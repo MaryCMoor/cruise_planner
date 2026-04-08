@@ -65,6 +65,16 @@
             border-radius: 10px;
             margin-bottom: 10px;
         }
+        .activity-time {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
         .activity-name { font-weight: 700; color: #2c3e50; margin-bottom: 5px; }
         .activity-details { color: #7f8c8d; font-size: 0.9em; }
         .add-activity-btn {
@@ -184,6 +194,10 @@
         <div class="modal-content">
             <div class="modal-header">Add Activity</div>
             <div class="form-group">
+                <label>Time (optional)</label>
+                <input type="time" id="activity-time" placeholder="10:00">
+            </div>
+            <div class="form-group">
                 <label>Activity Name</label>
                 <input type="text" id="activity-name" placeholder="Beach excursion">
             </div>
@@ -291,6 +305,13 @@
                     activities.push({id: doc.id, ...doc.data()});
                 });
                 
+                // Sort activities by time if they have time
+                activities.sort((a, b) => {
+                    if (!a.time) return 1;
+                    if (!b.time) return -1;
+                    return a.time.localeCompare(b.time);
+                });
+                
                 const dayCard = document.createElement('div');
                 dayCard.className = `day-card ${day.type === 'port' || day.type === 'arrival' ? 'port-day' : ''} ${day.type === 'sea' ? 'sea-day' : ''}`;
                 
@@ -318,6 +339,7 @@
                         ${activities.length === 0 ? '<div style="color: #999; text-align: center; padding: 10px;">No activities yet</div>' : ''}
                         ${activities.map(act => `
                             <div class="activity-item">
+                                ${act.time ? `<div class="activity-time">🕐 ${formatTime(act.time)}</div>` : ''}
                                 <div class="activity-name">${act.name}</div>
                                 <div class="activity-details">${act.details || ''}</div>
                                 ${act.cost ? `<div class="activity-details">Cost: $${act.cost}</div>` : ''}
@@ -335,6 +357,15 @@
             return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
         }
         
+        function formatTime(time) {
+            if (!time) return '';
+            const [hours, minutes] = time.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${minutes} ${ampm}`;
+        }
+        
         function openModal(day) {
             selectedDay = day;
             document.getElementById('add-modal').classList.add('show');
@@ -342,12 +373,14 @@
         
         function closeModal() {
             document.getElementById('add-modal').classList.remove('show');
+            document.getElementById('activity-time').value = '';
             document.getElementById('activity-name').value = '';
             document.getElementById('activity-details').value = '';
             document.getElementById('activity-cost').value = '';
         }
         
         async function saveActivity() {
+            const time = document.getElementById('activity-time').value;
             const name = document.getElementById('activity-name').value;
             const details = document.getElementById('activity-details').value;
             const cost = document.getElementById('activity-cost').value;
@@ -359,6 +392,7 @@
             
             await db.collection('users').doc(currentUser.uid).collection('itinerary').add({
                 day: selectedDay,
+                time: time || null,
                 name: name,
                 details: details,
                 cost: cost ? parseFloat(cost) : 0,
