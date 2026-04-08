@@ -317,10 +317,14 @@
                     members: [currentUser.uid]
                 });
                 
-                await db.collection('users').doc(currentUser.uid).update({
+                // Use SET with merge instead of UPDATE to handle missing doc
+                await db.collection('users').doc(currentUser.uid).set({
+                    email: currentUser.email.toLowerCase(),
+                    name: currentUser.displayName || '',
                     trips: firebase.firestore.FieldValue.arrayUnion(tripRef.id),
-                    activeTrip: tripRef.id
-                });
+                    activeTrip: tripRef.id,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
                 
                 localStorage.setItem('activeTripId', tripRef.id);
                 
@@ -332,6 +336,8 @@
                 showError('Error creating trip: ' + error.message);
             }
         }
+
+
         
         async function loadUserTrips() {
             const userDoc = await db.collection('users').doc(currentUser.uid).get();
