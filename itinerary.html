@@ -276,6 +276,17 @@
             margin-top: 5px;
             font-style: italic;
         }
+        .backup-note {
+            background: #fff3cd;
+            border-left: 4px solid #f39c12;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #856404;
+            display: none;
+        }
+        .backup-note.show { display: block; }
     </style>
 </head>
 <body>
@@ -304,10 +315,13 @@
 
             <div class="form-group" id="priority-group">
                 <label>Priority</label>
-                <select id="activity-priority">
+                <select id="activity-priority" onchange="toggleBackupNote()">
                     <option value="primary">Primary</option>
                     <option value="backup">Backup</option>
                 </select>
+                <div class="backup-note" id="backup-note">
+                    💡 Backup excursions can overlap with other activities (they're alternatives!)
+                </div>
             </div>
             
             <div class="form-row">
@@ -585,8 +599,21 @@
             
             if (type === 'excursion') {
                 priorityGroup.classList.add('show');
+                toggleBackupNote();
             } else {
                 priorityGroup.classList.remove('show');
+                document.getElementById('backup-note').classList.remove('show');
+            }
+        }
+        
+        function toggleBackupNote() {
+            const priority = document.getElementById('activity-priority').value;
+            const backupNote = document.getElementById('backup-note');
+            
+            if (priority === 'backup') {
+                backupNote.classList.add('show');
+            } else {
+                backupNote.classList.remove('show');
             }
         }
         
@@ -624,6 +651,7 @@
                 document.getElementById('activity-type').value = activity.activityType || 'other';
                 togglePriorityField();
                 document.getElementById('activity-priority').value = activity.priority || 'primary';
+                toggleBackupNote();
                 document.getElementById('activity-time-start').value = activity.timeStart || '';
                 document.getElementById('activity-time-end').value = activity.timeEnd || '';
                 document.getElementById('activity-name').value = activity.name || '';
@@ -657,6 +685,7 @@
             document.getElementById('activity-link').value = '';
             editingActivityId = null;
             hideError();
+            document.getElementById('backup-note').classList.remove('show');
         }
         
         async function checkTimeConflict(day, startTime, endTime, excludeId = null) {
@@ -678,7 +707,6 @@
                 if (!activity.timeStart || !activity.timeEnd) return;
                 
                 // Check for overlap
-                // Overlap occurs if: newStart < existingEnd AND newEnd > existingStart
                 if (startTime < activity.timeEnd && endTime > activity.timeStart) {
                     conflicts.push({
                         id: doc.id,
@@ -726,8 +754,10 @@
                 return;
             }
             
-            // Check for time conflicts
-            if (timeStart && timeEnd) {
+            // Check for time conflicts ONLY if NOT a backup excursion
+            const isBackupExcursion = (activityType === 'excursion' && priority === 'backup');
+            
+            if (timeStart && timeEnd && !isBackupExcursion) {
                 const conflicts = await checkTimeConflict(selectedDay, timeStart, timeEnd, editingActivityId);
                 
                 if (conflicts && conflicts.length > 0) {
@@ -735,7 +765,7 @@
                         `• ${c.name} (${formatTime(c.timeStart)} - ${formatTime(c.timeEnd)})`
                     ).join('\n');
                     
-                    showError(`❌ TIME CONFLICT!\n\nThis overlaps with:\n${conflictList}\n\nPlease choose a different time.`);
+                    showError(`❌ TIME CONFLICT!\n\nThis overlaps with:\n${conflictList}\n\nPlease choose a different time or mark as backup.`);
                     return;
                 }
             }
