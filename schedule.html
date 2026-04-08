@@ -334,7 +334,14 @@
             allEvents.forEach(event => {
                 const eventDiv = document.createElement('div');
                 eventDiv.className = `event-item ${event.source === 'itinerary' ? 'from-itinerary' : ''}`;
+                
+                let deleteButton = '';
+                if (event.source === 'schedule' && event.id) {
+                    deleteButton = `<button class="btn-icon btn-delete" onclick="deleteEvent('${event.id}')" style="position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; background: #e74c3c; color: white; border: none; border-radius: 6px; cursor: pointer;">🗑️</button>`;
+                }
+                
                 eventDiv.innerHTML = `
+                    ${deleteButton}
                     ${event.source === 'itinerary' ? '<span class="event-source">FROM TRIP</span>' : ''}
                     <div class="event-time">${formatTime(event.time)}</div>
                     <div class="event-title">${event.title}</div>
@@ -342,6 +349,7 @@
                 `;
                 container.appendChild(eventDiv);
             });
+
         }
         
         function formatTime(time) {
