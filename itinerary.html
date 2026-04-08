@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#fa709a">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
     <title>Itinerary - Cruise Planner</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,9 +32,7 @@
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .day-card.port-day {
-            border-left: 5px solid #27ae60;
-        }
+        .day-card.port-day { border-left: 5px solid #27ae60; }
         .day-header {
             display: flex;
             justify-content: space-between;
@@ -71,7 +72,6 @@
         .activity-item.meal { border-left-color: #e67e22; }
         .activity-item.activity { border-left-color: #9b59b6; }
         .activity-item.entertainment { border-left-color: #e74c3c; }
-        
         .activity-actions {
             position: absolute;
             top: 10px;
@@ -90,14 +90,8 @@
             align-items: center;
             justify-content: center;
         }
-        .btn-edit {
-            background: #3498db;
-            color: white;
-        }
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
-        }
+        .btn-edit { background: #3498db; color: white; }
+        .btn-delete { background: #e74c3c; color: white; }
         .activity-badges {
             display: flex;
             gap: 6px;
@@ -112,25 +106,15 @@
             font-weight: 700;
             text-transform: uppercase;
         }
-        .badge-time {
-            background: #667eea;
-            color: white;
-        }
-        .badge-type {
-            background: #95a5a6;
-            color: white;
-        }
+        .badge-time { background: #667eea; color: white; }
+        .badge-type { background: #95a5a6; color: white; }
         .badge-type.excursion { background: #3498db; }
         .badge-type.meal { background: #e67e22; }
         .badge-type.activity { background: #9b59b6; }
         .badge-type.entertainment { background: #e74c3c; }
-        
-        .badge-priority {
-            font-weight: 900;
-        }
+        .badge-priority { font-weight: 900; }
         .badge-priority.primary { background: #27ae60; color: white; }
         .badge-priority.backup { background: #f39c12; color: white; }
-        
         .activity-name { 
             font-weight: 700; 
             color: #2c3e50; 
@@ -157,18 +141,13 @@
             font-size: 0.9em;
             color: #34495e;
         }
-        .meta-icon {
-            width: 20px;
-            text-align: center;
-        }
+        .meta-icon { width: 20px; text-align: center; }
         .meta-link {
             color: #3498db;
             text-decoration: none;
             font-weight: 600;
         }
-        .meta-link:hover {
-            text-decoration: underline;
-        }
+        .meta-link:hover { text-decoration: underline; }
         .meta-cancel-warning {
             color: #e74c3c;
             font-weight: 600;
@@ -213,9 +192,7 @@
             margin-bottom: 20px;
             color: #2c3e50;
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
+        .form-group { margin-bottom: 15px; }
         .form-group label {
             display: block;
             font-weight: 600;
@@ -253,10 +230,7 @@
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             color: white;
         }
-        .btn-secondary {
-            background: #e0e0e0;
-            color: #2c3e50;
-        }
+        .btn-secondary { background: #e0e0e0; color: #2c3e50; }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -283,12 +257,8 @@
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
         .sea-day { opacity: 0.85; }
-        #priority-group {
-            display: none;
-        }
-        #priority-group.show {
-            display: block;
-        }
+        #priority-group { display: none; }
+        #priority-group.show { display: block; }
     </style>
 </head>
 <body>
@@ -399,6 +369,12 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        
+        // Enable offline persistence
+        db.enablePersistence({ synchronizeTabs: true })
+          .catch((err) => {
+            console.log('Offline persistence:', err.code);
+          });
         
         let currentUser = null;
         let selectedDay = null;
@@ -676,6 +652,16 @@
             closeModal();
             loadItinerary();
         }
+    </script>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then((reg) => console.log('✅ Service Worker registered'))
+                .catch((err) => console.log('❌ Service Worker failed:', err));
+        });
+    }
     </script>
 </body>
 </html>
