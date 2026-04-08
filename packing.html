@@ -76,11 +76,18 @@
             gap: 10px;
             margin-bottom: 10px;
         }
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
         input, select {
             padding: 12px;
             border: 2px solid #dcdde1;
             border-radius: 10px;
             font-size: 1em;
+            width: 100%;
         }
         .btn-add {
             width: 100%;
@@ -92,6 +99,33 @@
             font-weight: 700;
             cursor: pointer;
             margin-top: 10px;
+        }
+        .filter-card {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 15px;
+            border: 2px solid #dcdde1;
+            background: white;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-color: #f093fb;
         }
         .packing-card {
             background: white;
@@ -105,6 +139,21 @@
             font-weight: 700;
             color: #2c3e50;
             margin-bottom: 15px;
+        }
+        .category-section {
+            margin-bottom: 20px;
+        }
+        .category-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .packing-item {
             background: #f8f9fa;
@@ -139,7 +188,20 @@
             color: #7f8c8d;
             font-size: 0.85em;
             margin-top: 3px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
+        .item-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .badge-mary { background: #ffeef8; color: #e91e63; }
+        .badge-brian { background: #e3f2fd; color: #2196f3; }
+        .badge-house { background: #fff3e0; color: #f57c00; }
         .btn-delete {
             width: 32px;
             height: 32px;
@@ -175,6 +237,12 @@
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
+        .empty-category {
+            color: #95a5a6;
+            font-style: italic;
+            padding: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -196,19 +264,43 @@
                 <input type="text" id="item-name" placeholder="Item name">
                 <input type="number" id="item-quantity" placeholder="Qty" value="1">
             </div>
-            <select id="item-house">
-                <option value="My House">My House</option>
-                <option value="Her House">Her House</option>
-                <option value="Buy">Need to Buy</option>
-            </select>
-            <input type="text" id="item-notes" placeholder="Notes (optional)" style="margin-top: 10px; width: 100%;">
+            <div class="form-row-3">
+                <select id="item-person">
+                    <option value="Mary">Mary</option>
+                    <option value="Brian">Brian</option>
+                    <option value="Both">Both</option>
+                </select>
+                <select id="item-category">
+                    <option value="Clothes">Clothes</option>
+                    <option value="Toiletries">Toiletries</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Documents">Documents</option>
+                    <option value="Medications">Medications</option>
+                    <option value="Beach">Beach</option>
+                    <option value="Formal">Formal Wear</option>
+                    <option value="Other">Other</option>
+                </select>
+                <select id="item-house">
+                    <option value="Mary's House">Mary's House</option>
+                    <option value="Monty House">Monty House</option>
+                    <option value="Buy">Buy</option>
+                </select>
+            </div>
+            <input type="text" id="item-notes" placeholder="Notes (optional)" style="width: 100%;">
             <button class="btn-add" onclick="addItem()">Add to List</button>
         </div>
 
-        <div class="packing-card">
-            <div class="packing-header">📦 My Items</div>
-            <div id="packing-list"></div>
+        <div class="filter-card">
+            <div style="font-weight: 700; margin-bottom: 10px; color: #2c3e50;">Filter by Person:</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="filterByPerson('All')">All</button>
+                <button class="filter-btn" onclick="filterByPerson('Mary')">👩 Mary</button>
+                <button class="filter-btn" onclick="filterByPerson('Brian')">👨 Brian</button>
+                <button class="filter-btn" onclick="filterByPerson('Both')">👥 Both</button>
+            </div>
         </div>
+
+        <div class="packing-card" id="packing-container"></div>
     </div>
     
     <nav class="bottom-nav">
@@ -259,6 +351,19 @@
           });
         
         let currentUser = null;
+        let allItems = [];
+        let currentFilter = 'All';
+        
+        const categoryIcons = {
+            'Clothes': '👕',
+            'Toiletries': '🧴',
+            'Electronics': '🔌',
+            'Documents': '📄',
+            'Medications': '💊',
+            'Beach': '🏖️',
+            'Formal': '👔',
+            'Other': '📦'
+        };
         
         auth.onAuthStateChanged((user) => {
             if (!user) {
@@ -273,45 +378,117 @@
             const snapshot = await db.collection('users').doc(currentUser.uid)
                 .collection('packing').orderBy('createdAt', 'desc').get();
             
-            const items = [];
+            allItems = [];
             snapshot.forEach(doc => {
-                items.push({id: doc.id, ...doc.data()});
+                allItems.push({id: doc.id, ...doc.data()});
             });
             
-            const total = items.length;
-            const packed = items.filter(i => i.packed).length;
+            updateProgress();
+            displayItems();
+        }
+        
+        function updateProgress() {
+            const total = allItems.length;
+            const packed = allItems.filter(i => i.packed).length;
             const percentage = total > 0 ? Math.round((packed / total) * 100) : 0;
             
             document.getElementById('progress-label').textContent = `${packed} of ${total} items packed`;
             document.getElementById('progress-bar').style.width = percentage + '%';
             document.getElementById('progress-bar').textContent = percentage + '%';
+        }
+        
+        function displayItems() {
+            const container = document.getElementById('packing-container');
             
-            const listContainer = document.getElementById('packing-list');
-            
-            if (items.length === 0) {
-                listContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #7f8c8d;">No items yet. Add your first item above!</div>';
-            } else {
-                listContainer.innerHTML = items.map(item => `
-                    <div class="packing-item ${item.packed ? 'packed' : ''}">
-                        <input type="checkbox" class="checkbox" ${item.packed ? 'checked' : ''} 
-                               onchange="togglePacked('${item.id}', this.checked)">
-                        <div class="item-content">
-                            <div class="item-name ${item.packed ? 'packed' : ''}">
-                                ${item.name} ${item.quantity > 1 ? `(×${item.quantity})` : ''}
-                            </div>
-                            <div class="item-details">
-                                ${item.house}${item.notes ? ` • ${item.notes}` : ''}
-                            </div>
-                        </div>
-                        <button class="btn-delete" onclick="deleteItem('${item.id}')">🗑️</button>
-                    </div>
-                `).join('');
+            // Filter items based on selected person
+            let filteredItems = allItems;
+            if (currentFilter !== 'All') {
+                filteredItems = allItems.filter(item => 
+                    item.person === currentFilter || item.person === 'Both'
+                );
             }
+            
+            if (filteredItems.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 20px; color: #7f8c8d;">No items yet. Add your first item above!</div>';
+                return;
+            }
+            
+            // Group by category
+            const categories = {};
+            filteredItems.forEach(item => {
+                const cat = item.category || 'Other';
+                if (!categories[cat]) categories[cat] = [];
+                categories[cat].push(item);
+            });
+            
+            // Build HTML
+            let html = '';
+            Object.keys(categories).sort().forEach(category => {
+                const items = categories[category];
+                const icon = categoryIcons[category] || '📦';
+                
+                html += `
+                    <div class="category-section">
+                        <div class="category-title">
+                            <span>${icon}</span>
+                            <span>${category}</span>
+                            <span style="margin-left: auto; font-size: 0.9em; color: #7f8c8d;">
+                                ${items.filter(i => i.packed).length}/${items.length}
+                            </span>
+                        </div>
+                `;
+                
+                items.forEach(item => {
+                    html += createItemHTML(item);
+                });
+                
+                html += '</div>';
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function createItemHTML(item) {
+            const personClass = item.person === 'Mary' ? 'badge-mary' : 
+                               item.person === 'Brian' ? 'badge-brian' : 
+                               'badge-house';
+            
+            return `
+                <div class="packing-item ${item.packed ? 'packed' : ''}">
+                    <input type="checkbox" class="checkbox" ${item.packed ? 'checked' : ''} 
+                           onchange="togglePacked('${item.id}', this.checked)">
+                    <div class="item-content">
+                        <div class="item-name ${item.packed ? 'packed' : ''}">
+                            ${item.name} ${item.quantity > 1 ? `(×${item.quantity})` : ''}
+                        </div>
+                        <div class="item-details">
+                            <span class="item-badge ${personClass}">${item.person}</span>
+                            <span class="item-badge badge-house">${item.house}</span>
+                            ${item.notes ? `<span>• ${item.notes}</span>` : ''}
+                        </div>
+                    </div>
+                    <button class="btn-delete" onclick="deleteItem('${item.id}')">🗑️</button>
+                </div>
+            `;
+        }
+        
+        function filterByPerson(person) {
+            currentFilter = person;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displayItems();
         }
         
         async function addItem() {
             const name = document.getElementById('item-name').value;
             const quantity = parseInt(document.getElementById('item-quantity').value) || 1;
+            const person = document.getElementById('item-person').value;
+            const category = document.getElementById('item-category').value;
             const house = document.getElementById('item-house').value;
             const notes = document.getElementById('item-notes').value;
             
@@ -323,6 +500,8 @@
             await db.collection('users').doc(currentUser.uid).collection('packing').add({
                 name: name,
                 quantity: quantity,
+                person: person,
+                category: category,
                 house: house,
                 notes: notes,
                 packed: false,
@@ -331,7 +510,9 @@
             
             document.getElementById('item-name').value = '';
             document.getElementById('item-quantity').value = '1';
-            document.getElementById('item-house').value = 'My House';
+            document.getElementById('item-person').value = 'Mary';
+            document.getElementById('item-category').value = 'Clothes';
+            document.getElementById('item-house').value = "Mary's House";
             document.getElementById('item-notes').value = '';
             
             loadPackingList();
