@@ -171,6 +171,14 @@
             text-align: center;
             font-weight: 700;
         }
+        .debug-info {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            margin-top: 10px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -209,6 +217,7 @@
         <div class="card">
             <div class="card-header">🗺️ My Trips</div>
             <div id="trips-list"></div>
+            <div class="debug-info" id="debug-info" style="display:none;"></div>
         </div>
 
         <!-- Invite Partner (only shows when trip is active) -->
@@ -274,14 +283,39 @@
         let currentUser = null;
         let activeTrip = null;
         
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.href = 'login.html';
             } else {
                 currentUser = user;
-                loadUserTrips();
+                
+                // CRITICAL: Ensure user document exists
+                await ensureUserDocument();
+                
+                // Load trips
+                await loadUserTrips();
             }
         });
+        
+        async function ensureUserDocument() {
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (!userDoc.exists) {
+                    console.log('Creating user document...');
+                    await db.collection('users').doc(currentUser.uid).set({
+                        email: currentUser.email.toLowerCase(),
+                        name: currentUser.displayName || '',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        trips: [],
+                        activeTrip: null
+                    });
+                    console.log('✅ User document created');
+                }
+            } catch (error) {
+                console.error('Error ensuring user doc:', error);
+            }
+        }
         
         function showSuccess(msg) {
             const el = document.getElementById('success-msg');
@@ -308,6 +342,9 @@
             }
             
             try {
+                console.log('Creating trip...');
+                
+                // Step 1: Create trip document
                 const tripRef = await db.collection('trips').add({
                     name: name,
                     startDate: startDate,
@@ -317,92 +354,146 @@
                     members: [currentUser.uid]
                 });
                 
-                // Use SET with merge instead of UPDATE to handle missing doc
+                const tripId = tripRef.id;
+                console.log('✅ Trip created:', tripId);
+                
+                // Step 2: Update user document with SET (not UPDATE)
                 await db.collection('users').doc(currentUser.uid).set({
-                    email: currentUser.email.toLowerCase(),
-                    name: currentUser.displayName || '',
-                    trips: firebase.firestore.FieldValue.arrayUnion(tripRef.id),
-                    activeTrip: tripRef.id,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    trips: firebase.firestore.FieldValue.arrayUnion(tripId),
+                    activeTrip: tripId
                 }, { merge: true });
                 
-                localStorage.setItem('activeTripId', tripRef.id);
+                console.log('✅ User document updated');
+                
+                // Step 3: Save to localStorage
+                localStorage.setItem('activeTripId', tripId);
+                console.log('✅ localStorage updated');
+                
+                // Step 4: Verify it was saved
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                console.log('Verification - User doc:', userDoc.data());
                 
                 showSuccess('✅ Trip created successfully!');
                 document.getElementById('trip-name').value = '';
-                loadUserTrips();
+                
+                // Reload trips list
+                await loadUserTrips();
                 
             } catch (error) {
+                console.error('Error creating trip:', error);
                 showError('Error creating trip: ' + error.message);
             }
         }
-
-
         
         async function loadUserTrips() {
-            const userDoc = await db.collection('users').doc(currentUser.uid).get();
-            const userData = userDoc.data() || {};
-            const tripIds = userData.trips || [];
-            
-            activeTrip = localStorage.getItem('activeTripId') || userData.activeTrip;
-            
-            if (tripIds.length === 0) {
-                document.getElementById('trips-list').innerHTML = `
-                    <div style="color: #7f8c8d; text-align: center; padding: 20px;">
-                        No trips yet. Create your first trip above!
-                    </div>
+            try {
+                // Step 1: Get user document
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (!userDoc.exists) {
+                    console.error('User doc does not exist!');
+                    document.getElementById('trips-list').innerHTML = `
+                        <div style="color: #7f8c8d; text-align: center; padding: 20px;">
+                            No user document found. Please refresh the page.
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const userData = userDoc.data();
+                console.log('User data:', userData);
+                
+                // Step 2: Get active trip from user doc or localStorage
+                activeTrip = userData.activeTrip || localStorage.getItem('activeTripId');
+                
+                // Step 3: Get all trips user is member of
+                const tripsSnapshot = await db.collection('trips')
+                    .where('members', 'array-contains', currentUser.uid)
+                    .get();
+                
+                console.log(`Found ${tripsSnapshot.size} trips`);
+                
+                // Debug info
+                document.getElementById('debug-info').innerHTML = `
+                    User ID: ${currentUser.uid}<br>
+                    Active Trip: ${activeTrip || 'none'}<br>
+                    localStorage: ${localStorage.getItem('activeTripId') || 'none'}<br>
+                    Trips in DB: ${tripsSnapshot.size}
                 `;
-                return;
-            }
-            
-            let html = '';
-            for (const tripId of tripIds) {
-                const tripDoc = await db.collection('trips').doc(tripId).get();
-                if (tripDoc.exists) {
-                    const trip = tripDoc.data();
-                    const isActive = tripId === activeTrip;
+                document.getElementById('debug-info').style.display = 'block';
+                
+                if (tripsSnapshot.empty) {
+                    document.getElementById('trips-list').innerHTML = `
+                        <div style="color: #7f8c8d; text-align: center; padding: 20px;">
+                            No trips yet. Create your first trip above!
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Step 4: Display trips
+                let html = '';
+                tripsSnapshot.forEach(doc => {
+                    const trip = doc.data();
+                    const isActive = doc.id === activeTrip;
                     
                     html += `
-                        <div class="trip-card ${isActive ? 'active' : ''}" onclick="selectTrip('${tripId}')">
+                        <div class="trip-card ${isActive ? 'active' : ''}" onclick="selectTrip('${doc.id}')">
                             <div class="trip-name">${trip.name}</div>
                             <div class="trip-dates">${trip.startDate} to ${trip.endDate}</div>
                             <div class="trip-members">👥 ${trip.members.length} member(s)</div>
                             ${isActive ? '<div style="margin-top: 5px;">✅ Active Trip</div>' : ''}
                         </div>
                     `;
+                });
+                
+                document.getElementById('trips-list').innerHTML = html;
+                
+                // Step 5: If we have an active trip, show invite card
+                if (activeTrip) {
+                    displayCurrentTrip();
+                    document.getElementById('invite-card').style.display = 'block';
+                    await loadTripMembers();
                 }
-            }
-            
-            document.getElementById('trips-list').innerHTML = html;
-            
-            if (activeTrip) {
-                displayCurrentTrip();
-                document.getElementById('invite-card').style.display = 'block';
-                loadTripMembers();
+                
+            } catch (error) {
+                console.error('Error loading trips:', error);
+                showError('Error loading trips: ' + error.message);
             }
         }
         
         async function displayCurrentTrip() {
-            const tripDoc = await db.collection('trips').doc(activeTrip).get();
-            if (tripDoc.exists) {
-                const trip = tripDoc.data();
-                document.getElementById('current-trip-display').innerHTML = `
-                    <div class="current-trip-banner">
-                        ✈️ Active Trip: ${trip.name}
-                    </div>
-                `;
+            try {
+                const tripDoc = await db.collection('trips').doc(activeTrip).get();
+                if (tripDoc.exists) {
+                    const trip = tripDoc.data();
+                    document.getElementById('current-trip-display').innerHTML = `
+                        <div class="current-trip-banner">
+                            ✈️ Active Trip: ${trip.name}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error displaying trip:', error);
             }
         }
         
         async function selectTrip(tripId) {
-            localStorage.setItem('activeTripId', tripId);
-            
-            await db.collection('users').doc(currentUser.uid).update({
-                activeTrip: tripId
-            });
-            
-            showSuccess('✅ Trip activated!');
-            loadUserTrips();
+            try {
+                // Save to both places
+                localStorage.setItem('activeTripId', tripId);
+                
+                await db.collection('users').doc(currentUser.uid).set({
+                    activeTrip: tripId
+                }, { merge: true });
+                
+                showSuccess('✅ Trip activated!');
+                await loadUserTrips();
+                
+            } catch (error) {
+                console.error('Error selecting trip:', error);
+                showError('Error: ' + error.message);
+            }
         }
         
         async function invitePartner() {
@@ -441,41 +532,47 @@
                     members: firebase.firestore.FieldValue.arrayUnion(partnerId)
                 });
                 
-                await db.collection('users').doc(partnerId).update({
+                await db.collection('users').doc(partnerId).set({
                     trips: firebase.firestore.FieldValue.arrayUnion(activeTrip)
-                });
+                }, { merge: true });
                 
                 showSuccess(`✅ Successfully invited ${email}!`);
                 document.getElementById('partner-email').value = '';
-                loadTripMembers();
+                await loadTripMembers();
                 
             } catch (error) {
+                console.error('Error inviting:', error);
                 showError('Error: ' + error.message);
             }
         }
         
         async function loadTripMembers() {
-            const tripDoc = await db.collection('trips').doc(activeTrip).get();
-            const trip = tripDoc.data();
-            
-            let html = '<div style="margin-top: 20px;"><strong>Trip Members:</strong></div>';
-            
-            for (const memberId of trip.members) {
-                const userDoc = await db.collection('users').doc(memberId).get();
-                const user = userDoc.data();
+            try {
+                const tripDoc = await db.collection('trips').doc(activeTrip).get();
+                const trip = tripDoc.data();
                 
-                html += `
-                    <div class="member-item">
-                        <div>
-                            <strong>${user.name || 'User'}</strong><br>
-                            <small>${user.email}</small>
+                let html = '<div style="margin-top: 20px;"><strong>Trip Members:</strong></div>';
+                
+                for (const memberId of trip.members) {
+                    const userDoc = await db.collection('users').doc(memberId).get();
+                    const user = userDoc.data();
+                    
+                    html += `
+                        <div class="member-item">
+                            <div>
+                                <strong>${user?.name || 'User'}</strong><br>
+                                <small>${user?.email || ''}</small>
+                            </div>
+                            ${memberId === trip.createdBy ? '<span style="color: #27ae60;">👑 Owner</span>' : ''}
                         </div>
-                        ${memberId === trip.createdBy ? '<span style="color: #27ae60;">👑 Owner</span>' : ''}
-                    </div>
-                `;
+                    `;
+                }
+                
+                document.getElementById('members-list').innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading members:', error);
             }
-            
-            document.getElementById('members-list').innerHTML = html;
         }
     </script>
 
