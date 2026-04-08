@@ -259,6 +259,23 @@
         .sea-day { opacity: 0.85; }
         #priority-group { display: none; }
         #priority-group.show { display: block; }
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: none;
+            border-left: 4px solid #e74c3c;
+        }
+        .error-message.show { display: block; }
+        .time-help {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            margin-top: 5px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -271,6 +288,8 @@
     <div class="modal" id="add-modal">
         <div class="modal-content">
             <div class="modal-header" id="modal-title">Add Activity</div>
+            
+            <div class="error-message" id="error-message"></div>
             
             <div class="form-group">
                 <label>Type</label>
@@ -291,9 +310,17 @@
                 </select>
             </div>
             
-            <div class="form-group">
-                <label>Time (optional)</label>
-                <input type="time" id="activity-time">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Start Time</label>
+                    <input type="time" id="activity-time-start">
+                    <div class="time-help">Leave empty for all-day</div>
+                </div>
+                <div class="form-group">
+                    <label>End Time</label>
+                    <input type="time" id="activity-time-end">
+                    <div class="time-help">Required if start time set</div>
+                </div>
             </div>
             
             <div class="form-group">
@@ -426,9 +453,9 @@
                 });
                 
                 activities.sort((a, b) => {
-                    if (!a.time) return 1;
-                    if (!b.time) return -1;
-                    return a.time.localeCompare(b.time);
+                    if (!a.timeStart) return 1;
+                    if (!b.timeStart) return -1;
+                    return a.timeStart.localeCompare(b.timeStart);
                 });
                 
                 const dayCard = document.createElement('div');
@@ -469,8 +496,10 @@
             
             let badgesHTML = '<div class="activity-badges">';
             
-            if (act.time) {
-                badgesHTML += `<span class="badge badge-time">🕐 ${formatTime(act.time)}</span>`;
+            if (act.timeStart && act.timeEnd) {
+                badgesHTML += `<span class="badge badge-time">🕐 ${formatTime(act.timeStart)} - ${formatTime(act.timeEnd)}</span>`;
+            } else if (act.timeStart) {
+                badgesHTML += `<span class="badge badge-time">🕐 ${formatTime(act.timeStart)}</span>`;
             }
             
             badgesHTML += `<span class="badge badge-type ${typeClass}">${act.activityType || 'other'}</span>`;
@@ -561,12 +590,24 @@
             }
         }
         
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+        
+        function hideError() {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.classList.remove('show');
+        }
+        
         function openModal(day) {
             selectedDay = day;
             editingActivityId = null;
             document.getElementById('modal-title').textContent = 'Add Activity';
             document.getElementById('activity-type').value = 'excursion';
             togglePriorityField();
+            hideError();
             document.getElementById('add-modal').classList.add('show');
         }
         
@@ -583,12 +624,14 @@
                 document.getElementById('activity-type').value = activity.activityType || 'other';
                 togglePriorityField();
                 document.getElementById('activity-priority').value = activity.priority || 'primary';
-                document.getElementById('activity-time').value = activity.time || '';
+                document.getElementById('activity-time-start').value = activity.timeStart || '';
+                document.getElementById('activity-time-end').value = activity.timeEnd || '';
                 document.getElementById('activity-name').value = activity.name || '';
                 document.getElementById('activity-details').value = activity.details || '';
                 document.getElementById('activity-cost').value = activity.cost || '';
                 document.getElementById('activity-cancel-date').value = activity.cancelDate || '';
                 document.getElementById('activity-link').value = activity.bookingLink || '';
+                hideError();
                 document.getElementById('add-modal').classList.add('show');
             }
         }
@@ -605,35 +648,104 @@
             document.getElementById('add-modal').classList.remove('show');
             document.getElementById('activity-type').value = 'excursion';
             document.getElementById('activity-priority').value = 'primary';
-            document.getElementById('activity-time').value = '';
+            document.getElementById('activity-time-start').value = '';
+            document.getElementById('activity-time-end').value = '';
             document.getElementById('activity-name').value = '';
             document.getElementById('activity-details').value = '';
             document.getElementById('activity-cost').value = '';
             document.getElementById('activity-cancel-date').value = '';
             document.getElementById('activity-link').value = '';
             editingActivityId = null;
+            hideError();
+        }
+        
+        async function checkTimeConflict(day, startTime, endTime, excludeId = null) {
+            if (!startTime || !endTime) return null;
+            
+            const snapshot = await db.collection('users').doc(currentUser.uid)
+                .collection('itinerary')
+                .where('day', '==', day)
+                .get();
+            
+            const conflicts = [];
+            snapshot.forEach(doc => {
+                const activity = doc.data();
+                
+                // Skip if it's the same activity we're editing
+                if (excludeId && doc.id === excludeId) return;
+                
+                // Skip if activity has no times
+                if (!activity.timeStart || !activity.timeEnd) return;
+                
+                // Check for overlap
+                // Overlap occurs if: newStart < existingEnd AND newEnd > existingStart
+                if (startTime < activity.timeEnd && endTime > activity.timeStart) {
+                    conflicts.push({
+                        id: doc.id,
+                        name: activity.name,
+                        timeStart: activity.timeStart,
+                        timeEnd: activity.timeEnd
+                    });
+                }
+            });
+            
+            return conflicts.length > 0 ? conflicts : null;
         }
         
         async function saveActivity() {
+            hideError();
+            
             const activityType = document.getElementById('activity-type').value;
             const priority = activityType === 'excursion' ? document.getElementById('activity-priority').value : null;
-            const time = document.getElementById('activity-time').value;
+            const timeStart = document.getElementById('activity-time-start').value;
+            const timeEnd = document.getElementById('activity-time-end').value;
             const name = document.getElementById('activity-name').value;
             const details = document.getElementById('activity-details').value;
             const cost = document.getElementById('activity-cost').value;
             const cancelDate = document.getElementById('activity-cancel-date').value;
             const bookingLink = document.getElementById('activity-link').value;
             
+            // Validation
             if (!name) {
-                alert('Please enter activity name');
+                showError('❌ Please enter activity name');
                 return;
+            }
+            
+            if (timeStart && !timeEnd) {
+                showError('❌ Please enter end time (required when start time is set)');
+                return;
+            }
+            
+            if (!timeStart && timeEnd) {
+                showError('❌ Please enter start time (required when end time is set)');
+                return;
+            }
+            
+            if (timeStart && timeEnd && timeEnd <= timeStart) {
+                showError('❌ End time must be after start time');
+                return;
+            }
+            
+            // Check for time conflicts
+            if (timeStart && timeEnd) {
+                const conflicts = await checkTimeConflict(selectedDay, timeStart, timeEnd, editingActivityId);
+                
+                if (conflicts && conflicts.length > 0) {
+                    const conflictList = conflicts.map(c => 
+                        `• ${c.name} (${formatTime(c.timeStart)} - ${formatTime(c.timeEnd)})`
+                    ).join('\n');
+                    
+                    showError(`❌ TIME CONFLICT!\n\nThis overlaps with:\n${conflictList}\n\nPlease choose a different time.`);
+                    return;
+                }
             }
             
             const data = {
                 day: selectedDay,
                 activityType: activityType,
                 priority: priority,
-                time: time || null,
+                timeStart: timeStart || null,
+                timeEnd: timeEnd || null,
                 name: name,
                 details: details,
                 cost: cost ? parseFloat(cost) : 0,
