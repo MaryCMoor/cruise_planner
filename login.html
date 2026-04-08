@@ -9,12 +9,7 @@
     <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
     <title>Login - Cruise Planner</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -24,115 +19,73 @@
             justify-content: center;
             padding: 20px;
         }
-        
         .login-container {
             background: white;
-            padding: 40px;
+            padding: 40px 30px;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             max-width: 400px;
             width: 100%;
+        }
+        .logo {
             text-align: center;
+            margin-bottom: 30px;
         }
-        
-        .login-icon {
-            font-size: 5em;
-            margin-bottom: 20px;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        h1 {
-            color: #2c3e50;
+        .logo-icon {
+            font-size: 4em;
             margin-bottom: 10px;
-            font-size: 2em;
         }
-        
+        .logo-text {
+            font-size: 2em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         .subtitle {
+            text-align: center;
             color: #7f8c8d;
             margin-bottom: 30px;
-            font-size: 1.1em;
         }
-        
-        .tab-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
+        .form-group {
+            margin-bottom: 20px;
         }
-        
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #dcdde1;
-            background: white;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
-        }
-        
-        .form-section {
-            display: none;
-        }
-        
-        .form-section.active {
+        .form-group label {
             display: block;
-        }
-        
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        
-        label {
-            display: block;
-            color: #2c3e50;
             font-weight: 600;
             margin-bottom: 8px;
-            font-size: 0.9em;
+            color: #2c3e50;
         }
-        
         input {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border: 2px solid #dcdde1;
             border-radius: 10px;
             font-size: 1em;
             transition: border-color 0.3s;
         }
-        
         input:focus {
             outline: none;
             border-color: #667eea;
         }
-        
         .btn {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             border: none;
             border-radius: 10px;
-            font-size: 1.1em;
             font-weight: 700;
+            font-size: 1em;
             cursor: pointer;
             transition: transform 0.3s;
-            margin-bottom: 15px;
         }
-        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            margin-bottom: 10px;
         }
-        
         .btn-google {
             background: white;
             color: #2c3e50;
@@ -142,125 +95,101 @@
             justify-content: center;
             gap: 10px;
         }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        
         .divider {
-            display: flex;
-            align-items: center;
+            text-align: center;
             margin: 20px 0;
             color: #7f8c8d;
-            font-size: 0.9em;
+            position: relative;
         }
-        
         .divider::before,
         .divider::after {
-            content: "";
-            flex: 1;
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
             height: 1px;
             background: #dcdde1;
         }
-        
-        .divider::before {
-            margin-right: 10px;
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+        .toggle-text {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
         }
-        
-        .divider::after {
-            margin-left: 10px;
+        .toggle-link {
+            color: #667eea;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
         }
-        
-        .message {
+        .error-message {
+            background: #fee;
+            color: #c33;
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 15px;
-            font-size: 0.9em;
             display: none;
         }
-        
-        .message.error {
-            background: #fee;
-            color: #c33;
-            display: block;
-        }
-        
-        .message.success {
-            background: #efe;
-            color: #3c3;
-            display: block;
-        }
-        
-        .loading {
-            display: none;
-            margin-top: 15px;
-            color: #667eea;
-        }
-        
-        .loading.show {
-            display: block;
-        }
+        .error-message.show { display: block; }
+        #signup-form { display: none; }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-icon">🚢</div>
-        <h1>Cruise Planner</h1>
-        <p class="subtitle">Your Personal Trip Organizer</p>
-        
-        <div class="message" id="message"></div>
-        
-        <div class="tab-buttons">
-            <button class="tab-btn active" onclick="showTab('login')">Login</button>
-            <button class="tab-btn" onclick="showTab('signup')">Sign Up</button>
+        <div class="logo">
+            <div class="logo-icon">🚢</div>
+            <div class="logo-text">Cruise Planner</div>
         </div>
-        
-        <div id="login-form" class="form-section active">
-            <div class="input-group">
+        <div class="subtitle">Plan together, travel better</div>
+
+        <div class="error-message" id="error-message"></div>
+
+        <!-- Login Form -->
+        <div id="login-form">
+            <div class="form-group">
                 <label>Email</label>
-                <input type="email" id="login-email" placeholder="you@example.com">
+                <input type="email" id="login-email" placeholder="your@email.com">
             </div>
-            
-            <div class="input-group">
+            <div class="form-group">
                 <label>Password</label>
                 <input type="password" id="login-password" placeholder="••••••••">
             </div>
-            
-            <button class="btn btn-primary" onclick="loginWithEmail()">Log In</button>
-            
-            <div class="divider">or</div>
-            
+            <button class="btn btn-primary" onclick="loginWithEmail()">Login</button>
+            <div class="divider">OR</div>
             <button class="btn btn-google" onclick="loginWithGoogle()">
-                <span>🔷</span> Continue with Google
+                <span>🔐</span>
+                <span>Continue with Google</span>
             </button>
-        </div>
-        
-        <div id="signup-form" class="form-section">
-            <div class="input-group">
-                <label>Full Name</label>
-                <input type="text" id="signup-name" placeholder="John Doe">
+            <div class="toggle-text">
+                Don't have an account? <a class="toggle-link" onclick="showSignup()">Sign Up</a>
             </div>
-            
-            <div class="input-group">
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signup-form">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="signup-name" placeholder="Your name">
+            </div>
+            <div class="form-group">
                 <label>Email</label>
-                <input type="email" id="signup-email" placeholder="you@example.com">
+                <input type="email" id="signup-email" placeholder="your@email.com">
             </div>
-            
-            <div class="input-group">
+            <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="signup-password" placeholder="At least 6 characters">
+                <input type="password" id="signup-password" placeholder="••••••••">
             </div>
-            
             <button class="btn btn-primary" onclick="signupWithEmail()">Create Account</button>
-            
-            <div class="divider">or</div>
-            
+            <div class="divider">OR</div>
             <button class="btn btn-google" onclick="loginWithGoogle()">
-                <span>🔷</span> Sign up with Google
+                <span>🔐</span>
+                <span>Continue with Google</span>
             </button>
+            <div class="toggle-text">
+                Already have an account? <a class="toggle-link" onclick="showLogin()">Login</a>
+            </div>
         </div>
-        
-        <div class="loading" id="loading">⏳ Loading...</div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -281,158 +210,110 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
-        // Enable offline persistence
-        db.enablePersistence({ synchronizeTabs: true })
-          .then(() => {
-            console.log('✅ Offline mode enabled');
-          })
-          .catch((err) => {
-            if (err.code == 'failed-precondition') {
-              console.log('⚠️ Multiple tabs open');
-            } else if (err.code == 'unimplemented') {
-              console.log('⚠️ Browser does not support offline');
-            }
-          });
-        
         auth.onAuthStateChanged((user) => {
             if (user) {
                 window.location.href = 'index.html';
             }
         });
         
-        function showTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.form-section').forEach(section => section.classList.remove('active'));
+        function showError(message) {
+            const el = document.getElementById('error-message');
+            el.textContent = message;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 5000);
+        }
+        
+        function showSignup() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'block';
+        }
+        
+        function showLogin() {
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        }
+        
+        async function createUserDocument(user, name = null) {
+            const userDoc = await db.collection('users').doc(user.uid).get();
             
-            if (tab === 'login') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('login-form').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('signup-form').classList.add('active');
+            if (!userDoc.exists) {
+                await db.collection('users').doc(user.uid).set({
+                    email: user.email,
+                    name: name || user.displayName || '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    trips: []
+                });
             }
-            hideMessage();
-        }
-        
-        function showMessage(text, type) {
-            const message = document.getElementById('message');
-            message.textContent = text;
-            message.className = 'message ' + type;
-        }
-        
-        function hideMessage() {
-            document.getElementById('message').className = 'message';
-        }
-        
-        function showLoading() {
-            document.getElementById('loading').classList.add('show');
-        }
-        
-        function hideLoading() {
-            document.getElementById('loading').classList.remove('show');
         }
         
         async function loginWithEmail() {
-            const email = document.getElementById('login-email').value;
+            const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
             
             if (!email || !password) {
-                showMessage('Please enter email and password', 'error');
+                showError('Please enter email and password');
                 return;
             }
             
-            showLoading();
-            hideMessage();
-            
             try {
-                await auth.signInWithEmailAndPassword(email, password);
+                const result = await auth.signInWithEmailAndPassword(email, password);
+                await createUserDocument(result.user);
             } catch (error) {
-                hideLoading();
-                showMessage(error.message, 'error');
+                showError(error.message);
             }
         }
         
         async function signupWithEmail() {
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
             
-            if (!name || !email || !password) {
-                showMessage('Please fill in all fields', 'error');
+            if (!name) {
+                showError('Please enter your name');
+                return;
+            }
+            
+            if (!email || !password) {
+                showError('Please enter email and password');
                 return;
             }
             
             if (password.length < 6) {
-                showMessage('Password must be at least 6 characters', 'error');
+                showError('Password must be at least 6 characters');
                 return;
             }
             
-            showLoading();
-            hideMessage();
-            
             try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                
-                await user.updateProfile({ displayName: name });
-                
-                await db.collection('users').doc(user.uid).set({
-                    name: name,
-                    email: email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
+                const result = await auth.createUserWithEmailAndPassword(email, password);
+                await result.user.updateProfile({ displayName: name });
+                await createUserDocument(result.user, name);
             } catch (error) {
-                hideLoading();
-                showMessage(error.message, 'error');
+                showError(error.message);
             }
         }
         
         async function loginWithGoogle() {
-            showLoading();
-            hideMessage();
-            
             const provider = new firebase.auth.GoogleAuthProvider();
             
             try {
                 const result = await auth.signInWithPopup(provider);
-                const user = result.user;
-                
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                
-                if (!userDoc.exists) {
-                    await db.collection('users').doc(user.uid).set({
-                        name: user.displayName,
-                        email: user.email,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                }
-                
+                await createUserDocument(result.user);
             } catch (error) {
-                hideLoading();
-                showMessage(error.message, 'error');
+                showError(error.message);
             }
         }
         
-        document.addEventListener('keypress', function(e) {
+        // Allow Enter key to submit
+        document.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                if (document.getElementById('login-form').classList.contains('active')) {
+                const loginForm = document.getElementById('login-form');
+                if (loginForm.style.display !== 'none') {
                     loginWithEmail();
                 } else {
                     signupWithEmail();
                 }
             }
         });
-    </script>
-
-    <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./service-worker.js')
-                .then((reg) => console.log('✅ Service Worker registered'))
-                .catch((err) => console.log('❌ Service Worker failed:', err));
-        });
-    }
     </script>
 </body>
 </html>
