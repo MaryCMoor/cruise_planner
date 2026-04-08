@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Itinerary - Cruise Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 { font-size: 1.8em; }
+        .container { padding: 15px; }
+        .day-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .day-number {
+            font-size: 2em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .day-location { font-weight: 700; color: #2c3e50; font-size: 1.2em; }
+        .day-date { color: #7f8c8d; font-size: 0.9em; }
+        .activities-list { margin-top: 15px; }
+        .activity-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .activity-name { font-weight: 700; color: #2c3e50; margin-bottom: 5px; }
+        .activity-details { color: #7f8c8d; font-size: 0.9em; }
+        .add-activity-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dcdde1;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        .form-group textarea { min-height: 80px; }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #2c3e50;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+            z-index: 9999;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.7em;
+            font-weight: 600;
+            padding: 8px 12px;
+            min-width: 60px;
+        }
+        .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
+        .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🗺️ My Itinerary</h1>
+    </div>
+
+    <div class="container" id="days-container"></div>
+
+    <div class="modal" id="add-modal">
+        <div class="modal-content">
+            <div class="modal-header">Add Activity</div>
+            <div class="form-group">
+                <label>Activity Name</label>
+                <input type="text" id="activity-name" placeholder="Beach excursion">
+            </div>
+            <div class="form-group">
+                <label>Details</label>
+                <textarea id="activity-details" placeholder="Description..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Cost ($)</label>
+                <input type="number" id="activity-cost" placeholder="0">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveActivity()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-item-icon">🏠</div>
+            <div>Home</div>
+        </a>
+        <a href="itinerary.html" class="nav-item active">
+            <div class="nav-item-icon">🗺️</div>
+            <div>Trip</div>
+        </a>
+        <a href="schedule.html" class="nav-item">
+            <div class="nav-item-icon">🗓️</div>
+            <div>Days</div>
+        </a>
+        <a href="packing.html" class="nav-item">
+            <div class="nav-item-icon">🧳</div>
+            <div>Pack</div>
+        </a>
+        <a href="notes.html" class="nav-item">
+            <div class="nav-item-icon">📝</div>
+            <div>Notes</div>
+        </a>
+    </nav>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
+            authDomain: "cruise-planner-2026.firebaseapp.com",
+            projectId: "cruise-planner-2026",
+            storageBucket: "cruise-planner-2026.firebasestorage.app",
+            messagingSenderId: "554027862680",
+            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        let currentUser = null;
+        let selectedDay = null;
+        
+        const cruiseDays = [
+            {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure'},
+            {day: 2, date: '2026-04-20', location: 'At Sea', type: 'sea'},
+            {day: 3, date: '2026-04-21', location: 'At Sea', type: 'sea'},
+            {day: 4, date: '2026-04-22', location: 'At Sea', type: 'sea'},
+            {day: 5, date: '2026-04-23', location: 'At Sea', type: 'sea'},
+            {day: 6, date: '2026-04-24', location: 'At Sea', type: 'sea'},
+            {day: 7, date: '2026-04-25', location: 'Ponta Delgada, Azores', type: 'port'},
+            {day: 8, date: '2026-04-26', location: 'At Sea', type: 'sea'},
+            {day: 9, date: '2026-04-27', location: 'Funchal, Madeira', type: 'port'},
+            {day: 10, date: '2026-04-28', location: 'At Sea', type: 'sea'},
+            {day: 11, date: '2026-04-29', location: 'Malaga, Spain', type: 'port'},
+            {day: 12, date: '2026-04-30', location: 'At Sea', type: 'sea'},
+            {day: 13, date: '2026-05-01', location: 'Palma de Mallorca', type: 'port'},
+            {day: 14, date: '2026-05-02', location: 'Valencia, Spain', type: 'port'},
+            {day: 15, date: '2026-05-03', location: 'At Sea', type: 'sea'},
+            {day: 16, date: '2026-05-04', location: 'At Sea', type: 'sea'},
+            {day: 17, date: '2026-05-05', location: 'At Sea', type: 'sea'},
+            {day: 18, date: '2026-05-06', location: 'At Sea', type: 'sea'},
+            {day: 19, date: '2026-05-07', location: 'At Sea', type: 'sea'},
+            {day: 20, date: '2026-05-08', location: 'Barcelona, Spain', type: 'arrival'}
+        ];
+        
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                currentUser = user;
+                loadItinerary();
+            }
+        });
+        
+        async function loadItinerary() {
+            const container = document.getElementById('days-container');
+            container.innerHTML = '';
+            
+            for (const day of cruiseDays) {
+                const snapshot = await db.collection('users').doc(currentUser.uid)
+                    .collection('itinerary').where('day', '==', day.day).get();
+                
+                const activities = [];
+                snapshot.forEach(doc => {
+                    activities.push({id: doc.id, ...doc.data()});
+                });
+                
+                const dayCard = document.createElement('div');
+                dayCard.className = 'day-card';
+                dayCard.innerHTML = `
+                    <div class="day-header">
+                        <div>
+                            <div class="day-number">Day ${day.day}</div>
+                            <div class="day-location">${day.location}</div>
+                            <div class="day-date">${formatDate(day.date)}</div>
+                        </div>
+                    </div>
+                    <div class="activities-list" id="activities-${day.day}">
+                        ${activities.length === 0 ? '<div style="color: #999; text-align: center; padding: 10px;">No activities yet</div>' : ''}
+                        ${activities.map(act => `
+                            <div class="activity-item">
+                                <div class="activity-name">${act.name}</div>
+                                <div class="activity-details">${act.details || ''}</div>
+                                ${act.cost ? `<div class="activity-details">Cost: $${act.cost}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="add-activity-btn" onclick="openModal(${day.day})">+ Add Activity</button>
+                `;
+                container.appendChild(dayCard);
+            }
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+        
+        function openModal(day) {
+            selectedDay = day;
+            document.getElementById('add-modal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('add-modal').classList.remove('show');
+            document.getElementById('activity-name').value = '';
+            document.getElementById('activity-details').value = '';
+            document.getElementById('activity-cost').value = '';
+        }
+        
+        async function saveActivity() {
+            const name = document.getElementById('activity-name').value;
+            const details = document.getElementById('activity-details').value;
+            const cost = document.getElementById('activity-cost').value;
+            
+            if (!name) {
+                alert('Please enter activity name');
+                return;
+            }
+            
+            await db.collection('users').doc(currentUser.uid).collection('itinerary').add({
+                day: selectedDay,
+                name: name,
+                details: details,
+                cost: cost ? parseFloat(cost) : 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            closeModal();
+            loadItinerary();
+        }
+    </script>
+</body>
+</html>

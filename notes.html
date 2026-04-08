@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Notes - Cruise Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 { font-size: 1.8em; }
+        .container { padding: 15px; }
+        .add-note-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .add-note-card h3 { margin-bottom: 15px; color: #2c3e50; }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dcdde1;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        .form-group textarea { min-height: 100px; }
+        .btn-add {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .notes-list {
+            display: grid;
+            gap: 12px;
+        }
+        .note-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-left: 5px solid #ffeaa7;
+        }
+        .note-card.high { border-left-color: #e74c3c; }
+        .note-card.medium { border-left-color: #f39c12; }
+        .note-card.low { border-left-color: #95a5a6; }
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .note-category {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        .note-priority {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+        .priority-high { background: #ffebee; color: #c62828; }
+        .priority-medium { background: #fff3e0; color: #e65100; }
+        .priority-low { background: #f5f5f5; color: #616161; }
+        .note-title {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .note-text {
+            color: #34495e;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .note-date {
+            color: #7f8c8d;
+            font-size: 0.85em;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+            z-index: 9999;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.7em;
+            font-weight: 600;
+            padding: 8px 12px;
+            min-width: 60px;
+        }
+        .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
+        .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
+        .no-notes { text-align: center; color: #999; padding: 40px 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 Trip Notes</h1>
+    </div>
+
+    <div class="container">
+        <div class="add-note-card">
+            <h3>Add Note</h3>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="note-category">
+                    <option value="planning">Planning</option>
+                    <option value="ideas">Ideas</option>
+                    <option value="reminders">Reminders</option>
+                    <option value="research">Research</option>
+                    <option value="contacts">Contacts</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="note-title" placeholder="Note title">
+            </div>
+            <div class="form-group">
+                <label>Note</label>
+                <textarea id="note-text" placeholder="Write your note here..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Priority</label>
+                <select id="note-priority">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <button class="btn-add" onclick="addNote()">+ Add Note</button>
+        </div>
+        
+        <div class="notes-list" id="notes-container">
+            <div class="no-notes">No notes yet. Start adding your trip ideas!</div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-item-icon">🏠</div>
+            <div>Home</div>
+        </a>
+        <a href="itinerary.html" class="nav-item">
+            <div class="nav-item-icon">🗺️</div>
+            <div>Trip</div>
+        </a>
+        <a href="schedule.html" class="nav-item">
+            <div class="nav-item-icon">🗓️</div>
+            <div>Days</div>
+        </a>
+        <a href="packing.html" class="nav-item">
+            <div class="nav-item-icon">🧳</div>
+            <div>Pack</div>
+        </a>
+        <a href="notes.html" class="nav-item active">
+            <div class="nav-item-icon">📝</div>
+            <div>Notes</div>
+        </a>
+    </nav>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
+            authDomain: "cruise-planner-2026.firebaseapp.com",
+            projectId: "cruise-planner-2026",
+            storageBucket: "cruise-planner-2026.firebasestorage.app",
+            messagingSenderId: "554027862680",
+            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        let currentUser = null;
+        
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                currentUser = user;
+                loadNotes();
+            }
+        });
+        
+        async function loadNotes() {
+            const snapshot = await db.collection('users').doc(currentUser.uid)
+                .collection('notes').orderBy('createdAt', 'desc').get();
+            
+            const container = document.getElementById('notes-container');
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<div class="no-notes">No notes yet. Start adding your trip ideas!</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            snapshot.forEach(doc => {
+                const note = doc.data();
+                const noteDiv = document.createElement('div');
+                noteDiv.className = `note-card ${note.priority}`;
+                noteDiv.innerHTML = `
+                    <div class="note-header">
+                        <span class="note-category">${note.category}</span>
+                        <span class="note-priority priority-${note.priority}">${note.priority}</span>
+                    </div>
+                    <div class="note-title">${note.title}</div>
+                    <div class="note-text">${note.text}</div>
+                    <div class="note-date">${formatDate(note.createdAt)}</div>
+                `;
+                container.appendChild(noteDiv);
+            });
+        }
+        
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Just now';
+            const date = timestamp.toDate();
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', day: 'numeric', year: 'numeric', 
+                hour: 'numeric', minute: '2-digit' 
+            });
+        }
+        
+        async function addNote() {
+            const category = document.getElementById('note-category').value;
+            const title = document.getElementById('note-title').value;
+            const text = document.getElementById('note-text').value;
+            const priority = document.getElementById('note-priority').value;
+            
+            if (!title || !text) {
+                alert('Please fill in title and note');
+                return;
+            }
+            
+            await db.collection('users').doc(currentUser.uid).collection('notes').add({
+                category: category,
+                title: title,
+                text: text,
+                priority: priority,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            document.getElementById('note-title').value = '';
+            document.getElementById('note-text').value = '';
+            
+            loadNotes();
+        }
+    </script>
+</body>
+</html>
