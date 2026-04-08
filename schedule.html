@@ -101,6 +101,20 @@
             margin-bottom: 10px;
             border-left: 4px solid #a8edea;
         }
+        .event-item.from-itinerary {
+            border-left-color: #fa709a;
+            background: #fff5f8;
+        }
+        .event-source {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: 700;
+            margin-bottom: 5px;
+            background: #fa709a;
+            color: white;
+        }
         .event-time { font-weight: 700; color: #2c3e50; }
         .event-title { font-weight: 600; color: #34495e; margin: 5px 0; }
         .event-desc { color: #7f8c8d; font-size: 0.9em; }
@@ -272,28 +286,71 @@
         }
         
         async function loadEvents(day) {
-            const snapshot = await db.collection('users').doc(currentUser.uid)
-                .collection('schedule').where('day', '==', day).orderBy('time').get();
-            
             const container = document.getElementById('events-container');
             
-            if (snapshot.empty) {
+            // Get schedule events
+            const scheduleSnapshot = await db.collection('users').doc(currentUser.uid)
+                .collection('schedule').where('day', '==', day).get();
+            
+            // Get itinerary activities with time
+            const itinerarySnapshot = await db.collection('users').doc(currentUser.uid)
+                .collection('itinerary').where('day', '==', day).get();
+            
+            const allEvents = [];
+            
+            // Add schedule events
+            scheduleSnapshot.forEach(doc => {
+                const event = doc.data();
+                allEvents.push({
+                    time: event.time,
+                    title: event.title,
+                    description: event.description,
+                    source: 'schedule'
+                });
+            });
+            
+            // Add itinerary activities (only if they have a time)
+            itinerarySnapshot.forEach(doc => {
+                const activity = doc.data();
+                if (activity.time) {
+                    allEvents.push({
+                        time: activity.time,
+                        title: activity.name,
+                        description: activity.details,
+                        source: 'itinerary'
+                    });
+                }
+            });
+            
+            // Sort by time
+            allEvents.sort((a, b) => a.time.localeCompare(b.time));
+            
+            if (allEvents.length === 0) {
                 container.innerHTML = '<div class="no-events">No events scheduled yet</div>';
                 return;
             }
             
             container.innerHTML = '';
-            snapshot.forEach(doc => {
-                const event = doc.data();
+            allEvents.forEach(event => {
                 const eventDiv = document.createElement('div');
-                eventDiv.className = 'event-item';
+                eventDiv.className = `event-item ${event.source === 'itinerary' ? 'from-itinerary' : ''}`;
                 eventDiv.innerHTML = `
-                    <div class="event-time">${event.time}</div>
+                    ${event.source === 'itinerary' ? '<span class="event-source">FROM TRIP</span>' : ''}
+                    <div class="event-time">${formatTime(event.time)}</div>
                     <div class="event-title">${event.title}</div>
                     ${event.description ? `<div class="event-desc">${event.description}</div>` : ''}
                 `;
                 container.appendChild(eventDiv);
             });
+        }
+        
+        function formatTime(time) {
+            if (!time) return '';
+            const [hours, minutes] = time.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${minutes} ${ampm}`;
         }
         
         async function addEvent() {
