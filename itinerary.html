@@ -29,6 +29,9 @@
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
+        .day-card.port-day {
+            border-left: 5px solid #27ae60;
+        }
         .day-header {
             display: flex;
             justify-content: space-between;
@@ -45,7 +48,16 @@
             -webkit-text-fill-color: transparent;
         }
         .day-location { font-weight: 700; color: #2c3e50; font-size: 1.2em; }
-        .day-date { color: #7f8c8d; font-size: 0.9em; }
+        .day-date { color: #7f8c8d; font-size: 0.9em; margin-top: 3px; }
+        .port-times {
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.9em;
+            color: #2c3e50;
+        }
+        .port-times strong { color: #27ae60; }
         .activities-list { margin-top: 15px; }
         .activity-item {
             background: #f8f9fa;
@@ -158,6 +170,7 @@
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
+        .sea-day { opacity: 0.85; }
     </style>
 </head>
 <body>
@@ -236,24 +249,24 @@
         const cruiseDays = [
             {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure'},
             {day: 2, date: '2026-04-20', location: 'At Sea', type: 'sea'},
-            {day: 3, date: '2026-04-21', location: 'At Sea', type: 'sea'},
+            {day: 3, date: '2026-04-21', location: 'Halifax, Canada', type: 'port', arrival: '9:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
             {day: 4, date: '2026-04-22', location: 'At Sea', type: 'sea'},
             {day: 5, date: '2026-04-23', location: 'At Sea', type: 'sea'},
             {day: 6, date: '2026-04-24', location: 'At Sea', type: 'sea'},
-            {day: 7, date: '2026-04-25', location: 'Ponta Delgada, Azores', type: 'port'},
-            {day: 8, date: '2026-04-26', location: 'At Sea', type: 'sea'},
-            {day: 9, date: '2026-04-27', location: 'Funchal, Madeira', type: 'port'},
+            {day: 7, date: '2026-04-25', location: 'At Sea', type: 'sea'},
+            {day: 8, date: '2026-04-26', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: '8:00 AM', allAboard: '11:30 PM', departure: '11:59 PM'},
+            {day: 9, date: '2026-04-27', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: '12:01 AM', allAboard: '12:30 PM', departure: '1:00 PM'},
             {day: 10, date: '2026-04-28', location: 'At Sea', type: 'sea'},
-            {day: 11, date: '2026-04-29', location: 'Malaga, Spain', type: 'port'},
+            {day: 11, date: '2026-04-29', location: 'Lisbon (Cascais), Portugal', type: 'port', arrival: '8:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
             {day: 12, date: '2026-04-30', location: 'At Sea', type: 'sea'},
-            {day: 13, date: '2026-05-01', location: 'Palma de Mallorca', type: 'port'},
-            {day: 14, date: '2026-05-02', location: 'Valencia, Spain', type: 'port'},
+            {day: 13, date: '2026-05-01', location: 'Cadiz (Seville), Spain', type: 'port', arrival: '7:00 AM', allAboard: '5:30 PM', departure: '6:00 PM'},
+            {day: 14, date: '2026-05-02', location: 'Malaga (Granada), Spain', type: 'port', arrival: '7:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
             {day: 15, date: '2026-05-03', location: 'At Sea', type: 'sea'},
-            {day: 16, date: '2026-05-04', location: 'At Sea', type: 'sea'},
-            {day: 17, date: '2026-05-05', location: 'At Sea', type: 'sea'},
-            {day: 18, date: '2026-05-06', location: 'At Sea', type: 'sea'},
-            {day: 19, date: '2026-05-07', location: 'At Sea', type: 'sea'},
-            {day: 20, date: '2026-05-08', location: 'Barcelona, Spain', type: 'arrival'}
+            {day: 16, date: '2026-05-04', location: 'Marseille (Provence), France', type: 'port', arrival: '8:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
+            {day: 17, date: '2026-05-05', location: 'Barcelona, Spain', type: 'arrival', arrival: '7:00 AM', allAboard: 'Disembark', departure: 'Disembark'},
+            {day: 18, date: '2026-05-06', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
+            {day: 19, date: '2026-05-07', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
+            {day: 20, date: '2026-05-08', location: 'Barcelona, Spain (Departure)', type: 'land'}
         ];
         
         auth.onAuthStateChanged((user) => {
@@ -279,7 +292,19 @@
                 });
                 
                 const dayCard = document.createElement('div');
-                dayCard.className = 'day-card';
+                dayCard.className = `day-card ${day.type === 'port' || day.type === 'arrival' ? 'port-day' : ''} ${day.type === 'sea' ? 'sea-day' : ''}`;
+                
+                let portTimesHTML = '';
+                if (day.type === 'port' || day.type === 'arrival') {
+                    portTimesHTML = `
+                        <div class="port-times">
+                            <strong>⚓ Arrival:</strong> ${day.arrival} | 
+                            <strong>⏰ All Aboard:</strong> ${day.allAboard} | 
+                            <strong>🚢 Departure:</strong> ${day.departure}
+                        </div>
+                    `;
+                }
+                
                 dayCard.innerHTML = `
                     <div class="day-header">
                         <div>
@@ -288,6 +313,7 @@
                             <div class="day-date">${formatDate(day.date)}</div>
                         </div>
                     </div>
+                    ${portTimesHTML}
                     <div class="activities-list" id="activities-${day.day}">
                         ${activities.length === 0 ? '<div style="color: #999; text-align: center; padding: 10px;">No activities yet</div>' : ''}
                         ${activities.map(act => `
