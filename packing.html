@@ -123,6 +123,21 @@
         .house2 { background: #f3e5f5; color: #7b1fa2; }
         .house3 { background: #fff3e0; color: #f57c00; }
         .ship { background: #e8f5e9; color: #388e3c; }
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -274,6 +289,7 @@
                         ${item.notes ? `<div class="item-details">${item.notes}</div>` : ''}
                         <span class="house-tag ${item.house}">${getHouseLabel(item.house)}</span>
                     </div>
+                    <button class="btn-icon btn-delete" onclick="deleteItem('${doc.id}')">🗑️</button>
                 `;
                 container.appendChild(itemDiv);
             });
@@ -330,6 +346,14 @@
                 packed: packed
             });
             loadItems();
+        }
+        
+        async function deleteItem(itemId) {
+            if (confirm('Delete this item?')) {
+                await db.collection('users').doc(currentUser.uid)
+                    .collection('packing').doc(itemId).delete();
+                loadItems();
+            }
         }
     </script>
 </body>
