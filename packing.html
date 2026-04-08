@@ -25,6 +25,32 @@
         }
         .header h1 { font-size: 1.8em; }
         .container { padding: 15px; }
+        .no-trip-banner {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .no-trip-banner h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .no-trip-banner p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .btn-setup {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
         .progress-card {
             background: white;
             padding: 20px;
@@ -281,7 +307,6 @@
             font-weight: 600;
             margin-bottom: 5px;
             color: #2c3e50;
-            font-size: 0.9em;
         }
         .modal-buttons {
             display: flex;
@@ -300,10 +325,7 @@
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
         }
-        .btn-secondary {
-            background: #e0e0e0;
-            color: #2c3e50;
-        }
+        .btn-secondary { background: #e0e0e0; color: #2c3e50; }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -330,7 +352,6 @@
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
 
-        /* PRINT STYLES */
         @media print {
             body {
                 background: white;
@@ -409,65 +430,9 @@
             <div class="print-date">April 19 - May 8, 2026</div>
         </div>
 
-        <div class="progress-card">
-            <div class="progress-label" id="progress-label">0 of 0 items packed</div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progress-bar" style="width: 0%">0%</div>
-            </div>
-        </div>
-
-        <div class="action-buttons">
-            <button class="btn-print" onclick="window.print()">
-                🖨️ Print Packing List
-            </button>
-        </div>
-
-        <div class="add-item-card">
-            <div class="add-item-header">➕ Add Item</div>
-            <div class="form-row">
-                <input type="text" id="item-name" placeholder="Item name">
-                <input type="number" id="item-quantity" placeholder="Qty" value="1">
-            </div>
-            <div class="form-row-3">
-                <select id="item-person">
-                    <option value="Mary">Mary</option>
-                    <option value="Brian">Brian</option>
-                    <option value="Both">Both</option>
-                </select>
-                <select id="item-category">
-                    <option value="Clothes">Clothes</option>
-                    <option value="Toiletries">Toiletries</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Documents">Documents</option>
-                    <option value="Medications">Medications</option>
-                    <option value="Beach">Beach</option>
-                    <option value="Formal">Formal Wear</option>
-                    <option value="Other">Other</option>
-                </select>
-                <select id="item-house">
-                    <option value="Mary's House">Mary's House</option>
-                    <option value="Monty House">Monty House</option>
-                    <option value="Buy">Buy</option>
-                </select>
-            </div>
-            <input type="text" id="item-notes" placeholder="Notes (optional)" style="width: 100%;">
-            <button class="btn-add" onclick="addItem()">Add to List</button>
-        </div>
-
-        <div class="filter-card">
-            <div style="font-weight: 700; margin-bottom: 10px; color: #2c3e50;">Filter by Person:</div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" onclick="filterByPerson('All')">All</button>
-                <button class="filter-btn" onclick="filterByPerson('Mary')">👩 Mary</button>
-                <button class="filter-btn" onclick="filterByPerson('Brian')">👨 Brian</button>
-                <button class="filter-btn" onclick="filterByPerson('Both')">👥 Both</button>
-            </div>
-        </div>
-
-        <div class="packing-card" id="packing-container"></div>
+        <div id="main-content"></div>
     </div>
 
-    <!-- Edit Modal -->
     <div class="modal" id="edit-modal">
         <div class="modal-content">
             <div class="modal-header">✏️ Edit Item</div>
@@ -535,7 +500,7 @@
             <div class="nav-item-icon">🗺️</div>
             <div>Trip</div>
         </a>
-        <a href="packing.html" class="nav-item">
+        <a href="packing.html" class="nav-item active">
             <div class="nav-item-icon">🧳</div>
             <div>Pack</div>
         </a>
@@ -548,7 +513,6 @@
             <div>Settings</div>
         </a>
     </nav>
-
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -568,13 +532,11 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
-        // Enable offline persistence
         db.enablePersistence({ synchronizeTabs: true })
-          .catch((err) => {
-            console.log('Offline persistence:', err.code);
-          });
+          .catch((err) => console.log('Offline persistence:', err.code));
         
         let currentUser = null;
+        let activeTripId = null;
         let allItems = [];
         let currentFilter = 'All';
         let editingItemId = null;
@@ -590,17 +552,46 @@
             'Other': '📦'
         };
         
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.href = 'login.html';
             } else {
                 currentUser = user;
-                loadPackingList();
+                await checkActiveTrip();
             }
         });
         
+        async function checkActiveTrip() {
+            activeTripId = localStorage.getItem('activeTripId');
+            
+            if (!activeTripId) {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                const userData = userDoc.data();
+                activeTripId = userData?.activeTrip;
+                if (activeTripId) {
+                    localStorage.setItem('activeTripId', activeTripId);
+                }
+            }
+            
+            if (!activeTripId) {
+                showNoTripMessage();
+            } else {
+                loadPackingList();
+            }
+        }
+        
+        function showNoTripMessage() {
+            document.getElementById('main-content').innerHTML = `
+                <div class="no-trip-banner">
+                    <h2>🚢 No Active Trip</h2>
+                    <p>Create a trip in Settings to start packing!</p>
+                    <a href="settings.html" class="btn-setup">Go to Settings</a>
+                </div>
+            `;
+        }
+        
         async function loadPackingList() {
-            const snapshot = await db.collection('users').doc(currentUser.uid)
+            const snapshot = await db.collection('trips').doc(activeTripId)
                 .collection('packing').orderBy('createdAt', 'desc').get();
             
             allItems = [];
@@ -608,24 +599,81 @@
                 allItems.push({id: doc.id, ...doc.data()});
             });
             
-            updateProgress();
-            displayItems();
+            displayUI();
         }
         
-        function updateProgress() {
+        function displayUI() {
+            const container = document.getElementById('main-content');
+            
             const total = allItems.length;
             const packed = allItems.filter(i => i.packed).length;
             const percentage = total > 0 ? Math.round((packed / total) * 100) : 0;
             
-            document.getElementById('progress-label').textContent = `${packed} of ${total} items packed`;
-            document.getElementById('progress-bar').style.width = percentage + '%';
-            document.getElementById('progress-bar').textContent = percentage + '%';
+            container.innerHTML = `
+                <div class="progress-card">
+                    <div class="progress-label">${packed} of ${total} items packed</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: ${percentage}%">${percentage}%</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-print" onclick="window.print()">
+                        🖨️ Print Packing List
+                    </button>
+                </div>
+
+                <div class="add-item-card">
+                    <div class="add-item-header">➕ Add Item</div>
+                    <div class="form-row">
+                        <input type="text" id="item-name" placeholder="Item name">
+                        <input type="number" id="item-quantity" placeholder="Qty" value="1">
+                    </div>
+                    <div class="form-row-3">
+                        <select id="item-person">
+                            <option value="Mary">Mary</option>
+                            <option value="Brian">Brian</option>
+                            <option value="Both">Both</option>
+                        </select>
+                        <select id="item-category">
+                            <option value="Clothes">Clothes</option>
+                            <option value="Toiletries">Toiletries</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Documents">Documents</option>
+                            <option value="Medications">Medications</option>
+                            <option value="Beach">Beach</option>
+                            <option value="Formal">Formal Wear</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <select id="item-house">
+                            <option value="Mary's House">Mary's House</option>
+                            <option value="Monty House">Monty House</option>
+                            <option value="Buy">Buy</option>
+                        </select>
+                    </div>
+                    <input type="text" id="item-notes" placeholder="Notes (optional)" style="width: 100%;">
+                    <button class="btn-add" onclick="addItem()">Add to List</button>
+                </div>
+
+                <div class="filter-card">
+                    <div style="font-weight: 700; margin-bottom: 10px; color: #2c3e50;">Filter by Person:</div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" onclick="filterByPerson('All')">All</button>
+                        <button class="filter-btn" onclick="filterByPerson('Mary')">👩 Mary</button>
+                        <button class="filter-btn" onclick="filterByPerson('Brian')">👨 Brian</button>
+                        <button class="filter-btn" onclick="filterByPerson('Both')">👥 Both</button>
+                    </div>
+                </div>
+
+                <div class="packing-card" id="packing-container"></div>
+            `;
+            
+            displayItems();
         }
         
         function displayItems() {
             const container = document.getElementById('packing-container');
             
-            // Filter items based on selected person
             let filteredItems = allItems;
             if (currentFilter !== 'All') {
                 filteredItems = allItems.filter(item => 
@@ -638,7 +686,6 @@
                 return;
             }
             
-            // Group by category
             const categories = {};
             filteredItems.forEach(item => {
                 const cat = item.category || 'Other';
@@ -646,7 +693,6 @@
                 categories[cat].push(item);
             });
             
-            // Build HTML
             let html = '';
             Object.keys(categories).sort().forEach(category => {
                 const items = categories[category];
@@ -702,13 +748,10 @@
         
         function filterByPerson(person) {
             currentFilter = person;
-            
-            // Update button states
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            
             displayItems();
         }
         
@@ -725,7 +768,7 @@
                 return;
             }
             
-            await db.collection('users').doc(currentUser.uid).collection('packing').add({
+            await db.collection('trips').doc(activeTripId).collection('packing').add({
                 name: name,
                 quantity: quantity,
                 person: person,
@@ -733,6 +776,7 @@
                 house: house,
                 notes: notes,
                 packed: false,
+                addedBy: currentUser.uid,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             
@@ -749,7 +793,7 @@
         async function openEditModal(itemId) {
             editingItemId = itemId;
             
-            const doc = await db.collection('users').doc(currentUser.uid)
+            const doc = await db.collection('trips').doc(activeTripId)
                 .collection('packing').doc(itemId).get();
             
             if (doc.exists) {
@@ -783,7 +827,7 @@
                 return;
             }
             
-            await db.collection('users').doc(currentUser.uid)
+            await db.collection('trips').doc(activeTripId)
                 .collection('packing').doc(editingItemId).update({
                     name: name,
                     quantity: quantity,
@@ -798,14 +842,18 @@
         }
         
         async function togglePacked(itemId, packed) {
-            await db.collection('users').doc(currentUser.uid)
-                .collection('packing').doc(itemId).update({ packed: packed });
+            await db.collection('trips').doc(activeTripId)
+                .collection('packing').doc(itemId).update({ 
+                    packed: packed,
+                    packedBy: packed ? currentUser.uid : null,
+                    packedAt: packed ? firebase.firestore.FieldValue.serverTimestamp() : null
+                });
             loadPackingList();
         }
         
         async function deleteItem(itemId) {
             if (confirm('Delete this item?')) {
-                await db.collection('users').doc(currentUser.uid)
+                await db.collection('trips').doc(activeTripId)
                     .collection('packing').doc(itemId).delete();
                 loadPackingList();
             }
