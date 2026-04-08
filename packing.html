@@ -356,67 +356,189 @@
             body {
                 background: white;
                 padding: 0;
+                font-size: 10pt;
             }
+            
+            /* Hide interactive elements */
             .header, .bottom-nav, .action-buttons, .add-item-card, .filter-card, 
-            .progress-bar-bg, .item-actions, .btn-icon {
+            .item-actions, .btn-icon, .btn-edit, .btn-delete {
                 display: none !important;
             }
+            
             .container {
-                padding: 20px;
+                padding: 15px;
+                max-width: 100%;
             }
+            
+            /* Print header */
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #000;
+            }
+            .print-header h1 {
+                font-size: 18pt;
+                color: #000;
+                margin-bottom: 3px;
+            }
+            .print-date {
+                color: #666;
+                font-size: 9pt;
+            }
+            
+            /* Progress summary */
             .progress-card {
                 box-shadow: none;
-                border: 2px solid #ddd;
-                margin-bottom: 20px;
+                border: 1px solid #000;
+                margin-bottom: 15px;
+                padding: 10px;
+                background: white;
             }
+            .progress-label {
+                font-size: 11pt;
+                color: #000;
+            }
+            .progress-bar-bg {
+                display: none !important;
+            }
+            
+            /* Main packing container - 2 columns */
             .packing-card {
                 box-shadow: none;
-                border: 1px solid #ddd;
-                page-break-inside: avoid;
+                padding: 0;
+                margin: 0;
+                background: white;
+                column-count: 2;
+                column-gap: 20px;
+                column-rule: 1px solid #ccc;
             }
+            
+            /* Category sections */
             .category-section {
+                break-inside: avoid;
                 page-break-inside: avoid;
+                margin-bottom: 15px;
             }
+            
             .category-title {
-                background: #f0f0f0;
-                border: 1px solid #ddd;
-                page-break-after: avoid;
+                background: white;
+                border: none;
+                border-bottom: 1.5px solid #000;
+                padding: 5px 0;
+                margin-bottom: 8px;
+                font-size: 11pt;
+                font-weight: bold;
+                color: #000;
+                display: flex;
+                align-items: center;
+                gap: 5px;
             }
+            
+            /* Individual items */
             .packing-item {
-                border: 1px solid #e0e0e0;
+                border: none;
+                background: white;
+                padding: 6px 0;
+                margin-bottom: 5px;
+                break-inside: avoid;
                 page-break-inside: avoid;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
             }
+            
+            .packing-item.packed {
+                background: white;
+            }
+            
+            /* Checkboxes */
             .checkbox {
-                border: 2px solid #333;
-                appearance: none;
+                width: 14px;
+                height: 14px;
+                min-width: 14px;
+                border: 1.5px solid #000;
+                background: white;
+                margin-top: 2px;
                 -webkit-appearance: none;
+                appearance: none;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
             }
+            
+            .checkbox:checked {
+                background: white;
+            }
+            
             .checkbox:checked::after {
                 content: "✓";
                 display: block;
                 text-align: center;
                 font-weight: bold;
+                color: #000;
+                font-size: 11pt;
+                line-height: 12px;
             }
-            .print-header {
-                display: block !important;
-                text-align: center;
-                margin-bottom: 20px;
-                padding-bottom: 10px;
-                border-bottom: 3px solid #2c3e50;
+            
+            /* Item content */
+            .item-content {
+                flex: 1;
+                min-width: 0;
             }
-            .print-header h1 {
-                font-size: 2em;
-                color: #2c3e50;
-                margin-bottom: 5px;
+            
+            .item-name {
+                font-size: 9pt;
+                font-weight: 600;
+                color: #000;
+                line-height: 1.3;
+                margin-bottom: 2px;
             }
-            .print-date {
-                color: #7f8c8d;
-                font-size: 0.9em;
+            
+            .item-name.packed {
+                text-decoration: line-through;
+                color: #666;
+            }
+            
+            /* Item details - compact */
+            .item-details {
+                font-size: 7pt;
+                color: #666;
+                margin-top: 2px;
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+                line-height: 1.2;
+            }
+            
+            /* Badges - no color, just text */
+            .item-badge {
+                background: white;
+                color: #000;
+                border: 0.5px solid #999;
+                padding: 1px 4px;
+                border-radius: 3px;
+                font-size: 7pt;
+                font-weight: normal;
+            }
+            
+            .badge-mary, .badge-brian, .badge-house {
+                background: white;
+                color: #000;
+                border: 0.5px solid #999;
+            }
+            
+            /* Force page breaks for long lists */
+            @page {
+                margin: 0.5in;
+                size: letter;
             }
         }
+        
         .print-header {
             display: none;
         }
+
     </style>
 </head>
 <body>
