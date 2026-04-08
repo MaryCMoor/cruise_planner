@@ -64,6 +64,33 @@
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 10px;
+            position: relative;
+        }
+        .activity-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
         }
         .activity-time {
             display: inline-block;
@@ -75,7 +102,7 @@
             font-weight: 700;
             margin-bottom: 8px;
         }
-        .activity-name { font-weight: 700; color: #2c3e50; margin-bottom: 5px; }
+        .activity-name { font-weight: 700; color: #2c3e50; margin-bottom: 5px; padding-right: 70px; }
         .activity-details { color: #7f8c8d; font-size: 0.9em; }
         .add-activity-btn {
             width: 100%;
@@ -192,7 +219,7 @@
 
     <div class="modal" id="add-modal">
         <div class="modal-content">
-            <div class="modal-header">Add Activity</div>
+            <div class="modal-header" id="modal-title">Add Activity</div>
             <div class="form-group">
                 <label>Time (optional)</label>
                 <input type="time" id="activity-time" placeholder="10:00">
@@ -259,6 +286,7 @@
         
         let currentUser = null;
         let selectedDay = null;
+        let editingActivityId = null;
         
         const cruiseDays = [
             {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure'},
@@ -305,7 +333,6 @@
                     activities.push({id: doc.id, ...doc.data()});
                 });
                 
-                // Sort activities by time if they have time
                 activities.sort((a, b) => {
                     if (!a.time) return 1;
                     if (!b.time) return -1;
@@ -339,6 +366,10 @@
                         ${activities.length === 0 ? '<div style="color: #999; text-align: center; padding: 10px;">No activities yet</div>' : ''}
                         ${activities.map(act => `
                             <div class="activity-item">
+                                <div class="activity-actions">
+                                    <button class="btn-icon btn-edit" onclick="editActivity('${act.id}', ${day.day})">✏️</button>
+                                    <button class="btn-icon btn-delete" onclick="deleteActivity('${act.id}')">🗑️</button>
+                                </div>
                                 ${act.time ? `<div class="activity-time">🕐 ${formatTime(act.time)}</div>` : ''}
                                 <div class="activity-name">${act.name}</div>
                                 <div class="activity-details">${act.details || ''}</div>
@@ -368,7 +399,35 @@
         
         function openModal(day) {
             selectedDay = day;
+            editingActivityId = null;
+            document.getElementById('modal-title').textContent = 'Add Activity';
             document.getElementById('add-modal').classList.add('show');
+        }
+        
+        async function editActivity(activityId, day) {
+            selectedDay = day;
+            editingActivityId = activityId;
+            
+            const doc = await db.collection('users').doc(currentUser.uid)
+                .collection('itinerary').doc(activityId).get();
+            
+            if (doc.exists) {
+                const activity = doc.data();
+                document.getElementById('modal-title').textContent = 'Edit Activity';
+                document.getElementById('activity-time').value = activity.time || '';
+                document.getElementById('activity-name').value = activity.name || '';
+                document.getElementById('activity-details').value = activity.details || '';
+                document.getElementById('activity-cost').value = activity.cost || '';
+                document.getElementById('add-modal').classList.add('show');
+            }
+        }
+        
+        async function deleteActivity(activityId) {
+            if (confirm('Delete this activity?')) {
+                await db.collection('users').doc(currentUser.uid)
+                    .collection('itinerary').doc(activityId).delete();
+                loadItinerary();
+            }
         }
         
         function closeModal() {
@@ -377,6 +436,7 @@
             document.getElementById('activity-name').value = '';
             document.getElementById('activity-details').value = '';
             document.getElementById('activity-cost').value = '';
+            editingActivityId = null;
         }
         
         async function saveActivity() {
@@ -390,14 +450,23 @@
                 return;
             }
             
-            await db.collection('users').doc(currentUser.uid).collection('itinerary').add({
+            const data = {
                 day: selectedDay,
                 time: time || null,
                 name: name,
                 details: details,
-                cost: cost ? parseFloat(cost) : 0,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+                cost: cost ? parseFloat(cost) : 0
+            };
+            
+            if (editingActivityId) {
+                // Update existing
+                await db.collection('users').doc(currentUser.uid)
+                    .collection('itinerary').doc(editingActivityId).update(data);
+            } else {
+                // Create new
+                data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('users').doc(currentUser.uid).collection('itinerary').add(data);
+            }
             
             closeModal();
             loadItinerary();
