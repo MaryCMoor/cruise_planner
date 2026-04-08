@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#f093fb">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
     <title>Packing - Cruise Planner</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             min-height: 100vh;
             padding-bottom: 80px;
         }
@@ -28,24 +31,31 @@
             border-radius: 15px;
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            text-align: center;
         }
-        .progress-card h3 { margin-bottom: 15px; text-align: center; color: #2c3e50; }
-        .progress-bar {
+        .progress-label {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .progress-bar-bg {
+            width: 100%;
             height: 30px;
-            background: #e0e0e0;
+            background: #ecf0f1;
             border-radius: 15px;
             overflow: hidden;
-            position: relative;
         }
-        .progress-fill {
+        .progress-bar-fill {
             height: 100%;
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            transition: width 0.3s;
+            background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
+            transition: width 0.5s;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: 700;
+            font-size: 0.9em;
         }
         .add-item-card {
             background: white;
@@ -54,54 +64,61 @@
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .add-item-card h3 { margin-bottom: 15px; color: #2c3e50; }
+        .add-item-header {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
         .form-row {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 10px;
             margin-bottom: 10px;
         }
-        .form-group {
-            margin-bottom: 10px;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
+        input, select {
+            padding: 12px;
             border: 2px solid #dcdde1;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1em;
         }
         .btn-add {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
             border: none;
             border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
+            margin-top: 10px;
         }
-        .items-list {
+        .packing-card {
             background: white;
             padding: 20px;
             border-radius: 15px;
+            margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .items-list h3 { margin-bottom: 15px; color: #2c3e50; }
-        .item {
+        .packing-header {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .packing-item {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
-        .item.packed {
-            opacity: 0.6;
-            text-decoration: line-through;
+        .packing-item.packed {
+            background: #d4edda;
         }
-        .item input[type="checkbox"] {
+        .checkbox {
             width: 24px;
             height: 24px;
             cursor: pointer;
@@ -109,34 +126,29 @@
         .item-content {
             flex: 1;
         }
-        .item-name { font-weight: 700; color: #2c3e50; }
-        .item-details { color: #7f8c8d; font-size: 0.9em; margin-top: 3px; }
-        .house-tag {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75em;
-            font-weight: 600;
-            margin-top: 5px;
+        .item-name {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 1.05em;
         }
-        .house1 { background: #e3f2fd; color: #1976d2; }
-        .house2 { background: #f3e5f5; color: #7b1fa2; }
-        .house3 { background: #fff3e0; color: #f57c00; }
-        .ship { background: #e8f5e9; color: #388e3c; }
-        .btn-icon {
+        .item-name.packed {
+            text-decoration: line-through;
+            color: #95a5a6;
+        }
+        .item-details {
+            color: #7f8c8d;
+            font-size: 0.85em;
+            margin-top: 3px;
+        }
+        .btn-delete {
             width: 32px;
             height: 32px;
+            background: #e74c3c;
+            color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
         }
         .bottom-nav {
             position: fixed;
@@ -163,7 +175,6 @@
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
-        .no-items { text-align: center; color: #999; padding: 20px; }
     </style>
 </head>
 <body>
@@ -173,40 +184,33 @@
 
     <div class="container">
         <div class="progress-card">
-            <h3>Packing Progress</h3>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill">0%</div>
+            <div class="progress-label" id="progress-label">0 of 0 items packed</div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%">0%</div>
             </div>
         </div>
-        
+
         <div class="add-item-card">
-            <h3>Add Item</h3>
+            <div class="add-item-header">➕ Add Item</div>
             <div class="form-row">
                 <input type="text" id="item-name" placeholder="Item name">
-                <input type="number" id="item-qty" placeholder="Qty" value="1">
+                <input type="number" id="item-quantity" placeholder="Qty" value="1">
             </div>
-            <div class="form-group">
-                <select id="item-house">
-                    <option value="house1">House 1</option>
-                    <option value="house2">House 2</option>
-                    <option value="house3">House 3</option>
-                    <option value="ship">Buy on Ship</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <input type="text" id="item-notes" placeholder="Notes (optional)">
-            </div>
-            <button class="btn-add" onclick="addItem()">+ Add to List</button>
+            <select id="item-house">
+                <option value="My House">My House</option>
+                <option value="Her House">Her House</option>
+                <option value="Buy">Need to Buy</option>
+            </select>
+            <input type="text" id="item-notes" placeholder="Notes (optional)" style="margin-top: 10px; width: 100%;">
+            <button class="btn-add" onclick="addItem()">Add to List</button>
         </div>
-        
-        <div class="items-list">
-            <h3>My Items</h3>
-            <div id="items-container">
-                <div class="no-items">No items added yet</div>
-            </div>
+
+        <div class="packing-card">
+            <div class="packing-header">📦 My Items</div>
+            <div id="packing-list"></div>
         </div>
     </div>
-
+    
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item">
             <div class="nav-item-icon">🏠</div>
@@ -248,6 +252,12 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
+        // Enable offline persistence
+        db.enablePersistence({ synchronizeTabs: true })
+          .catch((err) => {
+            console.log('Offline persistence:', err.code);
+          });
+        
         let currentUser = null;
         
         auth.onAuthStateChanged((user) => {
@@ -255,68 +265,53 @@
                 window.location.href = 'login.html';
             } else {
                 currentUser = user;
-                loadItems();
+                loadPackingList();
             }
         });
         
-        async function loadItems() {
-            const snapshot = await db.collection('users').doc(currentUser.uid).collection('packing').get();
+        async function loadPackingList() {
+            const snapshot = await db.collection('users').doc(currentUser.uid)
+                .collection('packing').orderBy('createdAt', 'desc').get();
             
-            const container = document.getElementById('items-container');
-            
-            if (snapshot.empty) {
-                container.innerHTML = '<div class="no-items">No items added yet</div>';
-                updateProgress(0, 0);
-                return;
-            }
-            
-            container.innerHTML = '';
-            let totalItems = 0;
-            let packedItems = 0;
-            
+            const items = [];
             snapshot.forEach(doc => {
-                const item = doc.data();
-                totalItems++;
-                if (item.packed) packedItems++;
-                
-                const itemDiv = document.createElement('div');
-                itemDiv.className = `item ${item.packed ? 'packed' : ''}`;
-                itemDiv.innerHTML = `
-                    <input type="checkbox" ${item.packed ? 'checked' : ''} 
-                           onchange="togglePacked('${doc.id}', this.checked)">
-                    <div class="item-content">
-                        <div class="item-name">${item.name} ${item.quantity > 1 ? `(${item.quantity})` : ''}</div>
-                        ${item.notes ? `<div class="item-details">${item.notes}</div>` : ''}
-                        <span class="house-tag ${item.house}">${getHouseLabel(item.house)}</span>
-                    </div>
-                    <button class="btn-icon btn-delete" onclick="deleteItem('${doc.id}')">🗑️</button>
-                `;
-                container.appendChild(itemDiv);
+                items.push({id: doc.id, ...doc.data()});
             });
             
-            updateProgress(packedItems, totalItems);
-        }
-        
-        function getHouseLabel(house) {
-            const labels = {
-                house1: 'House 1',
-                house2: 'House 2',
-                house3: 'House 3',
-                ship: 'Buy on Ship'
-            };
-            return labels[house] || house;
-        }
-        
-        function updateProgress(packed, total) {
+            const total = items.length;
+            const packed = items.filter(i => i.packed).length;
             const percentage = total > 0 ? Math.round((packed / total) * 100) : 0;
-            const fill = document.getElementById('progress-fill');
-            fill.style.width = percentage + '%';
-            fill.textContent = percentage + '%';
+            
+            document.getElementById('progress-label').textContent = `${packed} of ${total} items packed`;
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            document.getElementById('progress-bar').textContent = percentage + '%';
+            
+            const listContainer = document.getElementById('packing-list');
+            
+            if (items.length === 0) {
+                listContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #7f8c8d;">No items yet. Add your first item above!</div>';
+            } else {
+                listContainer.innerHTML = items.map(item => `
+                    <div class="packing-item ${item.packed ? 'packed' : ''}">
+                        <input type="checkbox" class="checkbox" ${item.packed ? 'checked' : ''} 
+                               onchange="togglePacked('${item.id}', this.checked)">
+                        <div class="item-content">
+                            <div class="item-name ${item.packed ? 'packed' : ''}">
+                                ${item.name} ${item.quantity > 1 ? `(×${item.quantity})` : ''}
+                            </div>
+                            <div class="item-details">
+                                ${item.house}${item.notes ? ` • ${item.notes}` : ''}
+                            </div>
+                        </div>
+                        <button class="btn-delete" onclick="deleteItem('${item.id}')">🗑️</button>
+                    </div>
+                `).join('');
+            }
         }
         
         async function addItem() {
             const name = document.getElementById('item-name').value;
-            const quantity = parseInt(document.getElementById('item-qty').value) || 1;
+            const quantity = parseInt(document.getElementById('item-quantity').value) || 1;
             const house = document.getElementById('item-house').value;
             const notes = document.getElementById('item-notes').value;
             
@@ -335,26 +330,36 @@
             });
             
             document.getElementById('item-name').value = '';
-            document.getElementById('item-qty').value = '1';
+            document.getElementById('item-quantity').value = '1';
+            document.getElementById('item-house').value = 'My House';
             document.getElementById('item-notes').value = '';
             
-            loadItems();
+            loadPackingList();
         }
         
         async function togglePacked(itemId, packed) {
-            await db.collection('users').doc(currentUser.uid).collection('packing').doc(itemId).update({
-                packed: packed
-            });
-            loadItems();
+            await db.collection('users').doc(currentUser.uid)
+                .collection('packing').doc(itemId).update({ packed: packed });
+            loadPackingList();
         }
         
         async function deleteItem(itemId) {
             if (confirm('Delete this item?')) {
                 await db.collection('users').doc(currentUser.uid)
                     .collection('packing').doc(itemId).delete();
-                loadItems();
+                loadPackingList();
             }
         }
+    </script>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then((reg) => console.log('✅ Service Worker registered'))
+                .catch((err) => console.log('❌ Service Worker failed:', err));
+        });
+    }
     </script>
 </body>
 </html>
