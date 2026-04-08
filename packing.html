@@ -57,6 +57,25 @@
             font-weight: 700;
             font-size: 0.9em;
         }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .btn-print {
+            flex: 1;
+            padding: 12px;
+            background: white;
+            color: #2c3e50;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
         .add-item-card {
             background: white;
             padding: 20px;
@@ -310,11 +329,72 @@
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
-        .empty-category {
-            color: #95a5a6;
-            font-style: italic;
-            padding: 10px;
-            text-align: center;
+
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .header, .bottom-nav, .action-buttons, .add-item-card, .filter-card, 
+            .progress-bar-bg, .item-actions, .btn-icon {
+                display: none !important;
+            }
+            .container {
+                padding: 20px;
+            }
+            .progress-card {
+                box-shadow: none;
+                border: 2px solid #ddd;
+                margin-bottom: 20px;
+            }
+            .packing-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+            .category-section {
+                page-break-inside: avoid;
+            }
+            .category-title {
+                background: #f0f0f0;
+                border: 1px solid #ddd;
+                page-break-after: avoid;
+            }
+            .packing-item {
+                border: 1px solid #e0e0e0;
+                page-break-inside: avoid;
+            }
+            .checkbox {
+                border: 2px solid #333;
+                appearance: none;
+                -webkit-appearance: none;
+            }
+            .checkbox:checked::after {
+                content: "✓";
+                display: block;
+                text-align: center;
+                font-weight: bold;
+            }
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 3px solid #2c3e50;
+            }
+            .print-header h1 {
+                font-size: 2em;
+                color: #2c3e50;
+                margin-bottom: 5px;
+            }
+            .print-date {
+                color: #7f8c8d;
+                font-size: 0.9em;
+            }
+        }
+        .print-header {
+            display: none;
         }
     </style>
 </head>
@@ -324,11 +404,22 @@
     </div>
 
     <div class="container">
+        <div class="print-header">
+            <h1>🚢 MSC Cruise Packing List</h1>
+            <div class="print-date">April 19 - May 8, 2026</div>
+        </div>
+
         <div class="progress-card">
             <div class="progress-label" id="progress-label">0 of 0 items packed</div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progress-bar" style="width: 0%">0%</div>
             </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn-print" onclick="window.print()">
+                🖨️ Print Packing List
+            </button>
         </div>
 
         <div class="add-item-card">
