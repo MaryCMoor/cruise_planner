@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#a8edea">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
     <title>Notes - Cruise Planner</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
             min-height: 100vh;
             padding-bottom: 80px;
         }
@@ -29,108 +32,111 @@
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .add-note-card h3 { margin-bottom: 15px; color: #2c3e50; }
-        .form-group {
-            margin-bottom: 12px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
+        .add-note-header {
+            font-size: 1.3em;
+            font-weight: 700;
             color: #2c3e50;
-            font-size: 0.9em;
+            margin-bottom: 15px;
         }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 10px;
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        input, select, textarea {
+            padding: 12px;
             border: 2px solid #dcdde1;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1em;
+            width: 100%;
         }
-        .form-group textarea { min-height: 100px; }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
         .btn-add {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-            color: white;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #2c3e50;
             border: none;
             border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
+            margin-top: 10px;
         }
-        .notes-list {
-            display: grid;
-            gap: 12px;
-        }
-        .note-card {
+        .notes-card {
             background: white;
             padding: 20px;
             border-radius: 15px;
+            margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            border-left: 5px solid #ffeaa7;
+        }
+        .notes-header {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .note-item {
+            background: #fffbea;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #f39c12;
             position: relative;
         }
-        .note-card.high { border-left-color: #e74c3c; }
-        .note-card.medium { border-left-color: #f39c12; }
-        .note-card.low { border-left-color: #95a5a6; }
-        .note-header {
+        .note-item.general { background: #e8f5e9; border-left-color: #27ae60; }
+        .note-item.excursion { background: #e3f2fd; border-left-color: #3498db; }
+        .note-item.dining { background: #fff3e0; border-left-color: #e67e22; }
+        .note-item.important { background: #ffebee; border-left-color: #e74c3c; }
+        .note-badges {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
+            gap: 6px;
+            margin-bottom: 8px;
         }
-        .note-category {
+        .badge {
             display: inline-block;
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.75em;
-            font-weight: 600;
-            background: #e8f5e9;
-            color: #388e3c;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: white;
         }
-        .note-priority {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75em;
-            font-weight: 600;
-        }
-        .priority-high { background: #ffebee; color: #c62828; }
-        .priority-medium { background: #fff3e0; color: #e65100; }
-        .priority-low { background: #f5f5f5; color: #616161; }
+        .badge.general { background: #27ae60; }
+        .badge.excursion { background: #3498db; }
+        .badge.dining { background: #e67e22; }
+        .badge.important { background: #e74c3c; }
+        .badge.high { background: #e74c3c; }
+        .badge.medium { background: #f39c12; }
+        .badge.low { background: #95a5a6; }
         .note-title {
             font-weight: 700;
             color: #2c3e50;
-            font-size: 1.2em;
-            margin: 10px 0;
+            font-size: 1.1em;
+            margin-bottom: 8px;
             padding-right: 40px;
         }
         .note-text {
-            color: #34495e;
-            line-height: 1.6;
-            margin-bottom: 10px;
+            color: #5a6c7d;
+            font-size: 0.95em;
+            line-height: 1.5;
         }
-        .note-date {
-            color: #7f8c8d;
-            font-size: 0.85em;
-        }
-        .btn-icon {
+        .btn-delete {
+            position: absolute;
+            top: 10px;
+            right: 10px;
             width: 32px;
             height: 32px;
+            background: #e74c3c;
+            color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
-            position: absolute;
-            top: 15px;
-            right: 15px;
         }
         .bottom-nav {
             position: fixed;
@@ -157,7 +163,6 @@
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
-        .no-notes { text-align: center; color: #999; padding: 40px 20px; }
     </style>
 </head>
 <body>
@@ -167,41 +172,31 @@
 
     <div class="container">
         <div class="add-note-card">
-            <h3>Add Note</h3>
-            <div class="form-group">
-                <label>Category</label>
+            <div class="add-note-header">➕ Add Note</div>
+            <input type="text" id="note-title" placeholder="Note title" style="margin-bottom: 10px;">
+            <textarea id="note-text" placeholder="Write your note here..."></textarea>
+            <div class="form-row">
                 <select id="note-category">
-                    <option value="planning">Planning</option>
-                    <option value="ideas">Ideas</option>
-                    <option value="reminders">Reminders</option>
-                    <option value="research">Research</option>
-                    <option value="contacts">Contacts</option>
+                    <option value="general">General</option>
+                    <option value="excursion">Excursion</option>
+                    <option value="dining">Dining</option>
+                    <option value="important">Important</option>
                 </select>
-            </div>
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text" id="note-title" placeholder="Note title">
-            </div>
-            <div class="form-group">
-                <label>Note</label>
-                <textarea id="note-text" placeholder="Write your note here..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Priority</label>
                 <select id="note-priority">
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
+                    <option value="low">Low Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="high">High Priority</option>
                 </select>
             </div>
-            <button class="btn-add" onclick="addNote()">+ Add Note</button>
+            <button class="btn-add" onclick="addNote()">Save Note</button>
         </div>
-        
-        <div class="notes-list" id="notes-container">
-            <div class="no-notes">No notes yet. Start adding your trip ideas!</div>
+
+        <div class="notes-card">
+            <div class="notes-header">📌 My Notes</div>
+            <div id="notes-list"></div>
         </div>
     </div>
-
+    
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item">
             <div class="nav-item-icon">🏠</div>
@@ -243,6 +238,12 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
+        // Enable offline persistence
+        db.enablePersistence({ synchronizeTabs: true })
+          .catch((err) => {
+            console.log('Offline persistence:', err.code);
+          });
+        
         let currentUser = null;
         
         auth.onAuthStateChanged((user) => {
@@ -258,62 +259,53 @@
             const snapshot = await db.collection('users').doc(currentUser.uid)
                 .collection('notes').orderBy('createdAt', 'desc').get();
             
-            const container = document.getElementById('notes-container');
-            
-            if (snapshot.empty) {
-                container.innerHTML = '<div class="no-notes">No notes yet. Start adding your trip ideas!</div>';
-                return;
-            }
-            
-            container.innerHTML = '';
+            const notes = [];
             snapshot.forEach(doc => {
-                const note = doc.data();
-                const noteDiv = document.createElement('div');
-                noteDiv.className = `note-card ${note.priority}`;
-                noteDiv.innerHTML = `
-                    <button class="btn-icon btn-delete" onclick="deleteNote('${doc.id}')">🗑️</button>
-                    <div class="note-header">
-                        <span class="note-category">${note.category}</span>
-                        <span class="note-priority priority-${note.priority}">${note.priority}</span>
+                notes.push({id: doc.id, ...doc.data()});
+            });
+            
+            const listContainer = document.getElementById('notes-list');
+            
+            if (notes.length === 0) {
+                listContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #7f8c8d;">No notes yet. Add your first note above!</div>';
+            } else {
+                listContainer.innerHTML = notes.map(note => `
+                    <div class="note-item ${note.category}">
+                        <button class="btn-delete" onclick="deleteNote('${note.id}')">🗑️</button>
+                        <div class="note-badges">
+                            <span class="badge ${note.category}">${note.category}</span>
+                            <span class="badge ${note.priority}">${note.priority}</span>
+                        </div>
+                        <div class="note-title">${note.title}</div>
+                        <div class="note-text">${note.text}</div>
                     </div>
-                    <div class="note-title">${note.title}</div>
-                    <div class="note-text">${note.text}</div>
-                    <div class="note-date">${formatDate(note.createdAt)}</div>
-                `;
-                container.appendChild(noteDiv);
-            });
-        }
-        
-        function formatDate(timestamp) {
-            if (!timestamp) return 'Just now';
-            const date = timestamp.toDate();
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', day: 'numeric', year: 'numeric', 
-                hour: 'numeric', minute: '2-digit' 
-            });
+                `).join('');
+            }
         }
         
         async function addNote() {
-            const category = document.getElementById('note-category').value;
             const title = document.getElementById('note-title').value;
             const text = document.getElementById('note-text').value;
+            const category = document.getElementById('note-category').value;
             const priority = document.getElementById('note-priority').value;
             
             if (!title || !text) {
-                alert('Please fill in title and note');
+                alert('Please enter title and note text');
                 return;
             }
             
             await db.collection('users').doc(currentUser.uid).collection('notes').add({
-                category: category,
                 title: title,
                 text: text,
+                category: category,
                 priority: priority,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             
             document.getElementById('note-title').value = '';
             document.getElementById('note-text').value = '';
+            document.getElementById('note-category').value = 'general';
+            document.getElementById('note-priority').value = 'low';
             
             loadNotes();
         }
@@ -325,6 +317,16 @@
                 loadNotes();
             }
         }
+    </script>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then((reg) => console.log('✅ Service Worker registered'))
+                .catch((err) => console.log('❌ Service Worker failed:', err));
+        });
+    }
     </script>
 </body>
 </html>
