@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#a8edea">
+    <meta name="theme-color" content="#4facfe">
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
     <title>Notes - Cruise Planner</title>
@@ -12,7 +12,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             min-height: 100vh;
             padding-bottom: 80px;
         }
@@ -25,6 +25,32 @@
         }
         .header h1 { font-size: 1.8em; }
         .container { padding: 15px; }
+        .no-trip-banner {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .no-trip-banner h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .no-trip-banner p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .btn-setup {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
         .add-note-card {
             background: white;
             padding: 20px;
@@ -45,99 +71,150 @@
             margin-bottom: 10px;
         }
         input, select, textarea {
+            width: 100%;
             padding: 12px;
             border: 2px solid #dcdde1;
             border-radius: 10px;
             font-size: 1em;
-            width: 100%;
         }
         textarea {
             min-height: 100px;
             resize: vertical;
-            font-family: inherit;
         }
         .btn-add {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            color: #2c3e50;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
             border: none;
             border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
             margin-top: 10px;
         }
-        .notes-card {
+        .notes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .note-card {
             background: white;
             padding: 20px;
             border-radius: 15px;
-            margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .notes-header {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        .note-item {
-            background: #fffbea;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 4px solid #f39c12;
             position: relative;
         }
-        .note-item.general { background: #e8f5e9; border-left-color: #27ae60; }
-        .note-item.excursion { background: #e3f2fd; border-left-color: #3498db; }
-        .note-item.dining { background: #fff3e0; border-left-color: #e67e22; }
-        .note-item.important { background: #ffebee; border-left-color: #e74c3c; }
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
         .note-badges {
             display: flex;
             gap: 6px;
-            margin-bottom: 8px;
+            flex-wrap: wrap;
         }
         .badge {
-            display: inline-block;
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.75em;
             font-weight: 700;
             text-transform: uppercase;
+        }
+        .badge-category {
+            background: #667eea;
             color: white;
         }
-        .badge.general { background: #27ae60; }
-        .badge.excursion { background: #3498db; }
-        .badge.dining { background: #e67e22; }
-        .badge.important { background: #e74c3c; }
-        .badge.high { background: #e74c3c; }
-        .badge.medium { background: #f39c12; }
-        .badge.low { background: #95a5a6; }
-        .note-title {
-            font-weight: 700;
-            color: #2c3e50;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-            padding-right: 40px;
-        }
-        .note-text {
-            color: #5a6c7d;
-            font-size: 0.95em;
-            line-height: 1.5;
-        }
-        .btn-delete {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 32px;
-            height: 32px;
+        .badge-priority {
             background: #e74c3c;
             color: white;
+        }
+        .note-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-icon {
+            width: 32px;
+            height: 32px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .btn-edit { background: #3498db; color: white; }
+        .btn-delete { background: #e74c3c; color: white; }
+        .note-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            padding-right: 70px;
+        }
+        .note-text {
+            color: #34495e;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        .btn-secondary { background: #e0e0e0; color: #2c3e50; }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -163,6 +240,11 @@
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 <body>
@@ -170,30 +252,47 @@
         <h1>📝 Trip Notes</h1>
     </div>
 
-    <div class="container">
-        <div class="add-note-card">
-            <div class="add-note-header">➕ Add Note</div>
-            <input type="text" id="note-title" placeholder="Note title" style="margin-bottom: 10px;">
-            <textarea id="note-text" placeholder="Write your note here..."></textarea>
-            <div class="form-row">
-                <select id="note-category">
-                    <option value="general">General</option>
-                    <option value="excursion">Excursion</option>
-                    <option value="dining">Dining</option>
-                    <option value="important">Important</option>
+    <div class="container" id="main-content"></div>
+
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">✏️ Edit Note</div>
+            
+            <div class="form-group">
+                <label>Category</label>
+                <select id="edit-category">
+                    <option value="General">General</option>
+                    <option value="Excursions">Excursions</option>
+                    <option value="Dining">Dining</option>
+                    <option value="Packing">Packing</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Budget">Budget</option>
+                    <option value="Other">Other</option>
                 </select>
-                <select id="note-priority">
-                    <option value="low">Low Priority</option>
-                    <option value="medium">Medium Priority</option>
+            </div>
+
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="edit-title" placeholder="Note title">
+            </div>
+
+            <div class="form-group">
+                <label>Note</label>
+                <textarea id="edit-text" placeholder="Your note..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Priority</label>
+                <select id="edit-priority">
+                    <option value="normal">Normal</option>
                     <option value="high">High Priority</option>
                 </select>
             </div>
-            <button class="btn-add" onclick="addNote()">Save Note</button>
-        </div>
 
-        <div class="notes-card">
-            <div class="notes-header">📌 My Notes</div>
-            <div id="notes-list"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
+            </div>
         </div>
     </div>
     
@@ -210,7 +309,7 @@
             <div class="nav-item-icon">🧳</div>
             <div>Pack</div>
         </a>
-        <a href="notes.html" class="nav-item">
+        <a href="notes.html" class="nav-item active">
             <div class="nav-item-icon">📝</div>
             <div>Notes</div>
         </a>
@@ -219,7 +318,6 @@
             <div>Settings</div>
         </a>
     </nav>
-
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -239,81 +337,203 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
-        // Enable offline persistence
         db.enablePersistence({ synchronizeTabs: true })
-          .catch((err) => {
-            console.log('Offline persistence:', err.code);
-          });
+          .catch((err) => console.log('Offline persistence:', err.code));
         
         let currentUser = null;
+        let activeTripId = null;
+        let allNotes = [];
+        let editingNoteId = null;
         
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.href = 'login.html';
             } else {
                 currentUser = user;
-                loadNotes();
+                await checkActiveTrip();
             }
         });
         
-        async function loadNotes() {
-            const snapshot = await db.collection('users').doc(currentUser.uid)
-                .collection('notes').orderBy('createdAt', 'desc').get();
+        async function checkActiveTrip() {
+            activeTripId = localStorage.getItem('activeTripId');
             
-            const notes = [];
-            snapshot.forEach(doc => {
-                notes.push({id: doc.id, ...doc.data()});
-            });
+            if (!activeTripId) {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                const userData = userDoc.data();
+                activeTripId = userData?.activeTrip;
+                if (activeTripId) {
+                    localStorage.setItem('activeTripId', activeTripId);
+                }
+            }
             
-            const listContainer = document.getElementById('notes-list');
-            
-            if (notes.length === 0) {
-                listContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #7f8c8d;">No notes yet. Add your first note above!</div>';
+            if (!activeTripId) {
+                showNoTripMessage();
             } else {
-                listContainer.innerHTML = notes.map(note => `
-                    <div class="note-item ${note.category}">
-                        <button class="btn-delete" onclick="deleteNote('${note.id}')">🗑️</button>
-                        <div class="note-badges">
-                            <span class="badge ${note.category}">${note.category}</span>
-                            <span class="badge ${note.priority}">${note.priority}</span>
-                        </div>
-                        <div class="note-title">${note.title}</div>
-                        <div class="note-text">${note.text}</div>
-                    </div>
-                `).join('');
+                loadNotes();
             }
         }
         
-        async function addNote() {
-            const title = document.getElementById('note-title').value;
-            const text = document.getElementById('note-text').value;
-            const category = document.getElementById('note-category').value;
-            const priority = document.getElementById('note-priority').value;
+        function showNoTripMessage() {
+            document.getElementById('main-content').innerHTML = `
+                <div class="no-trip-banner">
+                    <h2>🚢 No Active Trip</h2>
+                    <p>Create a trip in Settings to start taking notes!</p>
+                    <a href="settings.html" class="btn-setup">Go to Settings</a>
+                </div>
+            `;
+        }
+        
+        async function loadNotes() {
+            const snapshot = await db.collection('trips').doc(activeTripId)
+                .collection('notes').orderBy('createdAt', 'desc').get();
             
-            if (!title || !text) {
-                alert('Please enter title and note text');
+            allNotes = [];
+            snapshot.forEach(doc => {
+                allNotes.push({id: doc.id, ...doc.data()});
+            });
+            
+            displayUI();
+        }
+        
+        function displayUI() {
+            const container = document.getElementById('main-content');
+            
+            container.innerHTML = `
+                <div class="add-note-card">
+                    <div class="add-note-header">➕ Add Note</div>
+                    <div class="form-row">
+                        <select id="note-category">
+                            <option value="General">General</option>
+                            <option value="Excursions">Excursions</option>
+                            <option value="Dining">Dining</option>
+                            <option value="Packing">Packing</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Budget">Budget</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <select id="note-priority">
+                            <option value="normal">Normal</option>
+                            <option value="high">High Priority</option>
+                        </select>
+                    </div>
+                    <input type="text" id="note-title" placeholder="Note title" style="margin-bottom: 10px;">
+                    <textarea id="note-text" placeholder="Your note..."></textarea>
+                    <button class="btn-add" onclick="addNote()">Add Note</button>
+                </div>
+
+                <div class="notes-container" id="notes-container"></div>
+            `;
+            
+            displayNotes();
+        }
+        
+        function displayNotes() {
+            const container = document.getElementById('notes-container');
+            
+            if (allNotes.length === 0) {
+                container.innerHTML = '<div class="empty-state">No notes yet. Add your first note above!</div>';
                 return;
             }
             
-            await db.collection('users').doc(currentUser.uid).collection('notes').add({
-                title: title,
-                text: text,
+            let html = '';
+            allNotes.forEach(note => {
+                html += `
+                    <div class="note-card">
+                        <div class="note-header">
+                            <div class="note-badges">
+                                <span class="badge badge-category">${note.category || 'General'}</span>
+                                ${note.priority === 'high' ? '<span class="badge badge-priority">HIGH PRIORITY</span>' : ''}
+                            </div>
+                            <div class="note-actions">
+                                <button class="btn-icon btn-edit" onclick="openEditModal('${note.id}')">✏️</button>
+                                <button class="btn-icon btn-delete" onclick="deleteNote('${note.id}')">🗑️</button>
+                            </div>
+                        </div>
+                        ${note.title ? `<div class="note-title">${note.title}</div>` : ''}
+                        <div class="note-text">${note.text || ''}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        async function addNote() {
+            const category = document.getElementById('note-category').value;
+            const priority = document.getElementById('note-priority').value;
+            const title = document.getElementById('note-title').value.trim();
+            const text = document.getElementById('note-text').value.trim();
+            
+            if (!text && !title) {
+                alert('Please enter a note or title');
+                return;
+            }
+            
+            await db.collection('trips').doc(activeTripId).collection('notes').add({
                 category: category,
                 priority: priority,
+                title: title,
+                text: text,
+                addedBy: currentUser.uid,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             
+            document.getElementById('note-category').value = 'General';
+            document.getElementById('note-priority').value = 'normal';
             document.getElementById('note-title').value = '';
             document.getElementById('note-text').value = '';
-            document.getElementById('note-category').value = 'general';
-            document.getElementById('note-priority').value = 'low';
             
+            loadNotes();
+        }
+        
+        async function openEditModal(noteId) {
+            editingNoteId = noteId;
+            
+            const doc = await db.collection('trips').doc(activeTripId)
+                .collection('notes').doc(noteId).get();
+            
+            if (doc.exists) {
+                const note = doc.data();
+                document.getElementById('edit-category').value = note.category || 'General';
+                document.getElementById('edit-priority').value = note.priority || 'normal';
+                document.getElementById('edit-title').value = note.title || '';
+                document.getElementById('edit-text').value = note.text || '';
+                
+                document.getElementById('edit-modal').classList.add('show');
+            }
+        }
+        
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('show');
+            editingNoteId = null;
+        }
+        
+        async function saveEdit() {
+            const category = document.getElementById('edit-category').value;
+            const priority = document.getElementById('edit-priority').value;
+            const title = document.getElementById('edit-title').value.trim();
+            const text = document.getElementById('edit-text').value.trim();
+            
+            if (!text && !title) {
+                alert('Please enter a note or title');
+                return;
+            }
+            
+            await db.collection('trips').doc(activeTripId)
+                .collection('notes').doc(editingNoteId).update({
+                    category: category,
+                    priority: priority,
+                    title: title,
+                    text: text
+                });
+            
+            closeEditModal();
             loadNotes();
         }
         
         async function deleteNote(noteId) {
             if (confirm('Delete this note?')) {
-                await db.collection('users').doc(currentUser.uid)
+                await db.collection('trips').doc(activeTripId)
                     .collection('notes').doc(noteId).delete();
                 loadNotes();
             }
