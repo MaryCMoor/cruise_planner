@@ -100,6 +100,7 @@
             border-radius: 10px;
             margin-bottom: 10px;
             border-left: 4px solid #a8edea;
+            position: relative;
         }
         .event-item.from-itinerary {
             border-left-color: #fa709a;
@@ -115,8 +116,26 @@
             background: #fa709a;
             color: white;
         }
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
         .event-time { font-weight: 700; color: #2c3e50; }
-        .event-title { font-weight: 600; color: #34495e; margin: 5px 0; }
+        .event-title { font-weight: 600; color: #34495e; margin: 5px 0; padding-right: 40px; }
         .event-desc { color: #7f8c8d; font-size: 0.9em; }
         .bottom-nav {
             position: fixed;
@@ -302,6 +321,7 @@
             scheduleSnapshot.forEach(doc => {
                 const event = doc.data();
                 allEvents.push({
+                    id: doc.id,
                     time: event.time,
                     title: event.title,
                     description: event.description,
@@ -337,7 +357,7 @@
                 
                 let deleteButton = '';
                 if (event.source === 'schedule' && event.id) {
-                    deleteButton = `<button class="btn-icon btn-delete" onclick="deleteEvent('${event.id}')" style="position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; background: #e74c3c; color: white; border: none; border-radius: 6px; cursor: pointer;">🗑️</button>`;
+                    deleteButton = `<button class="btn-icon btn-delete" onclick="deleteEvent('${event.id}')">🗑️</button>`;
                 }
                 
                 eventDiv.innerHTML = `
@@ -349,7 +369,6 @@
                 `;
                 container.appendChild(eventDiv);
             });
-
         }
         
         function formatTime(time) {
@@ -386,6 +405,14 @@
             document.getElementById('event-desc').value = '';
             
             loadEvents(selectedDay);
+        }
+        
+        async function deleteEvent(eventId) {
+            if (confirm('Delete this event?')) {
+                await db.collection('users').doc(currentUser.uid)
+                    .collection('schedule').doc(eventId).delete();
+                loadEvents(selectedDay);
+            }
         }
     </script>
 </body>
