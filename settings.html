@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#667eea">
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
-    <title>Settings - Cruise Planner</title>
+    <title>Trip Setup - Cruise Planner</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -25,21 +25,18 @@
         }
         .header h1 { font-size: 1.8em; }
         .container { padding: 15px; }
-        .settings-card {
+        .card {
             background: white;
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .settings-header {
+        .card-header {
             font-size: 1.3em;
             font-weight: 700;
             color: #2c3e50;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         .info-box {
             background: #e3f2fd;
@@ -48,7 +45,6 @@
             border-radius: 8px;
             margin-bottom: 15px;
             font-size: 0.9em;
-            color: #0d47a1;
             line-height: 1.5;
         }
         .form-group {
@@ -59,7 +55,6 @@
             font-weight: 600;
             margin-bottom: 5px;
             color: #2c3e50;
-            font-size: 0.9em;
         }
         input {
             width: 100%;
@@ -68,7 +63,7 @@
             border-radius: 10px;
             font-size: 1em;
         }
-        .btn-share {
+        .btn {
             width: 100%;
             padding: 12px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -79,82 +74,52 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        .shared-with {
-            margin-top: 20px;
+        .btn-secondary {
+            background: #95a5a6;
         }
-        .shared-user {
+        .trip-card {
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .shared-user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-        }
-        .user-details {
-            flex: 1;
-        }
-        .user-name {
-            font-weight: 700;
-            color: #2c3e50;
-        }
-        .user-email {
-            font-size: 0.85em;
-            color: #7f8c8d;
-        }
-        .btn-remove {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .viewing-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid #f0f0f0;
-        }
-        .shared-trip {
-            background: #fff3e0;
-            border-left: 4px solid #f57c00;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 10px;
             cursor: pointer;
             transition: all 0.3s;
+            border: 2px solid transparent;
         }
-        .shared-trip:hover {
-            background: #ffe0b2;
+        .trip-card:hover {
+            border-color: #667eea;
             transform: translateX(5px);
         }
-        .trip-owner {
+        .trip-card.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .trip-name {
             font-weight: 700;
-            color: #2c3e50;
+            font-size: 1.1em;
             margin-bottom: 5px;
         }
-        .trip-status {
-            font-size: 0.85em;
-            color: #e65100;
+        .trip-dates {
+            font-size: 0.9em;
+            opacity: 0.8;
         }
-        .success-message {
+        .trip-members {
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+        .member-list {
+            margin-top: 15px;
+        }
+        .member-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .success-msg {
             background: #d4edda;
             color: #155724;
             padding: 12px;
@@ -162,8 +127,8 @@
             margin-bottom: 15px;
             display: none;
         }
-        .success-message.show { display: block; }
-        .error-message {
+        .success-msg.show { display: block; }
+        .error-msg {
             background: #f8d7da;
             color: #721c24;
             padding: 12px;
@@ -171,7 +136,7 @@
             margin-bottom: 15px;
             display: none;
         }
-        .error-message.show { display: block; }
+        .error-msg.show { display: block; }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -180,7 +145,7 @@
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+            padding: 10px 0;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
             z-index: 9999;
         }
@@ -197,65 +162,68 @@
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
-        .my-email {
-            background: #f0f0f0;
-            padding: 10px;
-            border-radius: 8px;
+        .current-trip-banner {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
             margin-bottom: 15px;
-            font-size: 0.9em;
-            color: #5a6c7d;
             text-align: center;
-        }
-        .my-email strong {
-            color: #2c3e50;
+            font-weight: 700;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>⚙️ Settings & Sharing</h1>
+        <h1>🚢 Trip Setup</h1>
     </div>
 
     <div class="container">
-        <div class="settings-card">
-            <div class="settings-header">
-                🤝 Share Your Trip
-            </div>
+        <div id="current-trip-display"></div>
 
+        <div class="success-msg" id="success-msg"></div>
+        <div class="error-msg" id="error-msg"></div>
+
+        <!-- Create New Trip -->
+        <div class="card" id="create-trip-card">
+            <div class="card-header">✨ Create New Trip</div>
             <div class="info-box">
-                💡 <strong>Share with your travel partner!</strong><br>
-                Enter their email address and they'll be able to view your itinerary, packing list, schedule, and notes in their own account.
+                Create a trip and invite your travel partner to collaborate on itinerary, packing list, and more!
             </div>
-
-            <div class="my-email">
-                <strong>Your email:</strong> <span id="my-email">Loading...</span>
-            </div>
-
-            <div class="success-message" id="success-message"></div>
-            <div class="error-message" id="error-message"></div>
-
             <div class="form-group">
-                <label>Travel Partner's Email</label>
-                <input type="email" id="partner-email" placeholder="partner@example.com">
+                <label>Trip Name</label>
+                <input type="text" id="trip-name" placeholder="MSC Mediterranean Cruise 2026">
             </div>
-
-            <button class="btn-share" onclick="shareWithPartner()">
-                🔗 Share My Trip
-            </button>
-
-            <div class="shared-with" id="shared-with-list"></div>
+            <div class="form-group">
+                <label>Start Date</label>
+                <input type="date" id="trip-start" value="2026-04-19">
+            </div>
+            <div class="form-group">
+                <label>End Date</label>
+                <input type="date" id="trip-end" value="2026-05-08">
+            </div>
+            <button class="btn" onclick="createTrip()">Create Trip</button>
         </div>
 
-        <div class="settings-card">
-            <div class="settings-header">
-                👀 Trips Shared With Me
-            </div>
+        <!-- My Trips -->
+        <div class="card">
+            <div class="card-header">🗺️ My Trips</div>
+            <div id="trips-list"></div>
+        </div>
 
+        <!-- Invite Partner (only shows when trip is active) -->
+        <div class="card" id="invite-card" style="display: none;">
+            <div class="card-header">🤝 Invite Travel Partner</div>
             <div class="info-box">
-                📱 Tap a trip below to view your travel partner's data. You can see their plans while keeping your own data separate.
+                Your partner will be able to add/edit/view all trip data together with you!
             </div>
-
-            <div id="shared-trips-list"></div>
+            <div class="form-group">
+                <label>Partner's Email</label>
+                <input type="email" id="partner-email" placeholder="partner@example.com">
+            </div>
+            <button class="btn" onclick="invitePartner()">Send Invitation</button>
+            
+            <div class="member-list" id="members-list"></div>
         </div>
     </div>
     
@@ -268,13 +236,13 @@
             <div class="nav-item-icon">🗺️</div>
             <div>Trip</div>
         </a>
-        <a href="schedule.html" class="nav-item">
-            <div class="nav-item-icon">🗓️</div>
-            <div>Days</div>
-        </a>
         <a href="packing.html" class="nav-item">
             <div class="nav-item-icon">🧳</div>
             <div>Pack</div>
+        </a>
+        <a href="notes.html" class="nav-item">
+            <div class="nav-item-icon">📝</div>
+            <div>Notes</div>
         </a>
         <a href="settings.html" class="nav-item active">
             <div class="nav-item-icon">⚙️</div>
@@ -300,208 +268,208 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
-        // Enable offline persistence
         db.enablePersistence({ synchronizeTabs: true })
-          .catch((err) => {
-            console.log('Offline persistence:', err.code);
-          });
+          .catch((err) => console.log('Offline persistence:', err.code));
         
         let currentUser = null;
+        let activeTrip = null;
         
         auth.onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = 'login.html';
             } else {
                 currentUser = user;
-                document.getElementById('my-email').textContent = user.email;
-                loadSharedWith();
-                loadSharedWithMe();
+                loadUserTrips();
             }
         });
         
-        function showSuccess(message) {
-            const el = document.getElementById('success-message');
-            el.textContent = message;
+        function showSuccess(msg) {
+            const el = document.getElementById('success-msg');
+            el.textContent = msg;
             el.classList.add('show');
             setTimeout(() => el.classList.remove('show'), 5000);
         }
         
-        function showError(message) {
-            const el = document.getElementById('error-message');
-            el.textContent = message;
+        function showError(msg) {
+            const el = document.getElementById('error-msg');
+            el.textContent = msg;
             el.classList.add('show');
             setTimeout(() => el.classList.remove('show'), 5000);
         }
         
-        async function shareWithPartner() {
-            const partnerEmail = document.getElementById('partner-email').value.trim().toLowerCase();
+        async function createTrip() {
+            const name = document.getElementById('trip-name').value.trim();
+            const startDate = document.getElementById('trip-start').value;
+            const endDate = document.getElementById('trip-end').value;
             
-            if (!partnerEmail) {
-                showError('Please enter an email address');
-                return;
-            }
-            
-            if (partnerEmail === currentUser.email.toLowerCase()) {
-                showError("You can't share with yourself!");
+            if (!name) {
+                showError('Please enter trip name');
                 return;
             }
             
             try {
-                // Find user by email
-                const usersSnapshot = await db.collection('users')
-                    .where('email', '==', partnerEmail)
-                    .get();
+                const tripRef = await db.collection('trips').add({
+                    name: name,
+                    startDate: startDate,
+                    endDate: endDate,
+                    createdBy: currentUser.uid,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    members: [currentUser.uid]
+                });
                 
-                if (usersSnapshot.empty) {
-                    showError(`No user found with email: ${partnerEmail}. They need to create an account first.`);
-                    return;
-                }
+                await db.collection('users').doc(currentUser.uid).update({
+                    trips: firebase.firestore.FieldValue.arrayUnion(tripRef.id),
+                    activeTrip: tripRef.id
+                });
                 
-                const partnerUserId = usersSnapshot.docs[0].id;
-                const partnerData = usersSnapshot.docs[0].data();
+                localStorage.setItem('activeTripId', tripRef.id);
                 
-                // Check if already shared
-                const existingShare = await db.collection('users').doc(currentUser.uid)
-                    .collection('sharedWith').doc(partnerUserId).get();
-                
-                if (existingShare.exists) {
-                    showError('Already shared with this user!');
-                    return;
-                }
-                
-                // Add to my sharedWith list
-                await db.collection('users').doc(currentUser.uid)
-                    .collection('sharedWith').doc(partnerUserId).set({
-                        email: partnerEmail,
-                        name: partnerData.name || 'Travel Partner',
-                        sharedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                
-                // Add to their sharedWithMe list
-                await db.collection('users').doc(partnerUserId)
-                    .collection('sharedWithMe').doc(currentUser.uid).set({
-                        email: currentUser.email,
-                        name: currentUser.displayName || 'Travel Partner',
-                        sharedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                
-                showSuccess(`✅ Successfully shared with ${partnerEmail}!`);
-                document.getElementById('partner-email').value = '';
-                loadSharedWith();
+                showSuccess('✅ Trip created successfully!');
+                document.getElementById('trip-name').value = '';
+                loadUserTrips();
                 
             } catch (error) {
-                console.error('Share error:', error);
-                showError('Error sharing: ' + error.message);
+                showError('Error creating trip: ' + error.message);
             }
         }
         
-        async function loadSharedWith() {
-            const snapshot = await db.collection('users').doc(currentUser.uid)
-                .collection('sharedWith').get();
+        async function loadUserTrips() {
+            const userDoc = await db.collection('users').doc(currentUser.uid).get();
+            const userData = userDoc.data() || {};
+            const tripIds = userData.trips || [];
             
-            const container = document.getElementById('shared-with-list');
+            activeTrip = localStorage.getItem('activeTripId') || userData.activeTrip;
             
-            if (snapshot.empty) {
-                container.innerHTML = `
-                    <div class="viewing-section">
-                        <div style="color: #7f8c8d; text-align: center; padding: 20px;">
-                            Not shared with anyone yet
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '<div class="viewing-section"><div style="font-weight: 700; margin-bottom: 10px; color: #2c3e50;">Shared With:</div>';
-            
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const initials = (data.name || data.email).split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-                
-                html += `
-                    <div class="shared-user">
-                        <div class="shared-user-info">
-                            <div class="user-avatar">${initials}</div>
-                            <div class="user-details">
-                                <div class="user-name">${data.name || 'Partner'}</div>
-                                <div class="user-email">${data.email}</div>
-                            </div>
-                        </div>
-                        <button class="btn-remove" onclick="removeShare('${doc.id}', '${data.email}')">
-                            Remove
-                        </button>
-                    </div>
-                `;
-            });
-            
-            html += '</div>';
-            container.innerHTML = html;
-        }
-        
-        async function removeShare(partnerId, partnerEmail) {
-            if (!confirm(`Stop sharing with ${partnerEmail}?`)) return;
-            
-            try {
-                // Remove from my sharedWith
-                await db.collection('users').doc(currentUser.uid)
-                    .collection('sharedWith').doc(partnerId).delete();
-                
-                // Remove from their sharedWithMe
-                await db.collection('users').doc(partnerId)
-                    .collection('sharedWithMe').doc(currentUser.uid).delete();
-                
-                showSuccess('✅ Sharing removed');
-                loadSharedWith();
-                
-            } catch (error) {
-                showError('Error removing share: ' + error.message);
-            }
-        }
-        
-        async function loadSharedWithMe() {
-            const snapshot = await db.collection('users').doc(currentUser.uid)
-                .collection('sharedWithMe').get();
-            
-            const container = document.getElementById('shared-trips-list');
-            
-            if (snapshot.empty) {
-                container.innerHTML = `
+            if (tripIds.length === 0) {
+                document.getElementById('trips-list').innerHTML = `
                     <div style="color: #7f8c8d; text-align: center; padding: 20px;">
-                        No trips shared with you yet
+                        No trips yet. Create your first trip above!
                     </div>
                 `;
                 return;
             }
             
             let html = '';
-            
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const ownerId = doc.id;
-                
-                html += `
-                    <div class="shared-trip" onclick="viewSharedTrip('${ownerId}', '${data.name}', '${data.email}')">
-                        <div class="trip-owner">
-                            👤 ${data.name || data.email}'s Trip
+            for (const tripId of tripIds) {
+                const tripDoc = await db.collection('trips').doc(tripId).get();
+                if (tripDoc.exists) {
+                    const trip = tripDoc.data();
+                    const isActive = tripId === activeTrip;
+                    
+                    html += `
+                        <div class="trip-card ${isActive ? 'active' : ''}" onclick="selectTrip('${tripId}')">
+                            <div class="trip-name">${trip.name}</div>
+                            <div class="trip-dates">${trip.startDate} to ${trip.endDate}</div>
+                            <div class="trip-members">👥 ${trip.members.length} member(s)</div>
+                            ${isActive ? '<div style="margin-top: 5px;">✅ Active Trip</div>' : ''}
                         </div>
-                        <div class="trip-status">
-                            Tap to view their itinerary, packing list & more →
-                        </div>
-                    </div>
-                `;
-            });
+                    `;
+                }
+            }
             
-            container.innerHTML = html;
+            document.getElementById('trips-list').innerHTML = html;
+            
+            if (activeTrip) {
+                displayCurrentTrip();
+                document.getElementById('invite-card').style.display = 'block';
+                loadTripMembers();
+            }
         }
         
-        function viewSharedTrip(ownerId, ownerName, ownerEmail) {
-            // Store the owner's ID in localStorage so other pages can access it
-            localStorage.setItem('viewingUserId', ownerId);
-            localStorage.setItem('viewingUserName', ownerName);
-            localStorage.setItem('viewingUserEmail', ownerEmail);
+        async function displayCurrentTrip() {
+            const tripDoc = await db.collection('trips').doc(activeTrip).get();
+            if (tripDoc.exists) {
+                const trip = tripDoc.data();
+                document.getElementById('current-trip-display').innerHTML = `
+                    <div class="current-trip-banner">
+                        ✈️ Active Trip: ${trip.name}
+                    </div>
+                `;
+            }
+        }
+        
+        async function selectTrip(tripId) {
+            localStorage.setItem('activeTripId', tripId);
             
-            // Redirect to their itinerary
-            window.location.href = 'itinerary.html';
+            await db.collection('users').doc(currentUser.uid).update({
+                activeTrip: tripId
+            });
+            
+            showSuccess('✅ Trip activated!');
+            loadUserTrips();
+        }
+        
+        async function invitePartner() {
+            const email = document.getElementById('partner-email').value.trim().toLowerCase();
+            
+            if (!email) {
+                showError('Please enter email');
+                return;
+            }
+            
+            if (email === currentUser.email.toLowerCase()) {
+                showError("Can't invite yourself!");
+                return;
+            }
+            
+            try {
+                const usersSnapshot = await db.collection('users')
+                    .where('email', '==', email).get();
+                
+                if (usersSnapshot.empty) {
+                    showError(`User not found: ${email}. They need to create an account first.`);
+                    return;
+                }
+                
+                const partnerId = usersSnapshot.docs[0].id;
+                
+                const tripDoc = await db.collection('trips').doc(activeTrip).get();
+                const trip = tripDoc.data();
+                
+                if (trip.members.includes(partnerId)) {
+                    showError('User already a member of this trip!');
+                    return;
+                }
+                
+                await db.collection('trips').doc(activeTrip).update({
+                    members: firebase.firestore.FieldValue.arrayUnion(partnerId)
+                });
+                
+                await db.collection('users').doc(partnerId).update({
+                    trips: firebase.firestore.FieldValue.arrayUnion(activeTrip)
+                });
+                
+                showSuccess(`✅ Successfully invited ${email}!`);
+                document.getElementById('partner-email').value = '';
+                loadTripMembers();
+                
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+        
+        async function loadTripMembers() {
+            const tripDoc = await db.collection('trips').doc(activeTrip).get();
+            const trip = tripDoc.data();
+            
+            let html = '<div style="margin-top: 20px;"><strong>Trip Members:</strong></div>';
+            
+            for (const memberId of trip.members) {
+                const userDoc = await db.collection('users').doc(memberId).get();
+                const user = userDoc.data();
+                
+                html += `
+                    <div class="member-item">
+                        <div>
+                            <strong>${user.name || 'User'}</strong><br>
+                            <small>${user.email}</small>
+                        </div>
+                        ${memberId === trip.createdBy ? '<span style="color: #27ae60;">👑 Owner</span>' : ''}
+                    </div>
+                `;
+            }
+            
+            document.getElementById('members-list').innerHTML = html;
         }
     </script>
 
