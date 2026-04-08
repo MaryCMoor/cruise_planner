@@ -74,6 +74,10 @@
             cursor: pointer;
             margin-top: 10px;
         }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
         .btn-secondary {
             background: #95a5a6;
         }
@@ -85,6 +89,7 @@
             cursor: pointer;
             transition: all 0.3s;
             border: 2px solid transparent;
+            position: relative;
         }
         .trip-card:hover {
             border-color: #667eea;
@@ -94,10 +99,40 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
+        .btn-delete-trip {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        .btn-delete-trip:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+        .trip-card.active .btn-delete-trip {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        .trip-card.active .btn-delete-trip:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
         .trip-name {
             font-weight: 700;
             font-size: 1.1em;
             margin-bottom: 5px;
+            padding-right: 50px;
         }
         .trip-dates {
             font-size: 0.9em;
@@ -210,7 +245,7 @@
                 <label>End Date</label>
                 <input type="date" id="trip-end" value="2026-05-08">
             </div>
-            <button class="btn" onclick="createTrip()">Create Trip</button>
+            <button class="btn" id="create-trip-btn" onclick="createTrip()">Create Trip</button>
         </div>
 
         <!-- My Trips -->
@@ -288,11 +323,7 @@
                 window.location.href = 'login.html';
             } else {
                 currentUser = user;
-                
-                // CRITICAL: Ensure user document exists
                 await ensureUserDocument();
-                
-                // Load trips
                 await loadUserTrips();
             }
         });
@@ -332,19 +363,24 @@
         }
         
         async function createTrip() {
+            const btn = document.getElementById('create-trip-btn');
+            btn.disabled = true;
+            btn.textContent = 'Creating...';
+            
             const name = document.getElementById('trip-name').value.trim();
             const startDate = document.getElementById('trip-start').value;
             const endDate = document.getElementById('trip-end').value;
             
             if (!name) {
                 showError('Please enter trip name');
+                btn.disabled = false;
+                btn.textContent = 'Create Trip';
                 return;
             }
             
             try {
                 console.log('Creating trip...');
                 
-                // Step 1: Create trip document
                 const tripRef = await db.collection('trips').add({
                     name: name,
                     startDate: startDate,
@@ -357,7 +393,6 @@
                 const tripId = tripRef.id;
                 console.log('✅ Trip created:', tripId);
                 
-                // Step 2: Update user document with SET (not UPDATE)
                 await db.collection('users').doc(currentUser.uid).set({
                     trips: firebase.firestore.FieldValue.arrayUnion(tripId),
                     activeTrip: tripId
@@ -365,29 +400,27 @@
                 
                 console.log('✅ User document updated');
                 
-                // Step 3: Save to localStorage
                 localStorage.setItem('activeTripId', tripId);
                 console.log('✅ localStorage updated');
-                
-                // Step 4: Verify it was saved
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                console.log('Verification - User doc:', userDoc.data());
                 
                 showSuccess('✅ Trip created successfully!');
                 document.getElementById('trip-name').value = '';
                 
-                // Reload trips list
+                btn.disabled = false;
+                btn.textContent = 'Create Trip';
+                
                 await loadUserTrips();
                 
             } catch (error) {
                 console.error('Error creating trip:', error);
                 showError('Error creating trip: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = 'Create Trip';
             }
         }
         
         async function loadUserTrips() {
             try {
-                // Step 1: Get user document
                 const userDoc = await db.collection('users').doc(currentUser.uid).get();
                 
                 if (!userDoc.exists) {
@@ -403,17 +436,14 @@
                 const userData = userDoc.data();
                 console.log('User data:', userData);
                 
-                // Step 2: Get active trip from user doc or localStorage
                 activeTrip = userData.activeTrip || localStorage.getItem('activeTripId');
                 
-                // Step 3: Get all trips user is member of
                 const tripsSnapshot = await db.collection('trips')
                     .where('members', 'array-contains', currentUser.uid)
                     .get();
                 
                 console.log(`Found ${tripsSnapshot.size} trips`);
                 
-                // Debug info
                 document.getElementById('debug-info').innerHTML = `
                     User ID: ${currentUser.uid}<br>
                     Active Trip: ${activeTrip || 'none'}<br>
@@ -431,7 +461,6 @@
                     return;
                 }
                 
-                // Step 4: Display trips
                 let html = '';
                 tripsSnapshot.forEach(doc => {
                     const trip = doc.data();
@@ -439,6 +468,7 @@
                     
                     html += `
                         <div class="trip-card ${isActive ? 'active' : ''}" onclick="selectTrip('${doc.id}')">
+                            <button class="btn-delete-trip" onclick="event.stopPropagation(); deleteTrip('${doc.id}', '${trip.name.replace(/'/g, "\\'")}');" title="Delete Trip">🗑️</button>
                             <div class="trip-name">${trip.name}</div>
                             <div class="trip-dates">${trip.startDate} to ${trip.endDate}</div>
                             <div class="trip-members">👥 ${trip.members.length} member(s)</div>
@@ -449,7 +479,6 @@
                 
                 document.getElementById('trips-list').innerHTML = html;
                 
-                // Step 5: If we have an active trip, show invite card
                 if (activeTrip) {
                     displayCurrentTrip();
                     document.getElementById('invite-card').style.display = 'block';
@@ -480,7 +509,6 @@
         
         async function selectTrip(tripId) {
             try {
-                // Save to both places
                 localStorage.setItem('activeTripId', tripId);
                 
                 await db.collection('users').doc(currentUser.uid).set({
@@ -493,6 +521,74 @@
             } catch (error) {
                 console.error('Error selecting trip:', error);
                 showError('Error: ' + error.message);
+            }
+        }
+        
+        async function deleteTrip(tripId, tripName) {
+            try {
+                if (!confirm(`🗑️ Delete Trip?\n\n"${tripName}"\n\nThis will:\n• Delete the trip\n• Delete all itinerary items\n• Delete all packing items\n• Delete all notes\n• Remove from all members\n\nThis CANNOT be undone!\n\nAre you sure?`)) {
+                    return;
+                }
+                
+                console.log('Deleting trip:', tripId);
+                
+                const tripDoc = await db.collection('trips').doc(tripId).get();
+                if (!tripDoc.exists) {
+                    showError('Trip not found!');
+                    return;
+                }
+                
+                const trip = tripDoc.data();
+                
+                console.log('Deleting sub-collections...');
+                const collections = ['itinerary', 'packing', 'notes', 'schedule'];
+                for (const collectionName of collections) {
+                    const snapshot = await db.collection('trips').doc(tripId).collection(collectionName).get();
+                    console.log(`Deleting ${snapshot.size} ${collectionName} items...`);
+                    
+                    const batch = db.batch();
+                    snapshot.docs.forEach(doc => {
+                        batch.delete(doc.ref);
+                    });
+                    await batch.commit();
+                }
+                
+                console.log('Removing from members...');
+                for (const memberId of trip.members) {
+                    try {
+                        const memberDoc = await db.collection('users').doc(memberId).get();
+                        if (memberDoc.exists) {
+                            const updateData = {
+                                trips: firebase.firestore.FieldValue.arrayRemove(tripId)
+                            };
+                            
+                            if (memberDoc.data().activeTrip === tripId) {
+                                updateData.activeTrip = null;
+                            }
+                            
+                            await db.collection('users').doc(memberId).update(updateData);
+                        }
+                    } catch (err) {
+                        console.error('Error updating member:', memberId, err);
+                    }
+                }
+                
+                console.log('Deleting trip document...');
+                await db.collection('trips').doc(tripId).delete();
+                
+                if (activeTrip === tripId) {
+                    localStorage.removeItem('activeTripId');
+                    activeTrip = null;
+                }
+                
+                console.log('✅ Trip deleted successfully');
+                showSuccess('✅ Trip deleted successfully!');
+                
+                await loadUserTrips();
+                
+            } catch (error) {
+                console.error('Error deleting trip:', error);
+                showError('❌ Error deleting trip: ' + error.message);
             }
         }
         
@@ -509,18 +605,33 @@
                 return;
             }
             
+            if (!activeTrip) {
+                showError('No active trip selected!');
+                return;
+            }
+            
             try {
+                console.log('Looking for user:', email);
+                
                 const usersSnapshot = await db.collection('users')
-                    .where('email', '==', email).get();
+                    .where('email', '==', email)
+                    .get();
                 
                 if (usersSnapshot.empty) {
                     showError(`User not found: ${email}. They need to create an account first.`);
                     return;
                 }
                 
-                const partnerId = usersSnapshot.docs[0].id;
+                const partnerDoc = usersSnapshot.docs[0];
+                const partnerId = partnerDoc.id;
+                const partnerData = partnerDoc.data();
                 
                 const tripDoc = await db.collection('trips').doc(activeTrip).get();
+                if (!tripDoc.exists) {
+                    showError('Trip not found!');
+                    return;
+                }
+                
                 const trip = tripDoc.data();
                 
                 if (trip.members.includes(partnerId)) {
@@ -532,17 +643,17 @@
                     members: firebase.firestore.FieldValue.arrayUnion(partnerId)
                 });
                 
-                await db.collection('users').doc(partnerId).set({
+                await db.collection('users').doc(partnerId).update({
                     trips: firebase.firestore.FieldValue.arrayUnion(activeTrip)
-                }, { merge: true });
+                });
                 
-                showSuccess(`✅ Successfully invited ${email}!`);
+                showSuccess(`✅ Successfully invited ${partnerData.name || email}!`);
                 document.getElementById('partner-email').value = '';
                 await loadTripMembers();
                 
             } catch (error) {
-                console.error('Error inviting:', error);
-                showError('Error: ' + error.message);
+                console.error('Invite error:', error);
+                showError('Error inviting user: ' + error.message);
             }
         }
         
