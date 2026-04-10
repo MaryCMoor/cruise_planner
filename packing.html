@@ -65,6 +65,47 @@
             font-size: 0.9em;
             margin-top: 5px;
         }
+        .filter-section {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .filter-header {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 14px;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85em;
+            cursor: pointer;
+            color: #555;
+            transition: all 0.3s;
+        }
+        .filter-btn:hover {
+            background: #e9ecef;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border-color: #fa709a;
+        }
+        .filter-divider {
+            margin: 10px 0;
+            border-top: 1px solid #e0e0e0;
+        }
         .category-section {
             background: white;
             padding: 20px;
@@ -266,7 +307,7 @@
                 background: white;
                 padding: 0;
             }
-            .header, .bottom-nav, .action-buttons, .stats-bar, .item-actions {
+            .header, .bottom-nav, .action-buttons, .stats-bar, .item-actions, .filter-section {
                 display: none !important;
             }
             .container {
@@ -349,6 +390,40 @@
         <div class="stats-bar">
             <div class="stats-number" id="stats-display">0 / 0</div>
             <div class="stats-label">Items Packed</div>
+        </div>
+
+        <!-- NEW: Filter Section -->
+        <div class="filter-section">
+            <div class="filter-header">🔍 Filters</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="applyFilter('all', 'all')">Show All</button>
+                <button class="filter-btn" onclick="applyFilter('status', 'unpacked')">❌ Unpacked</button>
+                <button class="filter-btn" onclick="applyFilter('status', 'packed')">✅ Packed</button>
+            </div>
+            <div class="filter-divider"></div>
+            <div class="filter-header">👤 Person</div>
+            <div class="filter-buttons">
+                <button class="filter-btn" onclick="applyFilter('person', 'Mary')">Mary</button>
+                <button class="filter-btn" onclick="applyFilter('person', 'Brian')">Brian</button>
+                <button class="filter-btn" onclick="applyFilter('person', 'Shared')">Shared</button>
+            </div>
+            <div class="filter-divider"></div>
+            <div class="filter-header">📦 Category</div>
+            <div class="filter-buttons">
+                <button class="filter-btn" onclick="applyFilter('category', 'Clothing')">👕 Clothing</button>
+                <button class="filter-btn" onclick="applyFilter('category', 'Toiletries')">🧴 Toiletries</button>
+                <button class="filter-btn" onclick="applyFilter('category', 'Electronics')">🔌 Electronics</button>
+                <button class="filter-btn" onclick="applyFilter('category', 'Documents')">📄 Documents</button>
+                <button class="filter-btn" onclick="applyFilter('category', 'Medications')">💊 Medications</button>
+                <button class="filter-btn" onclick="applyFilter('category', 'Beach/Pool')">🏖️ Beach</button>
+            </div>
+            <div class="filter-divider"></div>
+            <div class="filter-header">🏠 Location</div>
+            <div class="filter-buttons">
+                <button class="filter-btn" onclick="applyFilter('house', 'Mary\'s House')">Mary's House</button>
+                <button class="filter-btn" onclick="applyFilter('house', 'Brian\'s House')">Brian's House</button>
+                <button class="filter-btn" onclick="applyFilter('house', 'Need to Buy')">🛒 Need to Buy</button>
+            </div>
         </div>
 
         <div id="packing-container"></div>
@@ -463,6 +538,7 @@
         let activeTripId = null;
         let editingItemId = null;
         let allItems = [];
+        let currentFilter = { type: 'all', value: 'all' };
         
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
@@ -489,21 +565,67 @@
             renderPackingList();
         }
         
+        function applyFilter(type, value) {
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Set filter
+            if (type === 'all') {
+                currentFilter = { type: 'all', value: 'all' };
+            } else {
+                currentFilter = { type, value };
+            }
+            
+            renderPackingList();
+        }
+        
+        function filterItems(items) {
+            if (currentFilter.type === 'all') return items;
+            
+            return items.filter(item => {
+                if (currentFilter.type === 'status') {
+                    if (currentFilter.value === 'packed') return item.packed === true;
+                    if (currentFilter.value === 'unpacked') return !item.packed;
+                }
+                if (currentFilter.type === 'person') {
+                    return item.person === currentFilter.value;
+                }
+                if (currentFilter.type === 'category') {
+                    return item.category === currentFilter.value;
+                }
+                if (currentFilter.type === 'house') {
+                    return item.house === currentFilter.value;
+                }
+                return true;
+            });
+        }
+        
         function renderPackingList() {
+            const filteredItems = filterItems(allItems);
             const categories = {};
             
-            allItems.forEach(item => {
+            filteredItems.forEach(item => {
                 const cat = item.category || 'Miscellaneous';
                 if (!categories[cat]) categories[cat] = [];
                 categories[cat].push(item);
             });
             
-            let totalItems = allItems.length;
-            let packedItems = allItems.filter(i => i.packed).length;
+            let totalItems = filteredItems.length;
+            let packedItems = filteredItems.filter(i => i.packed).length;
             document.getElementById('stats-display').textContent = `${packedItems} / ${totalItems}`;
             
             const container = document.getElementById('packing-container');
             container.innerHTML = '';
+            
+            if (totalItems === 0) {
+                container.innerHTML = `
+                    <div class="category-section">
+                        <div class="no-items">No items match your filter. Try "Show All"!</div>
+                    </div>
+                `;
+                return;
+            }
             
             const categoryOrder = ['Documents', 'Medications', 'Clothing', 'Toiletries', 'Electronics', 'Beach/Pool', 'Accessories', 'Miscellaneous'];
             const categoryIcons = {
@@ -555,14 +677,6 @@
                     </div>
                 `;
             });
-            
-            if (allItems.length === 0) {
-                container.innerHTML = `
-                    <div class="category-section">
-                        <div class="no-items">No items yet. Click "+ Add Item" to start your packing list!</div>
-                    </div>
-                `;
-            }
         }
         
         async function togglePacked(itemId, packed) {
