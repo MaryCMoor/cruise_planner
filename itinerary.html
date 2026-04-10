@@ -26,6 +26,12 @@
         .header h1 { font-size: 2.2em; margin-bottom: 5px; }
         .header p { opacity: 0.9; }
         .container { padding: 15px; }
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
         .day-card {
             background: white;
             padding: 20px;
@@ -146,17 +152,20 @@
             background: #e74c3c;
             color: white;
         }
-        .add-activity-btn {
-            width: 100%;
+        .add-activity-btn, .dining-schedule-btn {
             padding: 15px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
             border: none;
             border-radius: 10px;
             font-weight: 700;
-            font-size: 1.1em;
+            font-size: 1em;
             cursor: pointer;
-            margin-bottom: 15px;
+            color: white;
+        }
+        .add-activity-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .dining-schedule-btn {
+            background: linear-gradient(135deg, #f39c12 0%, #e74c3c 100%);
         }
         .no-activities {
             text-align: center;
@@ -243,6 +252,37 @@
             font-size: 0.9em;
             color: #856404;
         }
+        .day-checkboxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .day-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .day-checkbox-item input {
+            cursor: pointer;
+        }
+        .day-checkbox-item label {
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #2c3e50;
+        }
+        .info-box {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #1565c0;
+            border-left: 4px solid #2196f3;
+        }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -277,7 +317,10 @@
     </div>
 
     <div class="container">
-        <button class="add-activity-btn" onclick="showAddActivityModal()">+ Add Activity</button>
+        <div class="action-buttons">
+            <button class="add-activity-btn" onclick="showAddActivityModal()">+ Add Activity</button>
+            <button class="dining-schedule-btn" onclick="showDiningModal()">🍽️ Set Dining</button>
+        </div>
         <div id="itinerary-container"></div>
     </div>
 
@@ -341,6 +384,33 @@
                 <div style="margin-top: 20px;">
                     <button type="submit" class="btn-save">Save Activity</button>
                     <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="diningModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">🍽️ Set Recurring Dining Schedule</div>
+            <div class="info-box">
+                Set your main dining room seating time once, and we'll add it to all selected days. You can still edit or delete individual dining times later!
+            </div>
+            <form id="diningForm">
+                <div class="form-group">
+                    <label class="form-label">Dining Time</label>
+                    <input type="time" id="diningTime" class="form-input" required value="18:00">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duration (minutes)</label>
+                    <input type="number" id="diningDuration" class="form-input" value="120" min="30" step="15">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Select Days</label>
+                    <div class="day-checkboxes" id="dayCheckboxes"></div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn-save">Add Dining Schedule</button>
+                    <button type="button" class="btn-cancel" onclick="closeDiningModal()">Cancel</button>
                 </div>
             </form>
         </div>
@@ -549,6 +619,83 @@
             document.getElementById('activityForm').reset();
             document.getElementById('activityModal').style.display = 'block';
             document.getElementById('conflictWarning').style.display = 'none';
+        }
+        
+        function showDiningModal() {
+            const container = document.getElementById('dayCheckboxes');
+            container.innerHTML = '';
+            
+            cruiseDays.forEach(day => {
+                if (day.day >= 1 && day.day <= 17) {
+                    container.innerHTML += `
+                        <div class="day-checkbox-item">
+                            <input type="checkbox" id="day${day.day}" value="${day.day}" checked>
+                            <label for="day${day.day}">Day ${day.day}</label>
+                        </div>
+                    `;
+                }
+            });
+            
+            document.getElementById('diningModal').style.display = 'block';
+        }
+        
+        function closeDiningModal() {
+            document.getElementById('diningModal').style.display = 'none';
+        }
+        
+        document.getElementById('diningForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const diningTime = document.getElementById('diningTime').value;
+            const duration = parseInt(document.getElementById('diningDuration').value);
+            
+            const startTime = diningTime;
+            const endTime = addMinutes(diningTime, duration);
+            
+            const selectedDays = [];
+            cruiseDays.forEach(day => {
+                const checkbox = document.getElementById(`day${day.day}`);
+                if (checkbox && checkbox.checked) {
+                    selectedDays.push(day.day);
+                }
+            });
+            
+            if (selectedDays.length === 0) {
+                alert('Please select at least one day!');
+                return;
+            }
+            
+            let addedCount = 0;
+            for (const day of selectedDays) {
+                const activityData = {
+                    day: day,
+                    activityType: 'dining',
+                    name: 'Main Dining Room',
+                    timeStart: startTime,
+                    timeEnd: endTime,
+                    details: 'Assigned seating time',
+                    cost: 0,
+                    priority: 'confirmed',
+                    bookingLink: '',
+                    cancelDate: '',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('trips').doc(activeTripId).collection('itinerary').add(activityData);
+                addedCount++;
+            }
+            
+            closeDiningModal();
+            alert(`Added dining schedule to ${addedCount} days!`);
+            await loadItinerary();
+        });
+        
+        function addMinutes(time, minutes) {
+            const [hours, mins] = time.split(':').map(Number);
+            const totalMins = hours * 60 + mins + minutes;
+            const newHours = Math.floor(totalMins / 60) % 24;
+            const newMins = totalMins % 60;
+            return `${String(newHours).padStart(2, '0')}:${String(newMins).padStart(2, '0')}`;
         }
         
         function editActivity(activityId) {
