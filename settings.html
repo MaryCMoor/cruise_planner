@@ -230,10 +230,10 @@
             align-items: center;
             text-decoration: none;
             color: rgba(255,255,255,0.7);
-            font-size: 0.65em;
+            font-size: 0.6em;
             font-weight: 600;
-            padding: 8px 8px;
-            min-width: 50px;
+            padding: 8px 6px;
+            min-width: 48px;
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
@@ -246,14 +246,12 @@
     </div>
 
     <div class="container">
-        <!-- User Info -->
         <div class="section-card">
             <div class="section-title">👤 Account</div>
             <div class="user-info" id="user-info"></div>
             <button class="logout-btn" onclick="logout()">🚪 Logout</button>
         </div>
 
-        <!-- Create New Trip -->
         <div class="section-card">
             <div class="section-title">➕ Create New Trip</div>
             <form id="createTripForm">
@@ -275,13 +273,11 @@
             </form>
         </div>
 
-        <!-- My Trips -->
         <div class="section-card">
             <div class="section-title">🗺️ My Trips</div>
             <div id="trips-container"></div>
         </div>
 
-        <!-- Manage Members (Only shown when active trip exists) -->
         <div class="section-card" id="members-section" style="display: none;">
             <div class="section-title">👥 Manage Trip Members</div>
             <div class="member-input-group">
@@ -312,6 +308,10 @@
         <a href="notes.html" class="nav-item">
             <div class="nav-item-icon">📝</div>
             <div>Notes</div>
+        </a>
+        <a href="journal.html" class="nav-item">
+            <div class="nav-item-icon">📔</div>
+            <div>Journal</div>
         </a>
         <a href="settings.html" class="nav-item active">
             <div class="nav-item-icon">⚙️</div>
@@ -353,13 +353,11 @@
         });
         
         async function loadSettings() {
-            // Display user info
             document.getElementById('user-info').innerHTML = `
                 <div class="user-email">${currentUser.email}</div>
                 <div class="user-id">User ID: ${currentUser.uid}</div>
             `;
             
-            // Load user's trips
             const userDoc = await db.collection('users').doc(currentUser.uid).get();
             const userData = userDoc.data() || {};
             activeTripId = userData.activeTrip || localStorage.getItem('activeTripId');
@@ -492,8 +490,7 @@
                 return;
             }
             
-            // Delete subcollections
-            const collections = ['itinerary', 'packing', 'notes'];
+            const collections = ['itinerary', 'packing', 'notes', 'journal'];
             for (const collectionName of collections) {
                 const snapshot = await db.collection('trips').doc(tripId).collection(collectionName).get();
                 for (const doc of snapshot.docs) {
@@ -501,12 +498,10 @@
                 }
             }
             
-            // Get trip to find all members
             const tripDoc = await db.collection('trips').doc(tripId).get();
             if (tripDoc.exists) {
                 const tripData = tripDoc.data();
                 
-                // Remove trip from all members' trip lists
                 for (const memberId of tripData.members) {
                     const userDoc = await db.collection('users').doc(memberId).get();
                     if (userDoc.exists) {
@@ -523,7 +518,6 @@
                 }
             }
             
-            // Delete the trip document
             await db.collection('trips').doc(tripId).delete();
             
             if (activeTripId === tripId) {
@@ -542,7 +536,6 @@
                 return;
             }
             
-            // Find user by email
             const usersSnapshot = await db.collection('users').where('email', '==', email).get();
             
             if (usersSnapshot.empty) {
@@ -553,7 +546,6 @@
             const userDoc = usersSnapshot.docs[0];
             const userId = userDoc.id;
             
-            // Check if already a member
             const tripDoc = await db.collection('trips').doc(activeTripId).get();
             const trip = tripDoc.data();
             
@@ -562,12 +554,10 @@
                 return;
             }
             
-            // Add to trip members
             await db.collection('trips').doc(activeTripId).update({
                 members: firebase.firestore.FieldValue.arrayUnion(userId)
             });
             
-            // Add trip to user's trips
             await db.collection('users').doc(userId).set({
                 trips: firebase.firestore.FieldValue.arrayUnion(activeTripId)
             }, { merge: true });
@@ -580,12 +570,10 @@
         async function removeMember(memberId) {
             if (!confirm('Remove this member from the trip?')) return;
             
-            // Remove from trip
             await db.collection('trips').doc(activeTripId).update({
                 members: firebase.firestore.FieldValue.arrayRemove(memberId)
             });
             
-            // Remove trip from user
             await db.collection('users').doc(memberId).update({
                 trips: firebase.firestore.FieldValue.arrayRemove(activeTripId)
             });
