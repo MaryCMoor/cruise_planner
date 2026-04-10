@@ -403,22 +403,22 @@
         let allActivities = [];
         
         const cruiseDays = [
-            {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure'},
+            {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure', boarding: '11:00 AM', departure: '7:00 PM'},
             {day: 2, date: '2026-04-20', location: 'At Sea', type: 'sea'},
             {day: 3, date: '2026-04-21', location: 'Halifax, Canada', type: 'port', arrival: '9:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
             {day: 4, date: '2026-04-22', location: 'At Sea', type: 'sea'},
             {day: 5, date: '2026-04-23', location: 'At Sea', type: 'sea'},
             {day: 6, date: '2026-04-24', location: 'At Sea', type: 'sea'},
             {day: 7, date: '2026-04-25', location: 'At Sea', type: 'sea'},
-            {day: 8, date: '2026-04-26', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: '8:00 AM', allAboard: '5:30 PM', departure: '6:00 PM'},
-            {day: 9, date: '2026-04-27', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: 'In Port', allAboard: '7:00 PM', departure: '7:30 PM'},
+            {day: 8, date: '2026-04-26', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: '8:00 AM', allAboard: '(Overnight)', departure: '(See Day 9)'},
+            {day: 9, date: '2026-04-27', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: 'In Port', allAboard: '12:30 PM', departure: '1:00 PM'},
             {day: 10, date: '2026-04-28', location: 'At Sea', type: 'sea'},
-            {day: 11, date: '2026-04-29', location: 'Lisbon (Cascais), Portugal', type: 'port', arrival: '7:00 AM', allAboard: '7:00 PM', departure: '7:30 PM'},
+            {day: 11, date: '2026-04-29', location: 'Lisbon (Cascais), Portugal', type: 'port', arrival: '8:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
             {day: 12, date: '2026-04-30', location: 'At Sea', type: 'sea'},
-            {day: 13, date: '2026-05-01', location: 'Cadiz (Seville), Spain', type: 'port', arrival: '7:00 AM', allAboard: '5:00 PM', departure: '5:30 PM'},
-            {day: 14, date: '2026-05-02', location: 'Malaga (Granada), Spain', type: 'port', arrival: '11:00 AM', allAboard: '7:00 PM', departure: '7:30 PM'},
+            {day: 13, date: '2026-05-01', location: 'Cadiz (Seville), Spain', type: 'port', arrival: '7:00 AM', allAboard: '5:30 PM', departure: '6:00 PM'},
+            {day: 14, date: '2026-05-02', location: 'Malaga (Granada), Spain', type: 'port', arrival: '7:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
             {day: 15, date: '2026-05-03', location: 'At Sea', type: 'sea'},
-            {day: 16, date: '2026-05-04', location: 'Marseille (Provence), France', type: 'port', arrival: '8:00 AM', allAboard: '6:00 PM', departure: '6:30 PM'},
+            {day: 16, date: '2026-05-04', location: 'Marseille (Provence), France', type: 'port', arrival: '7:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
             {day: 17, date: '2026-05-05', location: 'Barcelona, Spain', type: 'arrival', arrival: '7:00 AM', allAboard: 'N/A', departure: 'Disembark'},
             {day: 18, date: '2026-05-06', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
             {day: 19, date: '2026-05-07', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
@@ -459,12 +459,14 @@
                 const dayActivities = allActivities.filter(a => a.day === day.day);
                 
                 let portTimesHTML = '';
-                if (day.type === 'port' || day.type === 'arrival') {
+                if (day.type === 'port' || day.type === 'arrival' || day.type === 'departure') {
                     portTimesHTML = `
                         <div class="port-times">
+                            ${day.boarding ? `<div>🚢 Boarding: ${day.boarding}</div>` : ''}
                             ${day.arrival ? `<div>🚢 Arrival: ${day.arrival}</div>` : ''}
                             ${day.allAboard && day.allAboard !== 'N/A' ? `<div>⏰ All Aboard: ${day.allAboard}</div>` : ''}
                             ${day.departure && day.departure !== 'Disembark' ? `<div>⚓ Departure: ${day.departure}</div>` : ''}
+                            ${day.departure === 'Disembark' ? `<div>🏁 Disembark</div>` : ''}
                         </div>
                     `;
                 }
