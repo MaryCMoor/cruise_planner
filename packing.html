@@ -1,995 +1,635 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#f093fb">
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
-    <title>Packing - Cruise Planner</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            min-height: 100vh;
-            padding-bottom: 80px;
-        }
-        .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        .header h1 { font-size: 1.8em; }
-        .container { padding: 15px; }
-        .no-trip-banner {
-            background: white;
-            padding: 30px 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .no-trip-banner h2 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .no-trip-banner p {
-            color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-        .btn-setup {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .progress-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        .progress-label {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .progress-bar-bg {
-            width: 100%;
-            height: 30px;
-            background: #ecf0f1;
-            border-radius: 15px;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
-            transition: width 0.5s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 0.9em;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .btn-print {
-            flex: 1;
-            padding: 12px;
-            background: white;
-            color: #2c3e50;
-            border: 2px solid #667eea;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .add-item-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .add-item-header {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .form-row-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        input, select {
-            padding: 12px;
-            border: 2px solid #dcdde1;
-            border-radius: 10px;
-            font-size: 1em;
-            width: 100%;
-        }
-        .btn-add {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .filter-card {
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .filter-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            padding: 8px 15px;
-            border: 2px solid #dcdde1;
-            background: white;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85em;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .filter-btn.active {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            border-color: #f093fb;
-        }
-        .packing-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .packing-header {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        .category-section {
-            margin-bottom: 20px;
-        }
-        .category-title {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .packing-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .packing-item.packed {
-            background: #d4edda;
-        }
-        .checkbox {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-        }
-        .item-content {
-            flex: 1;
-        }
-        .item-name {
-            font-weight: 700;
-            color: #2c3e50;
-            font-size: 1.05em;
-        }
-        .item-name.packed {
-            text-decoration: line-through;
-            color: #95a5a6;
-        }
-        .item-details {
-            color: #7f8c8d;
-            font-size: 0.85em;
-            margin-top: 3px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .item-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-        .badge-mary { background: #ffeef8; color: #e91e63; }
-        .badge-brian { background: #e3f2fd; color: #2196f3; }
-        .badge-house { background: #fff3e0; color: #f57c00; }
-        .item-actions {
-            display: flex;
-            gap: 5px;
-        }
-        .btn-icon {
-            width: 32px;
-            height: 32px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-edit {
-            background: #3498db;
-            color: white;
-        }
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal.show { display: flex; }
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-header {
-            font-size: 1.5em;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #2c3e50;
-        }
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-        .btn-secondary { background: #e0e0e0; color: #2c3e50; }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-            z-index: 9999;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.7em;
-            font-weight: 600;
-            padding: 8px 12px;
-            min-width: 60px;
-        }
-        .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
-        .nav-item-icon { font-size: 1.8em; margin-bottom: 4px; }
-
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-                font-size: 10pt;
-            }
-            
-            /* Hide interactive elements */
-            .header, .bottom-nav, .action-buttons, .add-item-card, .filter-card, 
-            .item-actions, .btn-icon, .btn-edit, .btn-delete {
-                display: none !important;
-            }
-            
-            .container {
-                padding: 15px;
-                max-width: 100%;
-            }
-            
-            /* Print header */
-            .print-header {
-                display: block !important;
-                text-align: center;
-                margin-bottom: 15px;
-                padding-bottom: 10px;
-                border-bottom: 2px solid #000;
-            }
-            .print-header h1 {
-                font-size: 18pt;
-                color: #000;
-                margin-bottom: 3px;
-            }
-            .print-date {
-                color: #666;
-                font-size: 9pt;
-            }
-            
-            /* Progress summary */
-            .progress-card {
-                box-shadow: none;
-                border: 1px solid #000;
-                margin-bottom: 15px;
-                padding: 10px;
-                background: white;
-            }
-            .progress-label {
-                font-size: 11pt;
-                color: #000;
-            }
-            .progress-bar-bg {
-                display: none !important;
-            }
-            
-            /* Main packing container - 2 columns */
-            .packing-card {
-                box-shadow: none;
-                padding: 0;
-                margin: 0;
-                background: white;
-                column-count: 2;
-                column-gap: 20px;
-                column-rule: 1px solid #ccc;
-            }
-            
-            /* Category sections */
-            .category-section {
-                break-inside: avoid;
-                page-break-inside: avoid;
-                margin-bottom: 15px;
-            }
-            
-            .category-title {
-                background: white;
-                border: none;
-                border-bottom: 1.5px solid #000;
-                padding: 5px 0;
-                margin-bottom: 8px;
-                font-size: 11pt;
-                font-weight: bold;
-                color: #000;
-                display: flex;
-                align-items: center;
-                gap: 5px;
-            }
-            
-            /* Individual items */
-            .packing-item {
-                border: none;
-                background: white;
-                padding: 6px 0;
-                margin-bottom: 5px;
-                break-inside: avoid;
-                page-break-inside: avoid;
-                display: flex;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .packing-item.packed {
-                background: white;
-            }
-            
-            /* Checkboxes */
-            .checkbox {
-                width: 14px;
-                height: 14px;
-                min-width: 14px;
-                border: 1.5px solid #000;
-                background: white;
-                margin-top: 2px;
-                -webkit-appearance: none;
-                appearance: none;
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
-            }
-            
-            .checkbox:checked {
-                background: white;
-            }
-            
-            .checkbox:checked::after {
-                content: "✓";
-                display: block;
-                text-align: center;
-                font-weight: bold;
-                color: #000;
-                font-size: 11pt;
-                line-height: 12px;
-            }
-            
-            /* Item content */
-            .item-content {
-                flex: 1;
-                min-width: 0;
-            }
-            
-            .item-name {
-                font-size: 9pt;
-                font-weight: 600;
-                color: #000;
-                line-height: 1.3;
-                margin-bottom: 2px;
-            }
-            
-            .item-name.packed {
-                text-decoration: line-through;
-                color: #666;
-            }
-            
-            /* Item details - compact */
-            .item-details {
-                font-size: 7pt;
-                color: #666;
-                margin-top: 2px;
-                display: flex;
-                gap: 6px;
-                flex-wrap: wrap;
-                line-height: 1.2;
-            }
-            
-            /* Badges - no color, just text */
-            .item-badge {
-                background: white;
-                color: #000;
-                border: 0.5px solid #999;
-                padding: 1px 4px;
-                border-radius: 3px;
-                font-size: 7pt;
-                font-weight: normal;
-            }
-            
-            .badge-mary, .badge-brian, .badge-house {
-                background: white;
-                color: #000;
-                border: 0.5px solid #999;
-            }
-            
-            /* Force page breaks for long lists */
-            @page {
-                margin: 0.5in;
-                size: letter;
-            }
-        }
-        
-        .print-header {
-            display: none;
-        }
-
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
+    <title>Packing List - Cruise Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        .header {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 5px; }
+        .header p { opacity: 0.9; }
+        .container { padding: 15px; }
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .btn-add, .btn-print {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1em;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        .btn-print {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .stats-bar {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .stats-number {
+            font-size: 2em;
+            font-weight: 900;
+            color: #fa709a;
+        }
+        .stats-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .category-section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .category-header {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .packing-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .packing-item.packed {
+            opacity: 0.5;
+            background: #e8f8f5;
+        }
+        .packing-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .packing-content {
+            flex: 1;
+        }
+        .packing-name {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        .packing-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: 0.85em;
+        }
+        .meta-badge {
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        .badge-person {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .badge-qty {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .badge-house {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+        .packing-notes {
+            font-size: 0.85em;
+            color: #555;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .item-actions {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+        .btn-edit-item, .btn-delete-item {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-edit-item {
+            background: #3498db;
+            color: white;
+        }
+        .btn-delete-item {
+            background: #e74c3c;
+            color: white;
+        }
+        .no-items {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .btn-save, .btn-cancel {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+        .btn-save {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+            z-index: 9999;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.65em;
+            font-weight: 600;
+            padding: 8px 8px;
+            min-width: 50px;
+        }
+        .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
+        .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
+        
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .header, .bottom-nav, .action-buttons, .stats-bar, .item-actions {
+                display: none !important;
+            }
+            .container {
+                padding: 0;
+                columns: 2;
+                column-gap: 20px;
+            }
+            .category-section {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                padding: 10px;
+                margin-bottom: 10px;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            .category-header {
+                font-size: 11pt;
+                margin-bottom: 8px;
+                border-bottom: 2px solid #333;
+                padding-bottom: 5px;
+            }
+            .packing-item {
+                background: white;
+                padding: 6px;
+                margin-bottom: 6px;
+                border: 1px solid #e0e0e0;
+                font-size: 9pt;
+                page-break-inside: avoid;
+            }
+            .packing-item.packed {
+                opacity: 1;
+                background: white;
+            }
+            .packing-checkbox {
+                width: 14px;
+                height: 14px;
+                border: 2px solid #333;
+                background: white;
+                appearance: none;
+                -webkit-appearance: none;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            .packing-name {
+                font-size: 9pt;
+                color: black;
+            }
+            .packing-meta {
+                font-size: 8pt;
+                color: #555;
+            }
+            .meta-badge {
+                background: none;
+                border: 1px solid #999;
+                color: black;
+                padding: 2px 5px;
+            }
+            .packing-notes {
+                font-size: 8pt;
+                color: #666;
+            }
+            .no-items {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🧳 Packing List</h1>
-    </div>
+    <div class="header">
+        <h1>🧳 Packing List</h1>
+        <p>What to bring on your cruise</p>
+    </div>
 
-    <div class="container">
-        <div class="print-header">
-            <h1>🚢 MSC Cruise Packing List</h1>
-            <div class="print-date">April 19 - May 8, 2026</div>
-        </div>
+    <div class="container">
+        <div class="action-buttons">
+            <button class="btn-add" onclick="showAddItemModal()">+ Add Item</button>
+            <button class="btn-print" onclick="window.print()">🖨️ Print List</button>
+        </div>
 
-        <div id="main-content"></div>
-    </div>
+        <div class="stats-bar">
+            <div class="stats-number" id="stats-display">0 / 0</div>
+            <div class="stats-label">Items Packed</div>
+        </div>
 
-    <div class="modal" id="edit-modal">
-        <div class="modal-content">
-            <div class="modal-header">✏️ Edit Item</div>
-            
-            <div class="form-group">
-                <label>Item Name</label>
-                <input type="text" id="edit-name" placeholder="Item name">
-            </div>
+        <div id="packing-container"></div>
+    </div>
 
-            <div class="form-group">
-                <label>Quantity</label>
-                <input type="number" id="edit-quantity" placeholder="1">
-            </div>
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-title">Add Packing Item</div>
+            <form id="itemForm">
+                <div class="form-group">
+                    <label class="form-label">Item Name *</label>
+                    <input type="text" id="itemName" class="form-input" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" id="quantity" class="form-input" value="1" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Person</label>
+                        <select id="person" class="form-select">
+                            <option value="Shared">Shared</option>
+                            <option value="Mary">Mary</option>
+                            <option value="Brian">Brian</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Category *</label>
+                        <select id="category" class="form-select" required>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Toiletries">Toiletries</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Documents">Documents</option>
+                            <option value="Medications">Medications</option>
+                            <option value="Beach/Pool">Beach/Pool</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Misc">Miscellaneous</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location</label>
+                        <select id="house" class="form-select">
+                            <option value="">Not Specified</option>
+                            <option value="Mary's House">Mary's House</option>
+                            <option value="Brian's House">Brian's House</option>
+                            <option value="Need to Buy">Need to Buy</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea id="notes" class="form-textarea" placeholder="Optional notes..."></textarea>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn-save">Save Item</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            <div class="form-group">
-                <label>Person</label>
-                <select id="edit-person">
-                    <option value="Mary">Mary</option>
-                    <option value="Brian">Brian</option>
-                    <option value="Both">Both</option>
-                </select>
-            </div>
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-item-icon">🏠</div>
+            <div>Home</div>
+        </a>
+        <a href="itinerary.html" class="nav-item">
+            <div class="nav-item-icon">🗺️</div>
+            <div>Trip</div>
+        </a>
+        <a href="schedule.html" class="nav-item">
+            <div class="nav-item-icon">🗓️</div>
+            <div>Days</div>
+        </a>
+        <a href="packing.html" class="nav-item active">
+            <div class="nav-item-icon">🧳</div>
+            <div>Pack</div>
+        </a>
+        <a href="notes.html" class="nav-item">
+            <div class="nav-item-icon">📝</div>
+            <div>Notes</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-item-icon">⚙️</div>
+            <div>Set</div>
+        </a>
+    </nav>
 
-            <div class="form-group">
-                <label>Category</label>
-                <select id="edit-category">
-                    <option value="Clothes">Clothes</option>
-                    <option value="Toiletries">Toiletries</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Documents">Documents</option>
-                    <option value="Medications">Medications</option>
-                    <option value="Beach">Beach</option>
-                    <option value="Formal">Formal Wear</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-            <div class="form-group">
-                <label>Location</label>
-                <select id="edit-house">
-                    <option value="Mary's House">Mary's House</option>
-                    <option value="Monty House">Monty House</option>
-                    <option value="Buy">Buy</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Notes (optional)</label>
-                <input type="text" id="edit-notes" placeholder="Notes">
-            </div>
-
-            <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
-            </div>
-        </div>
-    </div>
-    
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <div class="nav-item-icon">🏠</div>
-            <div>Home</div>
-        </a>
-        <a href="itinerary.html" class="nav-item">
-            <div class="nav-item-icon">🗺️</div>
-            <div>Trip</div>
-        </a>
-        <a href="packing.html" class="nav-item active">
-            <div class="nav-item-icon">🧳</div>
-            <div>Pack</div>
-        </a>
-        <a href="notes.html" class="nav-item">
-            <div class="nav-item-icon">📝</div>
-            <div>Notes</div>
-        </a>
-        <a href="settings.html" class="nav-item">
-            <div class="nav-item-icon">⚙️</div>
-            <div>Settings</div>
-        </a>
-    </nav>
-
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
-            authDomain: "cruise-planner-2026.firebaseapp.com",
-            projectId: "cruise-planner-2026",
-            storageBucket: "cruise-planner-2026.firebasestorage.app",
-            messagingSenderId: "554027862680",
-            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        db.enablePersistence({ synchronizeTabs: true })
-          .catch((err) => console.log('Offline persistence:', err.code));
-        
-        let currentUser = null;
-        let activeTripId = null;
-        let allItems = [];
-        let currentFilter = 'All';
-        let editingItemId = null;
-        
-        const categoryIcons = {
-            'Clothes': '👕',
-            'Toiletries': '🧴',
-            'Electronics': '🔌',
-            'Documents': '📄',
-            'Medications': '💊',
-            'Beach': '🏖️',
-            'Formal': '👔',
-            'Other': '📦'
-        };
-        
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-            } else {
-                currentUser = user;
-                await checkActiveTrip();
-            }
-        });
-        
-        async function checkActiveTrip() {
-            activeTripId = localStorage.getItem('activeTripId');
-            
-            if (!activeTripId) {
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                const userData = userDoc.data();
-                activeTripId = userData?.activeTrip;
-                if (activeTripId) {
-                    localStorage.setItem('activeTripId', activeTripId);
-                }
-            }
-            
-            if (!activeTripId) {
-                showNoTripMessage();
-            } else {
-                loadPackingList();
-            }
-        }
-        
-        function showNoTripMessage() {
-            document.getElementById('main-content').innerHTML = `
-                <div class="no-trip-banner">
-                    <h2>🚢 No Active Trip</h2>
-                    <p>Create a trip in Settings to start packing!</p>
-                    <a href="settings.html" class="btn-setup">Go to Settings</a>
-                </div>
-            `;
-        }
-        
-        async function loadPackingList() {
-            const snapshot = await db.collection('trips').doc(activeTripId)
-                .collection('packing').orderBy('createdAt', 'desc').get();
-            
-            allItems = [];
-            snapshot.forEach(doc => {
-                allItems.push({id: doc.id, ...doc.data()});
-            });
-            
-            displayUI();
-        }
-        
-        function displayUI() {
-            const container = document.getElementById('main-content');
-            
-            const total = allItems.length;
-            const packed = allItems.filter(i => i.packed).length;
-            const percentage = total > 0 ? Math.round((packed / total) * 100) : 0;
-            
-            container.innerHTML = `
-                <div class="progress-card">
-                    <div class="progress-label">${packed} of ${total} items packed</div>
-                    <div class="progress-bar-bg">
-                        <div class="progress-bar-fill" style="width: ${percentage}%">${percentage}%</div>
-                    </div>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn-print" onclick="window.print()">
-                        🖨️ Print Packing List
-                    </button>
-                </div>
-
-                <div class="add-item-card">
-                    <div class="add-item-header">➕ Add Item</div>
-                    <div class="form-row">
-                        <input type="text" id="item-name" placeholder="Item name">
-                        <input type="number" id="item-quantity" placeholder="Qty" value="1">
-                    </div>
-                    <div class="form-row-3">
-                        <select id="item-person">
-                            <option value="Mary">Mary</option>
-                            <option value="Brian">Brian</option>
-                            <option value="Both">Both</option>
-                        </select>
-                        <select id="item-category">
-                            <option value="Clothes">Clothes</option>
-                            <option value="Toiletries">Toiletries</option>
-                            <option value="Electronics">Electronics</option>
-                            <option value="Documents">Documents</option>
-                            <option value="Medications">Medications</option>
-                            <option value="Beach">Beach</option>
-                            <option value="Formal">Formal Wear</option>
-                            <option value="Other">Other</option>
-                        </select>
-                        <select id="item-house">
-                            <option value="Mary's House">Mary's House</option>
-                            <option value="Monty House">Monty House</option>
-                            <option value="Buy">Buy</option>
-                        </select>
-                    </div>
-                    <input type="text" id="item-notes" placeholder="Notes (optional)" style="width: 100%;">
-                    <button class="btn-add" onclick="addItem()">Add to List</button>
-                </div>
-
-                <div class="filter-card">
-                    <div style="font-weight: 700; margin-bottom: 10px; color: #2c3e50;">Filter by Person:</div>
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" onclick="filterByPerson('All')">All</button>
-                        <button class="filter-btn" onclick="filterByPerson('Mary')">👩 Mary</button>
-                        <button class="filter-btn" onclick="filterByPerson('Brian')">👨 Brian</button>
-                        <button class="filter-btn" onclick="filterByPerson('Both')">👥 Both</button>
-                    </div>
-                </div>
-
-                <div class="packing-card" id="packing-container"></div>
-            `;
-            
-            displayItems();
-        }
-        
-        function displayItems() {
-            const container = document.getElementById('packing-container');
-            
-            let filteredItems = allItems;
-            if (currentFilter !== 'All') {
-                filteredItems = allItems.filter(item => 
-                    item.person === currentFilter || item.person === 'Both'
-                );
-            }
-            
-            if (filteredItems.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 20px; color: #7f8c8d;">No items yet. Add your first item above!</div>';
-                return;
-            }
-            
-            const categories = {};
-            filteredItems.forEach(item => {
-                const cat = item.category || 'Other';
-                if (!categories[cat]) categories[cat] = [];
-                categories[cat].push(item);
-            });
-            
-            let html = '';
-            Object.keys(categories).sort().forEach(category => {
-                const items = categories[category];
-                const icon = categoryIcons[category] || '📦';
-                
-                html += `
-                    <div class="category-section">
-                        <div class="category-title">
-                            <span>${icon}</span>
-                            <span>${category}</span>
-                            <span style="margin-left: auto; font-size: 0.9em; color: #7f8c8d;">
-                                ${items.filter(i => i.packed).length}/${items.length}
-                            </span>
-                        </div>
-                `;
-                
-                items.forEach(item => {
-                    html += createItemHTML(item);
-                });
-                
-                html += '</div>';
-            });
-            
-            container.innerHTML = html;
-        }
-        
-        function createItemHTML(item) {
-            const personClass = item.person === 'Mary' ? 'badge-mary' : 
-                               item.person === 'Brian' ? 'badge-brian' : 
-                               'badge-house';
-            
-            return `
-                <div class="packing-item ${item.packed ? 'packed' : ''}">
-                    <input type="checkbox" class="checkbox" ${item.packed ? 'checked' : ''} 
-                           onchange="togglePacked('${item.id}', this.checked)">
-                    <div class="item-content">
-                        <div class="item-name ${item.packed ? 'packed' : ''}">
-                            ${item.name} ${item.quantity > 1 ? `(×${item.quantity})` : ''}
-                        </div>
-                        <div class="item-details">
-                            <span class="item-badge ${personClass}">${item.person}</span>
-                            <span class="item-badge badge-house">${item.house}</span>
-                            ${item.notes ? `<span>• ${item.notes}</span>` : ''}
-                        </div>
-                    </div>
-                    <div class="item-actions">
-                        <button class="btn-icon btn-edit" onclick="openEditModal('${item.id}')">✏️</button>
-                        <button class="btn-icon btn-delete" onclick="deleteItem('${item.id}')">🗑️</button>
-                    </div>
-                </div>
-            `;
-        }
-        
-        function filterByPerson(person) {
-            currentFilter = person;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            displayItems();
-        }
-        
-        async function addItem() {
-            const name = document.getElementById('item-name').value;
-            const quantity = parseInt(document.getElementById('item-quantity').value) || 1;
-            const person = document.getElementById('item-person').value;
-            const category = document.getElementById('item-category').value;
-            const house = document.getElementById('item-house').value;
-            const notes = document.getElementById('item-notes').value;
-            
-            if (!name) {
-                alert('Please enter item name');
-                return;
-            }
-            
-            await db.collection('trips').doc(activeTripId).collection('packing').add({
-                name: name,
-                quantity: quantity,
-                person: person,
-                category: category,
-                house: house,
-                notes: notes,
-                packed: false,
-                addedBy: currentUser.uid,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            
-            document.getElementById('item-name').value = '';
-            document.getElementById('item-quantity').value = '1';
-            document.getElementById('item-person').value = 'Mary';
-            document.getElementById('item-category').value = 'Clothes';
-            document.getElementById('item-house').value = "Mary's House";
-            document.getElementById('item-notes').value = '';
-            
-            loadPackingList();
-        }
-        
-        async function openEditModal(itemId) {
-            editingItemId = itemId;
-            
-            const doc = await db.collection('trips').doc(activeTripId)
-                .collection('packing').doc(itemId).get();
-            
-            if (doc.exists) {
-                const item = doc.data();
-                document.getElementById('edit-name').value = item.name || '';
-                document.getElementById('edit-quantity').value = item.quantity || 1;
-                document.getElementById('edit-person').value = item.person || 'Mary';
-                document.getElementById('edit-category').value = item.category || 'Clothes';
-                document.getElementById('edit-house').value = item.house || "Mary's House";
-                document.getElementById('edit-notes').value = item.notes || '';
-                
-                document.getElementById('edit-modal').classList.add('show');
-            }
-        }
-        
-        function closeEditModal() {
-            document.getElementById('edit-modal').classList.remove('show');
-            editingItemId = null;
-        }
-        
-        async function saveEdit() {
-            const name = document.getElementById('edit-name').value;
-            const quantity = parseInt(document.getElementById('edit-quantity').value) || 1;
-            const person = document.getElementById('edit-person').value;
-            const category = document.getElementById('edit-category').value;
-            const house = document.getElementById('edit-house').value;
-            const notes = document.getElementById('edit-notes').value;
-            
-            if (!name) {
-                alert('Please enter item name');
-                return;
-            }
-            
-            await db.collection('trips').doc(activeTripId)
-                .collection('packing').doc(editingItemId).update({
-                    name: name,
-                    quantity: quantity,
-                    person: person,
-                    category: category,
-                    house: house,
-                    notes: notes
-                });
-            
-            closeEditModal();
-            loadPackingList();
-        }
-        
-        async function togglePacked(itemId, packed) {
-            await db.collection('trips').doc(activeTripId)
-                .collection('packing').doc(itemId).update({ 
-                    packed: packed,
-                    packedBy: packed ? currentUser.uid : null,
-                    packedAt: packed ? firebase.firestore.FieldValue.serverTimestamp() : null
-                });
-            loadPackingList();
-        }
-        
-        async function deleteItem(itemId) {
-            if (confirm('Delete this item?')) {
-                await db.collection('trips').doc(activeTripId)
-                    .collection('packing').doc(itemId).delete();
-                loadPackingList();
-            }
-        }
-    </script>
-
-    <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./service-worker.js')
-                .then((reg) => console.log('✅ Service Worker registered'))
-                .catch((err) => console.log('❌ Service Worker failed:', err));
-        });
-    }
-    </script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
+            authDomain: "cruise-planner-2026.firebaseapp.com",
+            projectId: "cruise-planner-2026",
+            storageBucket: "cruise-planner-2026.firebasestorage.app",
+            messagingSenderId: "554027862680",
+            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.log('Offline:', err.code));
+        
+        let currentUser = null;
+        let activeTripId = null;
+        let editingItemId = null;
+        let allItems = [];
+        
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                currentUser = user;
+                activeTripId = localStorage.getItem('activeTripId');
+                if (!activeTripId) {
+                    alert('No active trip. Go to Settings to create one.');
+                    window.location.href = 'settings.html';
+                } else {
+                    await loadPackingList();
+                }
+            }
+        });
+        
+        async function loadPackingList() {
+            const snapshot = await db.collection('trips').doc(activeTripId).collection('packing').get();
+            allItems = [];
+            snapshot.forEach(doc => {
+                allItems.push({ id: doc.id, ...doc.data() });
+            });
+            
+            renderPackingList();
+        }
+        
+        function renderPackingList() {
+            const categories = {};
+            
+            allItems.forEach(item => {
+                const cat = item.category || 'Miscellaneous';
+                if (!categories[cat]) categories[cat] = [];
+                categories[cat].push(item);
+            });
+            
+            let totalItems = allItems.length;
+            let packedItems = allItems.filter(i => i.packed).length;
+            document.getElementById('stats-display').textContent = `${packedItems} / ${totalItems}`;
+            
+            const container = document.getElementById('packing-container');
+            container.innerHTML = '';
+            
+            const categoryOrder = ['Documents', 'Medications', 'Clothing', 'Toiletries', 'Electronics', 'Beach/Pool', 'Accessories', 'Miscellaneous'];
+            const categoryIcons = {
+                'Documents': '📄',
+                'Medications': '💊',
+                'Clothing': '👕',
+                'Toiletries': '🧴',
+                'Electronics': '🔌',
+                'Beach/Pool': '🏖️',
+                'Accessories': '👜',
+                'Miscellaneous': '📦'
+            };
+            
+            categoryOrder.forEach(catName => {
+                if (!categories[catName]) return;
+                
+                const items = categories[catName];
+                const icon = categoryIcons[catName] || '📦';
+                
+                let itemsHTML = '';
+                items.forEach(item => {
+                    const badges = [];
+                    if (item.person) badges.push(`<span class="meta-badge badge-person">${item.person}</span>`);
+                    if (item.quantity > 1) badges.push(`<span class="meta-badge badge-qty">Qty: ${item.quantity}</span>`);
+                    if (item.house) badges.push(`<span class="meta-badge badge-house">${item.house}</span>`);
+                    
+                    itemsHTML += `
+                        <div class="packing-item ${item.packed ? 'packed' : ''}">
+                            <input type="checkbox" class="packing-checkbox" 
+                                ${item.packed ? 'checked' : ''} 
+                                onchange="togglePacked('${item.id}', this.checked)">
+                            <div class="packing-content">
+                                <div class="packing-name">${item.name}</div>
+                                ${badges.length > 0 ? `<div class="packing-meta">${badges.join('')}</div>` : ''}
+                                ${item.notes ? `<div class="packing-notes">${item.notes}</div>` : ''}
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn-edit-item" onclick="editItem('${item.id}')">Edit</button>
+                                <button class="btn-delete-item" onclick="deleteItem('${item.id}')">Del</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML += `
+                    <div class="category-section">
+                        <div class="category-header">${icon} ${catName}</div>
+                        ${itemsHTML}
+                    </div>
+                `;
+            });
+            
+            if (allItems.length === 0) {
+                container.innerHTML = `
+                    <div class="category-section">
+                        <div class="no-items">No items yet. Click "+ Add Item" to start your packing list!</div>
+                    </div>
+                `;
+            }
+        }
+        
+        async function togglePacked(itemId, packed) {
+            await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ packed });
+            await loadPackingList();
+        }
+        
+        function showAddItemModal() {
+            editingItemId = null;
+            document.getElementById('modal-title').textContent = 'Add Packing Item';
+            document.getElementById('itemForm').reset();
+            document.getElementById('quantity').value = 1;
+            document.getElementById('itemModal').style.display = 'block';
+        }
+        
+        function editItem(itemId) {
+            editingItemId = itemId;
+            const item = allItems.find(i => i.id === itemId);
+            if (!item) return;
+            
+            document.getElementById('modal-title').textContent = 'Edit Packing Item';
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('quantity').value = item.quantity || 1;
+            document.getElementById('person').value = item.person || 'Shared';
+            document.getElementById('category').value = item.category || 'Misc';
+            document.getElementById('house').value = item.house || '';
+            document.getElementById('notes').value = item.notes || '';
+            document.getElementById('itemModal').style.display = 'block';
+        }
+        
+        async function deleteItem(itemId) {
+            if (!confirm('Delete this item?')) return;
+            await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).delete();
+            await loadPackingList();
+        }
+        
+        function closeModal() {
+            document.getElementById('itemModal').style.display = 'none';
+        }
+        
+        document.getElementById('itemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const itemData = {
+                name: document.getElementById('itemName').value,
+                quantity: parseInt(document.getElementById('quantity').value) || 1,
+                person: document.getElementById('person').value,
+                category: document.getElementById('category').value,
+                house: document.getElementById('house').value,
+                notes: document.getElementById('notes').value,
+                packed: false,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            if (editingItemId) {
+                const existingItem = allItems.find(i => i.id === editingItemId);
+                itemData.packed = existingItem ? existingItem.packed : false;
+                await db.collection('trips').doc(activeTripId).collection('packing').doc(editingItemId).update(itemData);
+            } else {
+                await db.collection('trips').doc(activeTripId).collection('packing').add(itemData);
+            }
+            
+            closeModal();
+            await loadPackingList();
+        });
+    </script>
 </body>
 </html>
+
+
