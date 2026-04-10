@@ -276,10 +276,10 @@
             align-items: center;
             text-decoration: none;
             color: rgba(255,255,255,0.7);
-            font-size: 0.65em;
+            font-size: 0.6em;
             font-weight: 600;
-            padding: 8px 8px;
-            min-width: 50px;
+            padding: 8px 6px;
+            min-width: 48px;
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
@@ -313,6 +313,10 @@
         <a href="notes.html" class="nav-item">
             <div class="nav-item-icon">📝</div>
             <div>Notes</div>
+        </a>
+        <a href="journal.html" class="nav-item">
+            <div class="nav-item-icon">📔</div>
+            <div>Journal</div>
         </a>
         <a href="settings.html" class="nav-item">
             <div class="nav-item-icon">⚙️</div>
@@ -403,7 +407,6 @@
             
             const trip = tripDoc.data();
             
-            // UPDATED: Countdown to EMBARKATION (April 19, 2026) not end date
             const embarkDate = new Date('2026-04-19');
             const endDate = new Date(trip.endDate.split('-').join('/'));
             const today = new Date();
@@ -448,6 +451,7 @@
             const itinerarySnapshot = await db.collection('trips').doc(activeTripId).collection('itinerary').get();
             const packingSnapshot = await db.collection('trips').doc(activeTripId).collection('packing').get();
             const notesCount = await db.collection('trips').doc(activeTripId).collection('notes').get();
+            const journalCount = await db.collection('trips').doc(activeTripId).collection('journal').get();
             
             const totalPacking = packingSnapshot.size;
             let packedCount = 0;
@@ -515,6 +519,14 @@
                         <div class="stat-number">${notesCount.size}</div>
                         <div class="stat-label">Notes</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${journalCount.size}</div>
+                        <div class="stat-label">Journal Entries</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${trip.members.length}</div>
+                        <div class="stat-label">Members</div>
+                    </div>
                 </div>
                 
                 <div class="quick-links">
@@ -526,9 +538,9 @@
                         <div class="quick-link-icon">🧳</div>
                         <div class="quick-link-text">Packing</div>
                     </a>
-                    <a href="notes.html" class="quick-link">
-                        <div class="quick-link-icon">📝</div>
-                        <div class="quick-link-text">Notes</div>
+                    <a href="journal.html" class="quick-link">
+                        <div class="quick-link-icon">📔</div>
+                        <div class="quick-link-text">Journal</div>
                     </a>
                     <a href="settings.html" class="quick-link">
                         <div class="quick-link-icon">⚙️</div>
