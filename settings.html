@@ -1,614 +1,612 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#667eea">
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
-    <title>Settings - Cruise Planner</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding-bottom: 80px;
-        }
-        .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 30px 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        .header h1 { font-size: 2.2em; margin-bottom: 5px; }
-        .header p { opacity: 0.9; }
-        .container { padding: 15px; }
-        .section-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .section-title {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .user-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-        .user-email {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        .user-id {
-            font-size: 0.85em;
-            color: #7f8c8d;
-            word-break: break-all;
-        }
-        .trip-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 4px solid #667eea;
-            position: relative;
-        }
-        .trip-card.active {
-            background: #e8f5e9;
-            border-left-color: #27ae60;
-        }
-        .trip-name-header {
-            font-weight: 700;
-            color: #2c3e50;
-            font-size: 1.1em;
-            margin-bottom: 5px;
-        }
-        .trip-dates {
-            font-size: 0.9em;
-            color: #7f8c8d;
-            margin-bottom: 8px;
-        }
-        .trip-members-list {
-            font-size: 0.85em;
-            color: #555;
-            margin-bottom: 10px;
-        }
-        .trip-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .btn-set-active, .btn-delete-trip {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.85em;
-            cursor: pointer;
-        }
-        .btn-set-active {
-            background: #27ae60;
-            color: white;
-        }
-        .btn-delete-trip {
-            background: #e74c3c;
-            color: white;
-        }
-        .active-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            background: #27ae60;
-            color: white;
-            border-radius: 12px;
-            font-size: 0.75em;
-            font-weight: 700;
-            margin-left: 10px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-label {
-            display: block;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 5px;
-            font-size: 0.9em;
-        }
-        .form-input, .form-select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            font-family: inherit;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .btn-create-trip {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1.1em;
-            cursor: pointer;
-        }
-        .member-input-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .member-email-input {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-        }
-        .btn-add-member {
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .member-item {
-            background: #e8f4f8;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .member-email {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        .btn-remove-member {
-            padding: 5px 12px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.85em;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .logout-btn {
-            width: 100%;
-            padding: 15px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1.1em;
-            cursor: pointer;
-        }
-        .no-trips {
-            text-align: center;
-            padding: 30px;
-            color: #7f8c8d;
-            font-style: italic;
-        }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-            z-index: 9999;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.65em;
-            font-weight: 600;
-            padding: 8px 8px;
-            min-width: 50px;
-        }
-        .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
-        .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
+    <title>Settings - Cruise Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 5px; }
+        .header p { opacity: 0.9; }
+        .container { padding: 15px; }
+        .section-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .section-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .user-email {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .user-id {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            word-break: break-all;
+        }
+        .trip-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
+        .trip-card.active {
+            background: #e8f5e9;
+            border-left-color: #27ae60;
+        }
+        .trip-name-header {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        .trip-dates {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+        .trip-members-list {
+            font-size: 0.85em;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .trip-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn-set-active, .btn-delete-trip {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85em;
+            cursor: pointer;
+        }
+        .btn-set-active {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-delete-trip {
+            background: #e74c3c;
+            color: white;
+        }
+        .active-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #27ae60;
+            color: white;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .btn-create-trip {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        .member-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .member-email-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        .btn-add-member {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .member-item {
+            background: #e8f4f8;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .member-email {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .btn-remove-member {
+            padding: 5px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .logout-btn {
+            width: 100%;
+            padding: 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        .no-trips {
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+            z-index: 9999;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.65em;
+            font-weight: 600;
+            padding: 8px 8px;
+            min-width: 50px;
+        }
+        .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
+        .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
+    </style>
 </head>
 <body>
-    <div class="header">
-        <h1>⚙️ Settings</h1>
-        <p>Manage trips and account</p>
-    </div>
+    <div class="header">
+        <h1>⚙️ Settings</h1>
+        <p>Manage trips and account</p>
+    </div>
 
-    <div class="container">
-        <!-- User Info -->
-        <div class="section-card">
-            <div class="section-title">👤 Account</div>
-            <div class="user-info" id="user-info"></div>
-            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
-        </div>
+    <div class="container">
+        <!-- User Info -->
+        <div class="section-card">
+            <div class="section-title">👤 Account</div>
+            <div class="user-info" id="user-info"></div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
 
-        <!-- Create New Trip -->
-        <div class="section-card">
-            <div class="section-title">➕ Create New Trip</div>
-            <form id="createTripForm">
-                <div class="form-group">
-                    <label class="form-label">Trip Name *</label>
-                    <input type="text" id="tripName" class="form-input" required placeholder="e.g., MSC Mediterranean Cruise 2026">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Start Date *</label>
-                        <input type="date" id="startDate" class="form-input" required value="2026-04-19">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">End Date *</label>
-                        <input type="date" id="endDate" class="form-input" required value="2026-05-08">
-                    </div>
-                </div>
-                <button type="submit" class="btn-create-trip">Create Trip</button>
-            </form>
-        </div>
+        <!-- Create New Trip -->
+        <div class="section-card">
+            <div class="section-title">➕ Create New Trip</div>
+            <form id="createTripForm">
+                <div class="form-group">
+                    <label class="form-label">Trip Name *</label>
+                    <input type="text" id="tripName" class="form-input" required placeholder="e.g., MSC Mediterranean Cruise 2026">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Start Date *</label>
+                        <input type="date" id="startDate" class="form-input" required value="2026-04-19">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">End Date *</label>
+                        <input type="date" id="endDate" class="form-input" required value="2026-05-08">
+                    </div>
+                </div>
+                <button type="submit" class="btn-create-trip">Create Trip</button>
+            </form>
+        </div>
 
-        <!-- My Trips -->
-        <div class="section-card">
-            <div class="section-title">🗺️ My Trips</div>
-            <div id="trips-container"></div>
-        </div>
+        <!-- My Trips -->
+        <div class="section-card">
+            <div class="section-title">🗺️ My Trips</div>
+            <div id="trips-container"></div>
+        </div>
 
-        <!-- Manage Members (Only shown when active trip exists) -->
-        <div class="section-card" id="members-section" style="display: none;">
-            <div class="section-title">👥 Manage Trip Members</div>
-            <div class="member-input-group">
-                <input type="email" id="memberEmail" class="member-email-input" placeholder="Enter email address">
-                <button class="btn-add-member" onclick="addMember()">Add</button>
-            </div>
-            <div id="members-list"></div>
-        </div>
-    </div>
+        <!-- Manage Members (Only shown when active trip exists) -->
+        <div class="section-card" id="members-section" style="display: none;">
+            <div class="section-title">👥 Manage Trip Members</div>
+            <div class="member-input-group">
+                <input type="email" id="memberEmail" class="member-email-input" placeholder="Enter email address">
+                <button class="btn-add-member" onclick="addMember()">Add</button>
+            </div>
+            <div id="members-list"></div>
+        </div>
+    </div>
 
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <div class="nav-item-icon">🏠</div>
-            <div>Home</div>
-        </a>
-        <a href="itinerary.html" class="nav-item">
-            <div class="nav-item-icon">🗺️</div>
-            <div>Trip</div>
-        </a>
-        <a href="schedule.html" class="nav-item">
-            <div class="nav-item-icon">🗓️</div>
-            <div>Days</div>
-        </a>
-        <a href="packing.html" class="nav-item">
-            <div class="nav-item-icon">🧳</div>
-            <div>Pack</div>
-        </a>
-        <a href="notes.html" class="nav-item">
-            <div class="nav-item-icon">📝</div>
-            <div>Notes</div>
-        </a>
-        <a href="settings.html" class="nav-item active">
-            <div class="nav-item-icon">⚙️</div>
-            <div>Set</div>
-        </a>
-    </nav>
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-item-icon">🏠</div>
+            <div>Home</div>
+        </a>
+        <a href="itinerary.html" class="nav-item">
+            <div class="nav-item-icon">🗺️</div>
+            <div>Trip</div>
+        </a>
+        <a href="schedule.html" class="nav-item">
+            <div class="nav-item-icon">🗓️</div>
+            <div>Days</div>
+        </a>
+        <a href="packing.html" class="nav-item">
+            <div class="nav-item-icon">🧳</div>
+            <div>Pack</div>
+        </a>
+        <a href="notes.html" class="nav-item">
+            <div class="nav-item-icon">📝</div>
+            <div>Notes</div>
+        </a>
+        <a href="settings.html" class="nav-item active">
+            <div class="nav-item-icon">⚙️</div>
+            <div>Set</div>
+        </a>
+    </nav>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
-            authDomain: "cruise-planner-2026.firebaseapp.com",
-            projectId: "cruise-planner-2026",
-            storageBucket: "cruise-planner-2026.firebasestorage.app",
-            messagingSenderId: "554027862680",
-            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.log('Offline:', err.code));
-        
-        let currentUser = null;
-        let activeTripId = null;
-        let userTrips = [];
-        
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-            } else {
-                currentUser = user;
-                await loadSettings();
-            }
-        });
-        
-        async function loadSettings() {
-            // Display user info
-            document.getElementById('user-info').innerHTML = `
-                <div class="user-email">${currentUser.email}</div>
-                <div class="user-id">User ID: ${currentUser.uid}</div>
-            `;
-            
-            // Load user's trips
-            const userDoc = await db.collection('users').doc(currentUser.uid).get();
-            const userData = userDoc.data() || {};
-            activeTripId = userData.activeTrip || localStorage.getItem('activeTripId');
-            
-            if (activeTripId) {
-                localStorage.setItem('activeTripId', activeTripId);
-            }
-            
-            const tripIds = userData.trips || [];
-            userTrips = [];
-            
-            for (const tripId of tripIds) {
-                const tripDoc = await db.collection('trips').doc(tripId).get();
-                if (tripDoc.exists) {
-                    userTrips.push({ id: tripId, ...tripDoc.data() });
-                }
-            }
-            
-            renderTrips();
-            
-            if (activeTripId) {
-                document.getElementById('members-section').style.display = 'block';
-                await loadMembers();
-            }
-        }
-        
-        function renderTrips() {
-            const container = document.getElementById('trips-container');
-            
-            if (userTrips.length === 0) {
-                container.innerHTML = '<div class="no-trips">No trips yet. Create your first trip above!</div>';
-                return;
-            }
-            
-            container.innerHTML = userTrips.map(trip => {
-                const isActive = trip.id === activeTripId;
-                return `
-                    <div class="trip-card ${isActive ? 'active' : ''}">
-                        <div class="trip-name-header">
-                            ${trip.name}
-                            ${isActive ? '<span class="active-badge">ACTIVE</span>' : ''}
-                        </div>
-                        <div class="trip-dates">${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}</div>
-                        <div class="trip-members-list">👥 ${trip.members.length} member(s)</div>
-                        <div class="trip-actions">
-                            ${!isActive ? `<button class="btn-set-active" onclick="setActiveTrip('${trip.id}')">Set as Active</button>` : ''}
-                            <button class="btn-delete-trip" onclick="deleteTrip('${trip.id}')">🗑️ Delete</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-        
-        async function loadMembers() {
-            const tripDoc = await db.collection('trips').doc(activeTripId).get();
-            if (!tripDoc.exists) return;
-            
-            const trip = tripDoc.data();
-            const membersList = document.getElementById('members-list');
-            membersList.innerHTML = '';
-            
-            for (const memberId of trip.members) {
-                const userDoc = await db.collection('users').doc(memberId).get();
-                const userData = userDoc.data() || {};
-                const email = userData.email || 'Unknown';
-                const isCurrentUser = memberId === currentUser.uid;
-                
-                membersList.innerHTML += `
-                    <div class="member-item">
-                        <div class="member-email">${email}${isCurrentUser ? ' (You)' : ''}</div>
-                        ${!isCurrentUser ? `<button class="btn-remove-member" onclick="removeMember('${memberId}')">Remove</button>` : ''}
-                    </div>
-                `;
-            }
-        }
-        
-        document.getElementById('createTripForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const tripData = {
-                name: document.getElementById('tripName').value,
-                startDate: document.getElementById('startDate').value,
-                endDate: document.getElementById('endDate').value,
-                members: [currentUser.uid],
-                createdBy: currentUser.uid,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            const tripRef = await db.collection('trips').add(tripData);
-            const tripId = tripRef.id;
-            
-            const userDoc = await db.collection('users').doc(currentUser.uid).get();
-            const currentTrips = userDoc.exists && userDoc.data().trips ? userDoc.data().trips : [];
-            
-            await db.collection('users').doc(currentUser.uid).set({
-                email: currentUser.email,
-                name: currentUser.displayName || currentUser.email.split('@')[0],
-                trips: [...currentTrips, tripId],
-                activeTrip: tripId
-            }, { merge: true });
-            
-            activeTripId = tripId;
-            localStorage.setItem('activeTripId', tripId);
-            
-            document.getElementById('createTripForm').reset();
-            document.getElementById('startDate').value = '2026-04-19';
-            document.getElementById('endDate').value = '2026-05-08';
-            
-            alert('Trip created successfully!');
-            await loadSettings();
-        });
-        
-        async function setActiveTrip(tripId) {
-            await db.collection('users').doc(currentUser.uid).set({
-                activeTrip: tripId
-            }, { merge: true });
-            
-            activeTripId = tripId;
-            localStorage.setItem('activeTripId', tripId);
-            
-            await loadSettings();
-        }
-        
-        async function deleteTrip(tripId) {
-            if (!confirm('⚠️ WARNING: This will permanently delete this trip and ALL its data (itinerary, packing list, notes) for ALL members. This cannot be undone. Are you sure?')) {
-                return;
-            }
-            
-            if (!confirm('Final confirmation: Delete this trip forever?')) {
-                return;
-            }
-            
-            // Delete subcollections
-            const collections = ['itinerary', 'packing', 'notes'];
-            for (const collectionName of collections) {
-                const snapshot = await db.collection('trips').doc(tripId).collection(collectionName).get();
-                for (const doc of snapshot.docs) {
-                    await doc.ref.delete();
-                }
-            }
-            
-            // Get trip to find all members
-            const tripDoc = await db.collection('trips').doc(tripId).get();
-            if (tripDoc.exists) {
-                const tripData = tripDoc.data();
-                
-                // Remove trip from all members' trip lists
-                for (const memberId of tripData.members) {
-                    const userDoc = await db.collection('users').doc(memberId).get();
-                    if (userDoc.exists) {
-                        const userData = userDoc.data();
-                        const updatedTrips = (userData.trips || []).filter(t => t !== tripId);
-                        const updates = { trips: updatedTrips };
-                        
-                        if (userData.activeTrip === tripId) {
-                            updates.activeTrip = updatedTrips.length > 0 ? updatedTrips[0] : null;
-                        }
-                        
-                        await db.collection('users').doc(memberId).update(updates);
-                    }
-                }
-            }
-            
-            // Delete the trip document
-            await db.collection('trips').doc(tripId).delete();
-            
-            if (activeTripId === tripId) {
-                activeTripId = null;
-                localStorage.removeItem('activeTripId');
-            }
-            
-            alert('Trip deleted successfully');
-            await loadSettings();
-        }
-        
-        async function addMember() {
-            const email = document.getElementById('memberEmail').value.trim();
-            if (!email) {
-                alert('Please enter an email address');
-                return;
-            }
-            
-            // Find user by email
-            const usersSnapshot = await db.collection('users').where('email', '==', email).get();
-            
-            if (usersSnapshot.empty) {
-                alert('User not found. They need to create an account first.');
-                return;
-            }
-            
-            const userDoc = usersSnapshot.docs[0];
-            const userId = userDoc.id;
-            
-            // Check if already a member
-            const tripDoc = await db.collection('trips').doc(activeTripId).get();
-            const trip = tripDoc.data();
-            
-            if (trip.members.includes(userId)) {
-                alert('This user is already a member of this trip');
-                return;
-            }
-            
-            // Add to trip members
-            await db.collection('trips').doc(activeTripId).update({
-                members: firebase.firestore.FieldValue.arrayUnion(userId)
-            });
-            
-            // Add trip to user's trips
-            await db.collection('users').doc(userId).set({
-                trips: firebase.firestore.FieldValue.arrayUnion(activeTripId)
-            }, { merge: true });
-            
-            document.getElementById('memberEmail').value = '';
-            alert('Member added successfully!');
-            await loadMembers();
-        }
-        
-        async function removeMember(memberId) {
-            if (!confirm('Remove this member from the trip?')) return;
-            
-            // Remove from trip
-            await db.collection('trips').doc(activeTripId).update({
-                members: firebase.firestore.FieldValue.arrayRemove(memberId)
-            });
-            
-            // Remove trip from user
-            await db.collection('users').doc(memberId).update({
-                trips: firebase.firestore.FieldValue.arrayRemove(activeTripId)
-            });
-            
-            await loadMembers();
-        }
-        
-        function formatDate(dateStr) {
-            const [year, month, day] = dateStr.split('-');
-            const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-        
-        function logout() {
-            if (confirm('Logout?')) {
-                auth.signOut().then(() => {
-                    localStorage.removeItem('activeTripId');
-                    window.location.href = 'login.html';
-                });
-            }
-        }
-    </script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
+            authDomain: "cruise-planner-2026.firebaseapp.com",
+            projectId: "cruise-planner-2026",
+            storageBucket: "cruise-planner-2026.firebasestorage.app",
+            messagingSenderId: "554027862680",
+            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.log('Offline:', err.code));
+        
+        let currentUser = null;
+        let activeTripId = null;
+        let userTrips = [];
+        
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                currentUser = user;
+                await loadSettings();
+            }
+        });
+        
+        async function loadSettings() {
+            // Display user info
+            document.getElementById('user-info').innerHTML = `
+                <div class="user-email">${currentUser.email}</div>
+                <div class="user-id">User ID: ${currentUser.uid}</div>
+            `;
+            
+            // Load user's trips
+            const userDoc = await db.collection('users').doc(currentUser.uid).get();
+            const userData = userDoc.data() || {};
+            activeTripId = userData.activeTrip || localStorage.getItem('activeTripId');
+            
+            if (activeTripId) {
+                localStorage.setItem('activeTripId', activeTripId);
+            }
+            
+            const tripIds = userData.trips || [];
+            userTrips = [];
+            
+            for (const tripId of tripIds) {
+                const tripDoc = await db.collection('trips').doc(tripId).get();
+                if (tripDoc.exists) {
+                    userTrips.push({ id: tripId, ...tripDoc.data() });
+                }
+            }
+            
+            renderTrips();
+            
+            if (activeTripId) {
+                document.getElementById('members-section').style.display = 'block';
+                await loadMembers();
+            }
+        }
+        
+        function renderTrips() {
+            const container = document.getElementById('trips-container');
+            
+            if (userTrips.length === 0) {
+                container.innerHTML = '<div class="no-trips">No trips yet. Create your first trip above!</div>';
+                return;
+            }
+            
+            container.innerHTML = userTrips.map(trip => {
+                const isActive = trip.id === activeTripId;
+                return `
+                    <div class="trip-card ${isActive ? 'active' : ''}">
+                        <div class="trip-name-header">
+                            ${trip.name}
+                            ${isActive ? '<span class="active-badge">ACTIVE</span>' : ''}
+                        </div>
+                        <div class="trip-dates">${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}</div>
+                        <div class="trip-members-list">👥 ${trip.members.length} member(s)</div>
+                        <div class="trip-actions">
+                            ${!isActive ? `<button class="btn-set-active" onclick="setActiveTrip('${trip.id}')">Set as Active</button>` : ''}
+                            <button class="btn-delete-trip" onclick="deleteTrip('${trip.id}')">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        async function loadMembers() {
+            const tripDoc = await db.collection('trips').doc(activeTripId).get();
+            if (!tripDoc.exists) return;
+            
+            const trip = tripDoc.data();
+            const membersList = document.getElementById('members-list');
+            membersList.innerHTML = '';
+            
+            for (const memberId of trip.members) {
+                const userDoc = await db.collection('users').doc(memberId).get();
+                const userData = userDoc.data() || {};
+                const email = userData.email || 'Unknown';
+                const isCurrentUser = memberId === currentUser.uid;
+                
+                membersList.innerHTML += `
+                    <div class="member-item">
+                        <div class="member-email">${email}${isCurrentUser ? ' (You)' : ''}</div>
+                        ${!isCurrentUser ? `<button class="btn-remove-member" onclick="removeMember('${memberId}')">Remove</button>` : ''}
+                    </div>
+                `;
+            }
+        }
+        
+        document.getElementById('createTripForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const tripData = {
+                name: document.getElementById('tripName').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                members: [currentUser.uid],
+                createdBy: currentUser.uid,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            const tripRef = await db.collection('trips').add(tripData);
+            const tripId = tripRef.id;
+            
+            const userDoc = await db.collection('users').doc(currentUser.uid).get();
+            const currentTrips = userDoc.exists && userDoc.data().trips ? userDoc.data().trips : [];
+            
+            await db.collection('users').doc(currentUser.uid).set({
+                email: currentUser.email,
+                name: currentUser.displayName || currentUser.email.split('@')[0],
+                trips: [...currentTrips, tripId],
+                activeTrip: tripId
+            }, { merge: true });
+            
+            activeTripId = tripId;
+            localStorage.setItem('activeTripId', tripId);
+            
+            document.getElementById('createTripForm').reset();
+            document.getElementById('startDate').value = '2026-04-19';
+            document.getElementById('endDate').value = '2026-05-08';
+            
+            alert('Trip created successfully!');
+            await loadSettings();
+        });
+        
+        async function setActiveTrip(tripId) {
+            await db.collection('users').doc(currentUser.uid).set({
+                activeTrip: tripId
+            }, { merge: true });
+            
+            activeTripId = tripId;
+            localStorage.setItem('activeTripId', tripId);
+            
+            await loadSettings();
+        }
+        
+        async function deleteTrip(tripId) {
+            if (!confirm('⚠️ WARNING: This will permanently delete this trip and ALL its data (itinerary, packing list, notes) for ALL members. This cannot be undone. Are you sure?')) {
+                return;
+            }
+            
+            if (!confirm('Final confirmation: Delete this trip forever?')) {
+                return;
+            }
+            
+            // Delete subcollections
+            const collections = ['itinerary', 'packing', 'notes'];
+            for (const collectionName of collections) {
+                const snapshot = await db.collection('trips').doc(tripId).collection(collectionName).get();
+                for (const doc of snapshot.docs) {
+                    await doc.ref.delete();
+                }
+            }
+            
+            // Get trip to find all members
+            const tripDoc = await db.collection('trips').doc(tripId).get();
+            if (tripDoc.exists) {
+                const tripData = tripDoc.data();
+                
+                // Remove trip from all members' trip lists
+                for (const memberId of tripData.members) {
+                    const userDoc = await db.collection('users').doc(memberId).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const updatedTrips = (userData.trips || []).filter(t => t !== tripId);
+                        const updates = { trips: updatedTrips };
+                        
+                        if (userData.activeTrip === tripId) {
+                            updates.activeTrip = updatedTrips.length > 0 ? updatedTrips[0] : null;
+                        }
+                        
+                        await db.collection('users').doc(memberId).update(updates);
+                    }
+                }
+            }
+            
+            // Delete the trip document
+            await db.collection('trips').doc(tripId).delete();
+            
+            if (activeTripId === tripId) {
+                activeTripId = null;
+                localStorage.removeItem('activeTripId');
+            }
+            
+            alert('Trip deleted successfully');
+            await loadSettings();
+        }
+        
+        async function addMember() {
+            const email = document.getElementById('memberEmail').value.trim();
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+            
+            // Find user by email
+            const usersSnapshot = await db.collection('users').where('email', '==', email).get();
+            
+            if (usersSnapshot.empty) {
+                alert('User not found. They need to create an account first.');
+                return;
+            }
+            
+            const userDoc = usersSnapshot.docs[0];
+            const userId = userDoc.id;
+            
+            // Check if already a member
+            const tripDoc = await db.collection('trips').doc(activeTripId).get();
+            const trip = tripDoc.data();
+            
+            if (trip.members.includes(userId)) {
+                alert('This user is already a member of this trip');
+                return;
+            }
+            
+            // Add to trip members
+            await db.collection('trips').doc(activeTripId).update({
+                members: firebase.firestore.FieldValue.arrayUnion(userId)
+            });
+            
+            // Add trip to user's trips
+            await db.collection('users').doc(userId).set({
+                trips: firebase.firestore.FieldValue.arrayUnion(activeTripId)
+            }, { merge: true });
+            
+            document.getElementById('memberEmail').value = '';
+            alert('Member added successfully!');
+            await loadMembers();
+        }
+        
+        async function removeMember(memberId) {
+            if (!confirm('Remove this member from the trip?')) return;
+            
+            // Remove from trip
+            await db.collection('trips').doc(activeTripId).update({
+                members: firebase.firestore.FieldValue.arrayRemove(memberId)
+            });
+            
+            // Remove trip from user
+            await db.collection('users').doc(memberId).update({
+                trips: firebase.firestore.FieldValue.arrayRemove(activeTripId)
+            });
+            
+            await loadMembers();
+        }
+        
+        function formatDate(dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+        
+        function logout() {
+            if (confirm('Logout?')) {
+                auth.signOut().then(() => {
+                    localStorage.removeItem('activeTripId');
+                    window.location.href = 'login.html';
+                });
+            }
+        }
+    </script>
 </body>
 </html>
-
-
