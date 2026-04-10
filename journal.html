@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
+    <title>Journal - Cruise Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fd79a8 100%);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        .header {
+            background: linear-gradient(135deg, #fd79a8 0%, #a29bfe 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 5px; }
+        .header p { opacity: 0.9; }
+        .container { padding: 15px; }
+        
+        .day-selector {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .day-selector label {
+            display: block;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .day-selector select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            background: white;
+        }
+        
+        .entry-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .entry-header {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .entry-date {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .entry-location {
+            color: #fd79a8;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        
+        .entry-content {
+            margin-top: 20px;
+        }
+        .entry-section {
+            margin-bottom: 20px;
+        }
+        .entry-label {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        .entry-text {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            line-height: 1.6;
+            color: #2c3e50;
+            white-space: pre-wrap;
+        }
+        .entry-text.empty {
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        .btn-add-entry {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #fd79a8 0%, #a29bfe 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .btn-edit-entry {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        .no-entry {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+        .no-entry-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+        .btn-save, .btn-cancel {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+        .btn-save {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .all-entries-btn {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: #fd79a8;
+            border: 2px solid #fd79a8;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        
+        .timeline-view {
+            display: none;
+        }
+        .timeline-view.active {
+            display: block;
+        }
+        .single-view {
+            display: block;
+        }
+        .single-view.hidden {
+            display: none;
+        }
+        
+        .timeline-entry {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .timeline-entry:hover {
+            transform: translateY(-3px);
+        }
+        .timeline-entry.has-content {
+            border-left: 5px solid #27ae60;
+        }
+        .timeline-entry.empty {
+            border-left: 5px solid #e0e0e0;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+            z-index: 9999;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.6em;
+            font-weight: 600;
+            padding: 8px 6px;
+            min-width: 48px;
+        }
+        .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
+        .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
+        
+        @media print {
+            body { background: white; padding: 0; }
+            .header, .bottom-nav, .btn-add-entry, .btn-edit-entry, .day-selector, .all-entries-btn { display: none !important; }
+            .entry-card { page-break-inside: avoid; border: 1px solid #ddd; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📔 Cruise Journal</h1>
+        <p>Your daily memories & stories</p>
+    </div>
+
+    <div class="container">
+        <div class="single-view" id="single-view">
+            <button class="all-entries-btn" onclick="showAllEntries()">📅 View All Entries</button>
+            
+            <div class="day-selector">
+                <label>Select Day:</label>
+                <select id="daySelect" onchange="loadEntry()"></select>
+            </div>
+
+            <button class="btn-add-entry" onclick="showEntryModal()">✍️ Write Entry</button>
+
+            <div id="entry-container"></div>
+        </div>
+
+        <div class="timeline-view" id="timeline-view">
+            <button class="all-entries-btn" onclick="showSingleView()">← Back to Day View</button>
+            <div id="timeline-container"></div>
+        </div>
+    </div>
+
+    <div id="entryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-title">Write Journal Entry</div>
+            <form id="entryForm">
+                <div class="form-group">
+                    <label class="form-label">📝 Your Story</label>
+                    <textarea id="story" class="form-textarea" placeholder="Write about your day... What did you see? How did you feel? What was memorable?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">🌟 Highlights</label>
+                    <textarea id="highlights" class="form-textarea" style="min-height: 80px;" placeholder="Favorite moments, best experiences..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">📸 Photo Album Link (Optional)</label>
+                    <input type="url" id="photoLink" class="form-input" placeholder="Paste Google Photos album link here...">
+                    <small style="color: #7f8c8d; font-size: 0.85em; display: block; margin-top: 5px;">
+                        Share a Google Photos album and paste the link here
+                    </small>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn-save">💾 Save Entry</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-item-icon">🏠</div>
+            <div>Home</div>
+        </a>
+        <a href="itinerary.html" class="nav-item">
+            <div class="nav-item-icon">🗺️</div>
+            <div>Trip</div>
+        </a>
+        <a href="schedule.html" class="nav-item">
+            <div class="nav-item-icon">🗓️</div>
+            <div>Days</div>
+        </a>
+        <a href="packing.html" class="nav-item">
+            <div class="nav-item-icon">🧳</div>
+            <div>Pack</div>
+        </a>
+        <a href="notes.html" class="nav-item">
+            <div class="nav-item-icon">📝</div>
+            <div>Notes</div>
+        </a>
+        <a href="journal.html" class="nav-item active">
+            <div class="nav-item-icon">📔</div>
+            <div>Journal</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-item-icon">⚙️</div>
+            <div>Set</div>
+        </a>
+    </nav>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
+            authDomain: "cruise-planner-2026.firebaseapp.com",
+            projectId: "cruise-planner-2026",
+            storageBucket: "cruise-planner-2026.firebasestorage.app",
+            messagingSenderId: "554027862680",
+            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.log('Offline:', err.code));
+        
+        let currentUser = null;
+        let activeTripId = null;
+        let currentDay = 1;
+        let allEntries = {};
+        
+        const cruiseDays = [
+            {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure'},
+            {day: 2, date: '2026-04-20', location: 'At Sea', type: 'sea'},
+            {day: 3, date: '2026-04-21', location: 'Halifax, Canada', type: 'port'},
+            {day: 4, date: '2026-04-22', location: 'At Sea', type: 'sea'},
+            {day: 5, date: '2026-04-23', location: 'At Sea', type: 'sea'},
+            {day: 6, date: '2026-04-24', location: 'At Sea', type: 'sea'},
+            {day: 7, date: '2026-04-25', location: 'At Sea', type: 'sea'},
+            {day: 8, date: '2026-04-26', location: 'Ponta Delgada, Azores (Portugal)', type: 'port'},
+            {day: 9, date: '2026-04-27', location: 'Ponta Delgada, Azores (Portugal)', type: 'port'},
+            {day: 10, date: '2026-04-28', location: 'At Sea', type: 'sea'},
+            {day: 11, date: '2026-04-29', location: 'Lisbon (Cascais), Portugal', type: 'port'},
+            {day: 12, date: '2026-04-30', location: 'At Sea', type: 'sea'},
+            {day: 13, date: '2026-05-01', location: 'Cadiz (Seville), Spain', type: 'port'},
+            {day: 14, date: '2026-05-02', location: 'Malaga (Granada), Spain', type: 'port'},
+            {day: 15, date: '2026-05-03', location: 'At Sea', type: 'sea'},
+            {day: 16, date: '2026-05-04', location: 'Marseille (Provence), France', type: 'port'},
+            {day: 17, date: '2026-05-05', location: 'Barcelona, Spain', type: 'arrival'},
+            {day: 18, date: '2026-05-06', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
+            {day: 19, date: '2026-05-07', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
+            {day: 20, date: '2026-05-08', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'}
+        ];
+        
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                currentUser = user;
+                activeTripId = localStorage.getItem('activeTripId');
+                if (!activeTripId) {
+                    alert('No active trip. Go to Settings to create one.');
+                    window.location.href = 'settings.html';
+                } else {
+                    await loadAllEntries();
+                    populateDaySelect();
+                    loadEntry();
+                }
+            }
+        });
+        
+        async function loadAllEntries() {
+            const snapshot = await db.collection('trips').doc(activeTripId).collection('journal').get();
+            allEntries = {};
+            snapshot.forEach(doc => {
+                allEntries[doc.data().day] = { id: doc.id, ...doc.data() };
+            });
+        }
+        
+        function populateDaySelect() {
+            const select = document.getElementById('daySelect');
+            select.innerHTML = cruiseDays.map(day => 
+                `<option value="${day.day}">Day ${day.day} - ${day.location}</option>`
+            ).join('');
+        }
+        
+        function loadEntry() {
+            currentDay = parseInt(document.getElementById('daySelect').value);
+            const dayInfo = cruiseDays.find(d => d.day === currentDay);
+            const entry = allEntries[currentDay];
+            
+            const container = document.getElementById('entry-container');
+            
+            if (!entry || (!entry.story && !entry.highlights && !entry.photoLink)) {
+                container.innerHTML = `
+                    <div class="no-entry">
+                        <div class="no-entry-icon">📝</div>
+                        <div>No entry yet for this day</div>
+                        <div style="margin-top: 10px; color: #95a5a6; font-size: 0.9em;">Click "Write Entry" above to add your memories!</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let photoLinkHTML = '';
+            if (entry.photoLink) {
+                photoLinkHTML = `
+                    <div class="entry-section">
+                        <div class="entry-label">📸 Photos</div>
+                        <div class="entry-text">
+                            <a href="${entry.photoLink}" target="_blank" style="color: #3498db; text-decoration: none; font-weight: 600;">
+                                🔗 View Photo Album
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = `
+                <div class="entry-card">
+                    <div class="entry-header">Day ${dayInfo.day}</div>
+                    <div class="entry-date">${formatDate(dayInfo.date)}</div>
+                    <div class="entry-location">${dayInfo.location}</div>
+                    
+                    <div class="entry-content">
+                        ${entry.story ? `
+                            <div class="entry-section">
+                                <div class="entry-label">📝 Your Story</div>
+                                <div class="entry-text">${entry.story}</div>
+                            </div>
+                        ` : ''}
+                        
+                        ${entry.highlights ? `
+                            <div class="entry-section">
+                                <div class="entry-label">🌟 Highlights</div>
+                                <div class="entry-text">${entry.highlights}</div>
+                            </div>
+                        ` : ''}
+                        
+                        ${photoLinkHTML}
+                    </div>
+                    
+                    <button class="btn-edit-entry" onclick="showEntryModal()">✏️ Edit Entry</button>
+                </div>
+            `;
+        }
+        
+        function showEntryModal() {
+            const entry = allEntries[currentDay] || {};
+            
+            document.getElementById('story').value = entry.story || '';
+            document.getElementById('highlights').value = entry.highlights || '';
+            document.getElementById('photoLink').value = entry.photoLink || '';
+            
+            document.getElementById('entryModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('entryModal').style.display = 'none';
+        }
+        
+        document.getElementById('entryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const entryData = {
+                day: currentDay,
+                story: document.getElementById('story').value,
+                highlights: document.getElementById('highlights').value,
+                photoLink: document.getElementById('photoLink').value,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            const existingEntry = allEntries[currentDay];
+            
+            if (existingEntry) {
+                await db.collection('trips').doc(activeTripId).collection('journal').doc(existingEntry.id).update(entryData);
+            } else {
+                await db.collection('trips').doc(activeTripId).collection('journal').add(entryData);
+            }
+            
+            closeModal();
+            await loadAllEntries();
+            loadEntry();
+        });
+        
+        function showAllEntries() {
+            document.getElementById('single-view').classList.add('hidden');
+            document.getElementById('timeline-view').classList.add('active');
+            renderTimeline();
+        }
+        
+        function showSingleView() {
+            document.getElementById('timeline-view').classList.remove('active');
+            document.getElementById('single-view').classList.remove('hidden');
+        }
+        
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+            
+            cruiseDays.forEach(day => {
+                const entry = allEntries[day.day];
+                const hasContent = entry && (entry.story || entry.highlights || entry.photoLink);
+                
+                const preview = hasContent ? 
+                    (entry.story ? entry.story.substring(0, 100) + '...' : entry.highlights.substring(0, 100) + '...') : 
+                    'No entry yet';
+                
+                container.innerHTML += `
+                    <div class="timeline-entry ${hasContent ? 'has-content' : 'empty'}" onclick="goToDay(${day.day})">
+                        <div class="entry-header">Day ${day.day}</div>
+                        <div class="entry-date">${formatDate(day.date)}</div>
+                        <div class="entry-location">${day.location}</div>
+                        <div class="entry-text ${hasContent ? '' : 'empty'}" style="margin-top: 10px;">
+                            ${preview}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function goToDay(day) {
+            document.getElementById('daySelect').value = day;
+            showSingleView();
+            loadEntry();
+        }
+        
+        function formatDate(dateStr) {
+            const [year, month, dayNum] = dateStr.split('-');
+            const date = new Date(year, month - 1, dayNum);
+            return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        }
+    </script>
+</body>
+</html>
