@@ -1,636 +1,634 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#667eea">
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
-    <title>Itinerary - Cruise Planner</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
-            min-height: 100vh;
-            padding-bottom: 80px;
-        }
-        .header {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 30px 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        .header h1 { font-size: 2.2em; margin-bottom: 5px; }
-        .header p { opacity: 0.9; }
-        .container { padding: 15px; }
-        .day-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .day-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        .day-title {
-            font-size: 1.4em;
-            font-weight: 700;
-            color: #2c3e50;
-        }
-        .day-date {
-            font-size: 0.9em;
-            color: #7f8c8d;
-            margin-top: 5px;
-        }
-        .day-location {
-            font-size: 1em;
-            color: #3498db;
-            font-weight: 600;
-            margin-top: 5px;
-        }
-        .port-times {
-            background: #e8f4f8;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.85em;
-            color: #2c3e50;
-            text-align: right;
-        }
-        .port-times div { margin: 2px 0; }
-        .activity-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 4px solid #3498db;
-            position: relative;
-        }
-        .activity-item.excursion { border-left-color: #e74c3c; }
-        .activity-item.backup { border-left-color: #95a5a6; opacity: 0.7; }
-        .activity-item.dining { border-left-color: #f39c12; }
-        .activity-item.onboard { border-left-color: #9b59b6; }
-        .activity-item.general { border-left-color: #3498db; }
-        .activity-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
-        }
-        .activity-name {
-            font-weight: 700;
-            color: #2c3e50;
-            font-size: 1.1em;
-        }
-        .activity-time {
-            font-size: 0.85em;
-            color: #7f8c8d;
-            white-space: nowrap;
-            margin-left: 10px;
-        }
-        .activity-details {
-            font-size: 0.9em;
-            color: #555;
-            margin-top: 8px;
-        }
-        .activity-meta {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
-        .activity-badge {
-            font-size: 0.75em;
-            padding: 4px 8px;
-            border-radius: 5px;
-            font-weight: 600;
-        }
-        .badge-cost {
-            background: #d4edda;
-            color: #155724;
-        }
-        .badge-backup {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .badge-cancelled {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        .activity-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .btn-edit, .btn-delete {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.85em;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .btn-edit {
-            background: #3498db;
-            color: white;
-        }
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
-        }
-        .add-activity-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1.1em;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-        .no-activities {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-            font-style: italic;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 10000;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        .modal-content {
-            background: white;
-            max-width: 500px;
-            margin: 20px auto;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .modal-header {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-label {
-            display: block;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 5px;
-            font-size: 0.9em;
-        }
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            font-family: inherit;
-        }
-        .form-textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .btn-save, .btn-cancel {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 1em;
-            margin-right: 10px;
-        }
-        .btn-save {
-            background: #27ae60;
-            color: white;
-        }
-        .btn-cancel {
-            background: #95a5a6;
-            color: white;
-        }
-        .conflict-warning {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #856404;
-        }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-            z-index: 9999;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.65em;
-            font-weight: 600;
-            padding: 8px 8px;
-            min-width: 50px;
-        }
-        .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
-        .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
+    <title>Itinerary - Cruise Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 5px; }
+        .header p { opacity: 0.9; }
+        .container { padding: 15px; }
+        .day-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .day-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        .day-date {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .day-location {
+            font-size: 1em;
+            color: #3498db;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        .port-times {
+            background: #e8f4f8;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            color: #2c3e50;
+            text-align: right;
+        }
+        .port-times div { margin: 2px 0; }
+        .activity-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3498db;
+            position: relative;
+        }
+        .activity-item.excursion { border-left-color: #e74c3c; }
+        .activity-item.backup { border-left-color: #95a5a6; opacity: 0.7; }
+        .activity-item.dining { border-left-color: #f39c12; }
+        .activity-item.onboard { border-left-color: #9b59b6; }
+        .activity-item.general { border-left-color: #3498db; }
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .activity-name {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+        .activity-time {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        .activity-details {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 8px;
+        }
+        .activity-meta {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .activity-badge {
+            font-size: 0.75em;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        .badge-cost {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-backup {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .activity-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .btn-edit, .btn-delete {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+        .add-activity-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .no-activities {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .btn-save, .btn-cancel {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+        .btn-save {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+        }
+        .conflict-warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #856404;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+            z-index: 9999;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.65em;
+            font-weight: 600;
+            padding: 8px 8px;
+            min-width: 50px;
+        }
+        .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
+        .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
+    </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🗺️ Trip Itinerary</h1>
-        <p>20-day cruise adventure</p>
-    </div>
+    <div class="header">
+        <h1>🗺️ Trip Itinerary</h1>
+        <p>20-day cruise adventure</p>
+    </div>
 
-    <div class="container">
-        <button class="add-activity-btn" onclick="showAddActivityModal()">+ Add Activity</button>
-        <div id="itinerary-container"></div>
-    </div>
+    <div class="container">
+        <button class="add-activity-btn" onclick="showAddActivityModal()">+ Add Activity</button>
+        <div id="itinerary-container"></div>
+    </div>
 
-    <div id="activityModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header" id="modal-title">Add Activity</div>
-            <form id="activityForm">
-                <div class="form-group">
-                    <label class="form-label">Day</label>
-                    <select id="daySelect" class="form-select" required></select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Activity Type</label>
-                    <select id="activityType" class="form-select" required>
-                        <option value="excursion">Port Excursion</option>
-                        <option value="dining">Dining</option>
-                        <option value="onboard">Onboard Activity</option>
-                        <option value="general">General</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Activity Name</label>
-                    <input type="text" id="activityName" class="form-input" required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Start Time</label>
-                        <input type="time" id="timeStart" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">End Time</label>
-                        <input type="time" id="timeEnd" class="form-input">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Details</label>
-                    <textarea id="details" class="form-textarea"></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Cost (USD)</label>
-                        <input type="number" id="cost" class="form-input" step="0.01" min="0">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Priority</label>
-                        <select id="priority" class="form-select">
-                            <option value="confirmed">Confirmed</option>
-                            <option value="backup">Backup</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Booking Link</label>
-                    <input type="url" id="bookingLink" class="form-input" placeholder="https://">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Cancel By Date</label>
-                    <input type="date" id="cancelDate" class="form-input">
-                </div>
-                <div id="conflictWarning" class="conflict-warning" style="display:none;"></div>
-                <div style="margin-top: 20px;">
-                    <button type="submit" class="btn-save">Save Activity</button>
-                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <div id="activityModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-title">Add Activity</div>
+            <form id="activityForm">
+                <div class="form-group">
+                    <label class="form-label">Day</label>
+                    <select id="daySelect" class="form-select" required></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Activity Type</label>
+                    <select id="activityType" class="form-select" required>
+                        <option value="excursion">Port Excursion</option>
+                        <option value="dining">Dining</option>
+                        <option value="onboard">Onboard Activity</option>
+                        <option value="general">General</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Activity Name</label>
+                    <input type="text" id="activityName" class="form-input" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Start Time</label>
+                        <input type="time" id="timeStart" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">End Time</label>
+                        <input type="time" id="timeEnd" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Details</label>
+                    <textarea id="details" class="form-textarea"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Cost (USD)</label>
+                        <input type="number" id="cost" class="form-input" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priority</label>
+                        <select id="priority" class="form-select">
+                            <option value="confirmed">Confirmed</option>
+                            <option value="backup">Backup</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Booking Link</label>
+                    <input type="url" id="bookingLink" class="form-input" placeholder="https://">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cancel By Date</label>
+                    <input type="date" id="cancelDate" class="form-input">
+                </div>
+                <div id="conflictWarning" class="conflict-warning" style="display:none;"></div>
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn-save">Save Activity</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <div class="nav-item-icon">🏠</div>
-            <div>Home</div>
-        </a>
-        <a href="itinerary.html" class="nav-item active">
-            <div class="nav-item-icon">🗺️</div>
-            <div>Trip</div>
-        </a>
-        <a href="schedule.html" class="nav-item">
-            <div class="nav-item-icon">🗓️</div>
-            <div>Days</div>
-        </a>
-        <a href="packing.html" class="nav-item">
-            <div class="nav-item-icon">🧳</div>
-            <div>Pack</div>
-        </a>
-        <a href="notes.html" class="nav-item">
-            <div class="nav-item-icon">📝</div>
-            <div>Notes</div>
-        </a>
-        <a href="settings.html" class="nav-item">
-            <div class="nav-item-icon">⚙️</div>
-            <div>Set</div>
-        </a>
-    </nav>
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-item-icon">🏠</div>
+            <div>Home</div>
+        </a>
+        <a href="itinerary.html" class="nav-item active">
+            <div class="nav-item-icon">🗺️</div>
+            <div>Trip</div>
+        </a>
+        <a href="schedule.html" class="nav-item">
+            <div class="nav-item-icon">🗓️</div>
+            <div>Days</div>
+        </a>
+        <a href="packing.html" class="nav-item">
+            <div class="nav-item-icon">🧳</div>
+            <div>Pack</div>
+        </a>
+        <a href="notes.html" class="nav-item">
+            <div class="nav-item-icon">📝</div>
+            <div>Notes</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-item-icon">⚙️</div>
+            <div>Set</div>
+        </a>
+    </nav>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
-            authDomain: "cruise-planner-2026.firebaseapp.com",
-            projectId: "cruise-planner-2026",
-            storageBucket: "cruise-planner-2026.firebasestorage.app",
-            messagingSenderId: "554027862680",
-            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.log('Offline:', err.code));
-        
-        let currentUser = null;
-        let activeTripId = null;
-        let editingActivityId = null;
-        let allActivities = [];
-        
-        const cruiseDays = [
-            {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure'},
-            {day: 2, date: '2026-04-20', location: 'At Sea', type: 'sea'},
-            {day: 3, date: '2026-04-21', location: 'Halifax, Canada', type: 'port', arrival: '9:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
-            {day: 4, date: '2026-04-22', location: 'At Sea', type: 'sea'},
-            {day: 5, date: '2026-04-23', location: 'At Sea', type: 'sea'},
-            {day: 6, date: '2026-04-24', location: 'At Sea', type: 'sea'},
-            {day: 7, date: '2026-04-25', location: 'At Sea', type: 'sea'},
-            {day: 8, date: '2026-04-26', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: '8:00 AM', allAboard: '5:30 PM', departure: '6:00 PM'},
-            {day: 9, date: '2026-04-27', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: 'In Port', allAboard: '7:00 PM', departure: '7:30 PM'},
-            {day: 10, date: '2026-04-28', location: 'At Sea', type: 'sea'},
-            {day: 11, date: '2026-04-29', location: 'Lisbon (Cascais), Portugal', type: 'port', arrival: '7:00 AM', allAboard: '7:00 PM', departure: '7:30 PM'},
-            {day: 12, date: '2026-04-30', location: 'At Sea', type: 'sea'},
-            {day: 13, date: '2026-05-01', location: 'Cadiz (Seville), Spain', type: 'port', arrival: '7:00 AM', allAboard: '5:00 PM', departure: '5:30 PM'},
-            {day: 14, date: '2026-05-02', location: 'Malaga (Granada), Spain', type: 'port', arrival: '11:00 AM', allAboard: '7:00 PM', departure: '7:30 PM'},
-            {day: 15, date: '2026-05-03', location: 'At Sea', type: 'sea'},
-            {day: 16, date: '2026-05-04', location: 'Marseille (Provence), France', type: 'port', arrival: '8:00 AM', allAboard: '6:00 PM', departure: '6:30 PM'},
-            {day: 17, date: '2026-05-05', location: 'Barcelona, Spain', type: 'arrival', arrival: '7:00 AM', allAboard: 'N/A', departure: 'Disembark'},
-            {day: 18, date: '2026-05-06', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
-            {day: 19, date: '2026-05-07', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
-            {day: 20, date: '2026-05-08', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'}
-        ];
-        
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-            } else {
-                currentUser = user;
-                activeTripId = localStorage.getItem('activeTripId');
-                if (!activeTripId) {
-                    alert('No active trip. Go to Settings to create one.');
-                    window.location.href = 'settings.html';
-                } else {
-                    await loadItinerary();
-                    populateDaySelect();
-                }
-            }
-        });
-        
-        async function loadItinerary() {
-            const snapshot = await db.collection('trips').doc(activeTripId).collection('itinerary').get();
-            allActivities = [];
-            snapshot.forEach(doc => {
-                allActivities.push({ id: doc.id, ...doc.data() });
-            });
-            
-            renderItinerary();
-        }
-        
-        function renderItinerary() {
-            const container = document.getElementById('itinerary-container');
-            container.innerHTML = '';
-            
-            cruiseDays.forEach(day => {
-                const dayActivities = allActivities.filter(a => a.day === day.day);
-                
-                let portTimesHTML = '';
-                if (day.type === 'port' || day.type === 'arrival') {
-                    portTimesHTML = `
-                        <div class="port-times">
-                            ${day.arrival ? `<div>🚢 Arrival: ${day.arrival}</div>` : ''}
-                            ${day.allAboard && day.allAboard !== 'N/A' ? `<div>⏰ All Aboard: ${day.allAboard}</div>` : ''}
-                            ${day.departure && day.departure !== 'Disembark' ? `<div>⚓ Departure: ${day.departure}</div>` : ''}
-                        </div>
-                    `;
-                }
-                
-                let activitiesHTML = '';
-                if (dayActivities.length === 0) {
-                    activitiesHTML = '<div class="no-activities">No activities planned</div>';
-                } else {
-                    dayActivities.sort((a, b) => {
-                        if (!a.timeStart && !b.timeStart) return 0;
-                        if (!a.timeStart) return 1;
-                        if (!b.timeStart) return -1;
-                        return a.timeStart.localeCompare(b.timeStart);
-                    });
-                    
-                    dayActivities.forEach(activity => {
-                        const badges = [];
-                        if (activity.cost > 0) badges.push(`<span class="activity-badge badge-cost">$${activity.cost}</span>`);
-                        if (activity.priority === 'backup') badges.push(`<span class="activity-badge badge-backup">BACKUP</span>`);
-                        if (activity.cancelDate) {
-                            const cancelBy = new Date(activity.cancelDate);
-                            const today = new Date();
-                            if (cancelBy < today) {
-                                badges.push(`<span class="activity-badge badge-cancelled">Cancel by ${formatDate(activity.cancelDate)}</span>`);
-                            } else {
-                                badges.push(`<span class="activity-badge">Cancel by ${formatDate(activity.cancelDate)}</span>`);
-                            }
-                        }
-                        
-                        const timeStr = activity.timeStart && activity.timeEnd 
-                            ? `${activity.timeStart} - ${activity.timeEnd}` 
-                            : activity.timeStart ? activity.timeStart : '';
-                        
-                        const priorityClass = activity.priority === 'backup' ? 'backup' : '';
-                        
-                        activitiesHTML += `
-                            <div class="activity-item ${activity.activityType} ${priorityClass}">
-                                <div class="activity-header">
-                                    <div class="activity-name">${activity.name}</div>
-                                    ${timeStr ? `<div class="activity-time">${timeStr}</div>` : ''}
-                                </div>
-                                ${activity.details ? `<div class="activity-details">${activity.details}</div>` : ''}
-                                ${badges.length > 0 ? `<div class="activity-meta">${badges.join('')}</div>` : ''}
-                                ${activity.bookingLink ? `<div class="activity-meta"><a href="${activity.bookingLink}" target="_blank" style="color: #3498db; text-decoration: none;">🔗 Booking Link</a></div>` : ''}
-                                <div class="activity-actions">
-                                    <button class="btn-edit" onclick="editActivity('${activity.id}')">Edit</button>
-                                    <button class="btn-delete" onclick="deleteActivity('${activity.id}')">Delete</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
-                
-                container.innerHTML += `
-                    <div class="day-card">
-                        <div class="day-header">
-                            <div>
-                                <div class="day-title">Day ${day.day}</div>
-                                <div class="day-date">${formatDate(day.date)}</div>
-                                <div class="day-location">${day.location}</div>
-                            </div>
-                            ${portTimesHTML}
-                        </div>
-                        ${activitiesHTML}
-                    </div>
-                `;
-            });
-        }
-        
-        function populateDaySelect() {
-            const select = document.getElementById('daySelect');
-            select.innerHTML = cruiseDays.map(day => 
-                `<option value="${day.day}">Day ${day.day} - ${day.location}</option>`
-            ).join('');
-        }
-        
-        function showAddActivityModal() {
-            editingActivityId = null;
-            document.getElementById('modal-title').textContent = 'Add Activity';
-            document.getElementById('activityForm').reset();
-            document.getElementById('activityModal').style.display = 'block';
-            document.getElementById('conflictWarning').style.display = 'none';
-        }
-        
-        function editActivity(activityId) {
-            editingActivityId = activityId;
-            const activity = allActivities.find(a => a.id === activityId);
-            if (!activity) return;
-            
-            document.getElementById('modal-title').textContent = 'Edit Activity';
-            document.getElementById('daySelect').value = activity.day;
-            document.getElementById('activityType').value = activity.activityType;
-            document.getElementById('activityName').value = activity.name;
-            document.getElementById('timeStart').value = activity.timeStart || '';
-            document.getElementById('timeEnd').value = activity.timeEnd || '';
-            document.getElementById('details').value = activity.details || '';
-            document.getElementById('cost').value = activity.cost || '';
-            document.getElementById('priority').value = activity.priority || 'confirmed';
-            document.getElementById('bookingLink').value = activity.bookingLink || '';
-            document.getElementById('cancelDate').value = activity.cancelDate || '';
-            document.getElementById('activityModal').style.display = 'block';
-            document.getElementById('conflictWarning').style.display = 'none';
-        }
-        
-        async function deleteActivity(activityId) {
-            if (!confirm('Delete this activity?')) return;
-            await db.collection('trips').doc(activeTripId).collection('itinerary').doc(activityId).delete();
-            await loadItinerary();
-        }
-        
-        function closeModal() {
-            document.getElementById('activityModal').style.display = 'none';
-        }
-        
-        document.getElementById('activityForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const day = parseInt(document.getElementById('daySelect').value);
-            const activityType = document.getElementById('activityType').value;
-            const name = document.getElementById('activityName').value;
-            const timeStart = document.getElementById('timeStart').value;
-            const timeEnd = document.getElementById('timeEnd').value;
-            const details = document.getElementById('details').value;
-            const cost = parseFloat(document.getElementById('cost').value) || 0;
-            const priority = document.getElementById('priority').value;
-            const bookingLink = document.getElementById('bookingLink').value;
-            const cancelDate = document.getElementById('cancelDate').value;
-            
-            const isBackupExcursion = (activityType === 'excursion' && priority === 'backup');
-            
-            if (timeStart && timeEnd && !isBackupExcursion) {
-                const conflicts = allActivities.filter(a => {
-                    if (editingActivityId && a.id === editingActivityId) return false;
-                    if (a.day !== day) return false;
-                    if (!a.timeStart || !a.timeEnd) return false;
-                    if (a.activityType === 'excursion' && a.priority === 'backup') return false;
-                    
-                    return (timeStart < a.timeEnd && timeEnd > a.timeStart);
-                });
-                
-                if (conflicts.length > 0) {
-                    document.getElementById('conflictWarning').innerHTML = 
-                        `⚠️ Time conflict with: ${conflicts.map(c => c.name).join(', ')}`;
-                    document.getElementById('conflictWarning').style.display = 'block';
-                    if (!confirm('There is a time conflict. Save anyway?')) return;
-                }
-            }
-            
-            const activityData = {
-                day, activityType, name, timeStart, timeEnd, details, cost, priority, bookingLink, cancelDate,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            if (editingActivityId) {
-                await db.collection('trips').doc(activeTripId).collection('itinerary').doc(editingActivityId).update(activityData);
-            } else {
-                await db.collection('trips').doc(activeTripId).collection('itinerary').add(activityData);
-            }
-            
-            closeModal();
-            await loadItinerary();
-        });
-        
-        function formatDate(dateStr) {
-            const [year, month, day] = dateStr.split('-');
-            const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-    </script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
+            authDomain: "cruise-planner-2026.firebaseapp.com",
+            projectId: "cruise-planner-2026",
+            storageBucket: "cruise-planner-2026.firebasestorage.app",
+            messagingSenderId: "554027862680",
+            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.log('Offline:', err.code));
+        
+        let currentUser = null;
+        let activeTripId = null;
+        let editingActivityId = null;
+        let allActivities = [];
+        
+        const cruiseDays = [
+            {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure'},
+            {day: 2, date: '2026-04-20', location: 'At Sea', type: 'sea'},
+            {day: 3, date: '2026-04-21', location: 'Halifax, Canada', type: 'port', arrival: '9:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
+            {day: 4, date: '2026-04-22', location: 'At Sea', type: 'sea'},
+            {day: 5, date: '2026-04-23', location: 'At Sea', type: 'sea'},
+            {day: 6, date: '2026-04-24', location: 'At Sea', type: 'sea'},
+            {day: 7, date: '2026-04-25', location: 'At Sea', type: 'sea'},
+            {day: 8, date: '2026-04-26', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: '8:00 AM', allAboard: '5:30 PM', departure: '6:00 PM'},
+            {day: 9, date: '2026-04-27', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: 'In Port', allAboard: '7:00 PM', departure: '7:30 PM'},
+            {day: 10, date: '2026-04-28', location: 'At Sea', type: 'sea'},
+            {day: 11, date: '2026-04-29', location: 'Lisbon (Cascais), Portugal', type: 'port', arrival: '7:00 AM', allAboard: '7:00 PM', departure: '7:30 PM'},
+            {day: 12, date: '2026-04-30', location: 'At Sea', type: 'sea'},
+            {day: 13, date: '2026-05-01', location: 'Cadiz (Seville), Spain', type: 'port', arrival: '7:00 AM', allAboard: '5:00 PM', departure: '5:30 PM'},
+            {day: 14, date: '2026-05-02', location: 'Malaga (Granada), Spain', type: 'port', arrival: '11:00 AM', allAboard: '7:00 PM', departure: '7:30 PM'},
+            {day: 15, date: '2026-05-03', location: 'At Sea', type: 'sea'},
+            {day: 16, date: '2026-05-04', location: 'Marseille (Provence), France', type: 'port', arrival: '8:00 AM', allAboard: '6:00 PM', departure: '6:30 PM'},
+            {day: 17, date: '2026-05-05', location: 'Barcelona, Spain', type: 'arrival', arrival: '7:00 AM', allAboard: 'N/A', departure: 'Disembark'},
+            {day: 18, date: '2026-05-06', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
+            {day: 19, date: '2026-05-07', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
+            {day: 20, date: '2026-05-08', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'}
+        ];
+        
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                currentUser = user;
+                activeTripId = localStorage.getItem('activeTripId');
+                if (!activeTripId) {
+                    alert('No active trip. Go to Settings to create one.');
+                    window.location.href = 'settings.html';
+                } else {
+                    await loadItinerary();
+                    populateDaySelect();
+                }
+            }
+        });
+        
+        async function loadItinerary() {
+            const snapshot = await db.collection('trips').doc(activeTripId).collection('itinerary').get();
+            allActivities = [];
+            snapshot.forEach(doc => {
+                allActivities.push({ id: doc.id, ...doc.data() });
+            });
+            
+            renderItinerary();
+        }
+        
+        function renderItinerary() {
+            const container = document.getElementById('itinerary-container');
+            container.innerHTML = '';
+            
+            cruiseDays.forEach(day => {
+                const dayActivities = allActivities.filter(a => a.day === day.day);
+                
+                let portTimesHTML = '';
+                if (day.type === 'port' || day.type === 'arrival') {
+                    portTimesHTML = `
+                        <div class="port-times">
+                            ${day.arrival ? `<div>🚢 Arrival: ${day.arrival}</div>` : ''}
+                            ${day.allAboard && day.allAboard !== 'N/A' ? `<div>⏰ All Aboard: ${day.allAboard}</div>` : ''}
+                            ${day.departure && day.departure !== 'Disembark' ? `<div>⚓ Departure: ${day.departure}</div>` : ''}
+                        </div>
+                    `;
+                }
+                
+                let activitiesHTML = '';
+                if (dayActivities.length === 0) {
+                    activitiesHTML = '<div class="no-activities">No activities planned</div>';
+                } else {
+                    dayActivities.sort((a, b) => {
+                        if (!a.timeStart && !b.timeStart) return 0;
+                        if (!a.timeStart) return 1;
+                        if (!b.timeStart) return -1;
+                        return a.timeStart.localeCompare(b.timeStart);
+                    });
+                    
+                    dayActivities.forEach(activity => {
+                        const badges = [];
+                        if (activity.cost > 0) badges.push(`<span class="activity-badge badge-cost">$${activity.cost}</span>`);
+                        if (activity.priority === 'backup') badges.push(`<span class="activity-badge badge-backup">BACKUP</span>`);
+                        if (activity.cancelDate) {
+                            const cancelBy = new Date(activity.cancelDate);
+                            const today = new Date();
+                            if (cancelBy < today) {
+                                badges.push(`<span class="activity-badge badge-cancelled">Cancel by ${formatDate(activity.cancelDate)}</span>`);
+                            } else {
+                                badges.push(`<span class="activity-badge">Cancel by ${formatDate(activity.cancelDate)}</span>`);
+                            }
+                        }
+                        
+                        const timeStr = activity.timeStart && activity.timeEnd 
+                            ? `${activity.timeStart} - ${activity.timeEnd}` 
+                            : activity.timeStart ? activity.timeStart : '';
+                        
+                        const priorityClass = activity.priority === 'backup' ? 'backup' : '';
+                        
+                        activitiesHTML += `
+                            <div class="activity-item ${activity.activityType} ${priorityClass}">
+                                <div class="activity-header">
+                                    <div class="activity-name">${activity.name}</div>
+                                    ${timeStr ? `<div class="activity-time">${timeStr}</div>` : ''}
+                                </div>
+                                ${activity.details ? `<div class="activity-details">${activity.details}</div>` : ''}
+                                ${badges.length > 0 ? `<div class="activity-meta">${badges.join('')}</div>` : ''}
+                                ${activity.bookingLink ? `<div class="activity-meta"><a href="${activity.bookingLink}" target="_blank" style="color: #3498db; text-decoration: none;">🔗 Booking Link</a></div>` : ''}
+                                <div class="activity-actions">
+                                    <button class="btn-edit" onclick="editActivity('${activity.id}')">Edit</button>
+                                    <button class="btn-delete" onclick="deleteActivity('${activity.id}')">Delete</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                container.innerHTML += `
+                    <div class="day-card">
+                        <div class="day-header">
+                            <div>
+                                <div class="day-title">Day ${day.day}</div>
+                                <div class="day-date">${formatDate(day.date)}</div>
+                                <div class="day-location">${day.location}</div>
+                            </div>
+                            ${portTimesHTML}
+                        </div>
+                        ${activitiesHTML}
+                    </div>
+                `;
+            });
+        }
+        
+        function populateDaySelect() {
+            const select = document.getElementById('daySelect');
+            select.innerHTML = cruiseDays.map(day => 
+                `<option value="${day.day}">Day ${day.day} - ${day.location}</option>`
+            ).join('');
+        }
+        
+        function showAddActivityModal() {
+            editingActivityId = null;
+            document.getElementById('modal-title').textContent = 'Add Activity';
+            document.getElementById('activityForm').reset();
+            document.getElementById('activityModal').style.display = 'block';
+            document.getElementById('conflictWarning').style.display = 'none';
+        }
+        
+        function editActivity(activityId) {
+            editingActivityId = activityId;
+            const activity = allActivities.find(a => a.id === activityId);
+            if (!activity) return;
+            
+            document.getElementById('modal-title').textContent = 'Edit Activity';
+            document.getElementById('daySelect').value = activity.day;
+            document.getElementById('activityType').value = activity.activityType;
+            document.getElementById('activityName').value = activity.name;
+            document.getElementById('timeStart').value = activity.timeStart || '';
+            document.getElementById('timeEnd').value = activity.timeEnd || '';
+            document.getElementById('details').value = activity.details || '';
+            document.getElementById('cost').value = activity.cost || '';
+            document.getElementById('priority').value = activity.priority || 'confirmed';
+            document.getElementById('bookingLink').value = activity.bookingLink || '';
+            document.getElementById('cancelDate').value = activity.cancelDate || '';
+            document.getElementById('activityModal').style.display = 'block';
+            document.getElementById('conflictWarning').style.display = 'none';
+        }
+        
+        async function deleteActivity(activityId) {
+            if (!confirm('Delete this activity?')) return;
+            await db.collection('trips').doc(activeTripId).collection('itinerary').doc(activityId).delete();
+            await loadItinerary();
+        }
+        
+        function closeModal() {
+            document.getElementById('activityModal').style.display = 'none';
+        }
+        
+        document.getElementById('activityForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const day = parseInt(document.getElementById('daySelect').value);
+            const activityType = document.getElementById('activityType').value;
+            const name = document.getElementById('activityName').value;
+            const timeStart = document.getElementById('timeStart').value;
+            const timeEnd = document.getElementById('timeEnd').value;
+            const details = document.getElementById('details').value;
+            const cost = parseFloat(document.getElementById('cost').value) || 0;
+            const priority = document.getElementById('priority').value;
+            const bookingLink = document.getElementById('bookingLink').value;
+            const cancelDate = document.getElementById('cancelDate').value;
+            
+            const isBackupExcursion = (activityType === 'excursion' && priority === 'backup');
+            
+            if (timeStart && timeEnd && !isBackupExcursion) {
+                const conflicts = allActivities.filter(a => {
+                    if (editingActivityId && a.id === editingActivityId) return false;
+                    if (a.day !== day) return false;
+                    if (!a.timeStart || !a.timeEnd) return false;
+                    if (a.activityType === 'excursion' && a.priority === 'backup') return false;
+                    
+                    return (timeStart < a.timeEnd && timeEnd > a.timeStart);
+                });
+                
+                if (conflicts.length > 0) {
+                    document.getElementById('conflictWarning').innerHTML = 
+                        `⚠️ Time conflict with: ${conflicts.map(c => c.name).join(', ')}`;
+                    document.getElementById('conflictWarning').style.display = 'block';
+                    if (!confirm('There is a time conflict. Save anyway?')) return;
+                }
+            }
+            
+            const activityData = {
+                day, activityType, name, timeStart, timeEnd, details, cost, priority, bookingLink, cancelDate,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            if (editingActivityId) {
+                await db.collection('trips').doc(activeTripId).collection('itinerary').doc(editingActivityId).update(activityData);
+            } else {
+                await db.collection('trips').doc(activeTripId).collection('itinerary').add(activityData);
+            }
+            
+            closeModal();
+            await loadItinerary();
+        });
+        
+        function formatDate(dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+    </script>
 </body>
 </html>
-
-
