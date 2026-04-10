@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Data Check - Cruise Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .result-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .result-box h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        .data-section {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+        }
+        .count {
+            font-size: 2em;
+            font-weight: 900;
+            color: #667eea;
+        }
+        .label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .no-data {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        .has-data {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        .user-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Data Checker</h1>
+        
+        <div class="user-info" id="user-info">
+            <strong>Loading user info...</strong>
+        </div>
+
+        <button class="btn" onclick="checkData()">
+            🔎 Check What Data Exists
+        </button>
+
+        <div id="results"></div>
+
+        <div class="back-link">
+            <a href="index.html">← Back to Home</a>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
+            authDomain: "cruise-planner-2026.firebaseapp.com",
+            projectId: "cruise-planner-2026",
+            storageBucket: "cruise-planner-2026.firebasestorage.app",
+            messagingSenderId: "554027862680",
+            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                document.getElementById('user-info').innerHTML = `
+                    <strong>Logged in as:</strong><br>
+                    📧 ${user.email}<br>
+                    🆔 ${user.uid}
+                `;
+            }
+        });
+
+        async function checkData() {
+            const user = auth.currentUser;
+            const userId = user.uid;
+            
+            document.getElementById('results').innerHTML = '<p style="text-align:center;">🔄 Checking data...</p>';
+
+            try {
+                // Check OLD location (users collection)
+                const oldItinerary = await db.collection('users').doc(userId).collection('itinerary').get();
+                const oldPacking = await db.collection('users').doc(userId).collection('packing').get();
+                const oldNotes = await db.collection('users').doc(userId).collection('notes').get();
+
+                // Check NEW location (trips collection)
+                const activeTripId = localStorage.getItem('activeTripId');
+                let newItinerary = { size: 0 };
+                let newPacking = { size: 0 };
+                let newNotes = { size: 0 };
+
+                if (activeTripId) {
+                    newItinerary = await db.collection('trips').doc(activeTripId).collection('itinerary').get();
+                    newPacking = await db.collection('trips').doc(activeTripId).collection('packing').get();
+                    newNotes = await db.collection('trips').doc(activeTripId).collection('notes').get();
+                }
+
+                // Check user document
+                const userDoc = await db.collection('users').doc(userId).get();
+                const userData = userDoc.data() || {};
+
+                const totalOld = oldItinerary.size + oldPacking.size + oldNotes.size;
+                const totalNew = newItinerary.size + newPacking.size + newNotes.size;
+
+                document.getElementById('results').innerHTML = `
+                    <div class="result-box">
+                        <h3>📊 OLD Data Location (users/${userId}/)</h3>
+                        <div class="data-section">
+                            <div class="count">${oldItinerary.size}</div>
+                            <div class="label">Itinerary Items</div>
+                        </div>
+                        <div class="data-section">
+                            <div class="count">${oldPacking.size}</div>
+                            <div class="label">Packing Items</div>
+                        </div>
+                        <div class="data-section">
+                            <div class="count">${oldNotes.size}</div>
+                            <div class="label">Notes</div>
+                        </div>
+                        <p style="margin-top:15px;" class="${totalOld > 0 ? 'has-data' : 'no-data'}">
+                            ${totalOld > 0 ? `✅ Found ${totalOld} items in OLD location - READY TO MIGRATE!` : '❌ No old data found here'}
+                        </p>
+                    </div>
+
+                    <div class="result-box">
+                        <h3>🆕 NEW Data Location (trips/${activeTripId || 'none'}/)</h3>
+                        ${activeTripId ? `
+                            <div class="data-section">
+                                <div class="count">${newItinerary.size}</div>
+                                <div class="label">Itinerary Items</div>
+                            </div>
+                            <div class="data-section">
+                                <div class="count">${newPacking.size}</div>
+                                <div class="label">Packing Items</div>
+                            </div>
+                            <div class="data-section">
+                                <div class="count">${newNotes.size}</div>
+                                <div class="label">Notes</div>
+                            </div>
+                            <p style="margin-top:15px;" class="${totalNew > 0 ? 'has-data' : 'no-data'}">
+                                ${totalNew > 0 ? `✅ Currently has ${totalNew} items` : '📭 New trip is empty (waiting for migration)'}
+                            </p>
+                        ` : `
+                            <p class="no-data">❌ No active trip! Create one in Settings first.</p>
+                        `}
+                    </div>
+
+                    <div class="result-box">
+                        <h3>💡 What This Means:</h3>
+                        ${totalOld === 0 && totalNew === 0 ? `
+                            <p class="no-data">❌ <strong>No data found anywhere!</strong></p>
+                            <p>Either:</p>
+                            <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
+                                <li>This is a fresh account</li>
+                                <li>You're logged in with a different email than before</li>
+                                <li>Data was deleted previously</li>
+                            </ul>
+                            <p><strong>Recommendation:</strong> Start fresh! Create a new trip in Settings and add your data.</p>
+                        ` : totalOld > 0 && totalNew === 0 && activeTripId ? `
+                            <p class="has-data">✅ <strong>Ready to migrate!</strong></p>
+                            <p>You have ${totalOld} items in the OLD location waiting to be copied to your new trip.</p>
+                            <p><strong>Next step:</strong> Go to <a href="migrate.html">migrate.html</a> and click "Start Migration"</p>
+                        ` : totalOld > 0 && !activeTripId ? `
+                            <p class="no-data">⚠️ <strong>Need to create a trip first!</strong></p>
+                            <p>You have ${totalOld} items ready to migrate, but no active trip to migrate them to.</p>
+                            <p><strong>Next step:</strong> Go to <a href="settings.html">Settings</a> and create a trip, then run migration.</p>
+                        ` : totalNew > 0 ? `
+                            <p class="has-data">✅ <strong>Migration already complete!</strong></p>
+                            <p>Your new trip has ${totalNew} items. ${totalOld > 0 ? 'Old backup data still exists.' : ''}</p>
+                            <p><strong>Next step:</strong> Go to <a href="index.html">Home</a> to see your data!</p>
+                        ` : `
+                            <p>Check the numbers above to see where your data is.</p>
+                        `}
+                    </div>
+
+                    <div class="result-box">
+                        <h3>👤 User Account Info:</h3>
+                        <p><strong>Active Trip ID:</strong> ${userData.activeTrip || 'None'}</p>
+                        <p><strong>Total Trips:</strong> ${userData.trips ? userData.trips.length : 0}</p>
+                    </div>
+                `;
+
+            } catch (error) {
+                document.getElementById('results').innerHTML = `
+                    <div class="result-box" style="border-left-color: #e74c3c;">
+                        <p class="no-data">❌ Error checking data: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
