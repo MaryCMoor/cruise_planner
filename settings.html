@@ -91,7 +91,7 @@
             gap: 8px;
             flex-wrap: wrap;
         }
-        .btn-set-active, .btn-delete-trip {
+        .btn-set-active, .btn-delete-trip, .btn-scan-trips {
             padding: 8px 16px;
             border: none;
             border-radius: 8px;
@@ -106,6 +106,14 @@
         .btn-delete-trip {
             background: #e74c3c;
             color: white;
+        }
+        .btn-scan-trips {
+            background: #3498db;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            margin-bottom: 15px;
         }
         .active-badge {
             display: inline-block;
@@ -212,6 +220,18 @@
             color: #7f8c8d;
             font-style: italic;
         }
+        .alert-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            color: #856404;
+        }
+        .alert-box strong {
+            display: block;
+            margin-bottom: 8px;
+        }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -275,6 +295,7 @@
 
         <div class="section-card">
             <div class="section-title">🗺️ My Trips</div>
+            <button class="btn-scan-trips" onclick="scanForOrphanedTrips()">🔍 Find Missing Trips</button>
             <div id="trips-container"></div>
         </div>
 
@@ -384,6 +405,50 @@
             }
         }
         
+        async function scanForOrphanedTrips() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '🔍 Scanning...';
+            
+            try {
+                // Find all trips where current user is a member
+                const tripsSnapshot = await db.collection('trips')
+                    .where('members', 'array-contains', currentUser.uid)
+                    .get();
+                
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                const userData = userDoc.data() || {};
+                const currentTripIds = userData.trips || [];
+                
+                const orphanedTrips = [];
+                tripsSnapshot.forEach(doc => {
+                    if (!currentTripIds.includes(doc.id)) {
+                        orphanedTrips.push(doc.id);
+                    }
+                });
+                
+                if (orphanedTrips.length > 0) {
+                    // Fix by adding orphaned trips to user document
+                    const allTripIds = [...currentTripIds, ...orphanedTrips];
+                    await db.collection('users').doc(currentUser.uid).update({
+                        trips: allTripIds,
+                        activeTrip: orphanedTrips[0] // Set first orphaned as active
+                    });
+                    
+                    alert(`✅ Found and reconnected ${orphanedTrips.length} trip(s)!`);
+                    await loadSettings();
+                } else {
+                    alert('No missing trips found. All trips are properly linked!');
+                }
+            } catch (error) {
+                console.error('Error scanning:', error);
+                alert('Error scanning for trips: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔍 Find Missing Trips';
+            }
+        }
+        
         function renderTrips() {
             const container = document.getElementById('trips-container');
             
@@ -446,28 +511,33 @@
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             
-            const tripRef = await db.collection('trips').add(tripData);
-            const tripId = tripRef.id;
-            
-            const userDoc = await db.collection('users').doc(currentUser.uid).get();
-            const currentTrips = userDoc.exists && userDoc.data().trips ? userDoc.data().trips : [];
-            
-            await db.collection('users').doc(currentUser.uid).set({
-                email: currentUser.email,
-                name: currentUser.displayName || currentUser.email.split('@')[0],
-                trips: [...currentTrips, tripId],
-                activeTrip: tripId
-            }, { merge: true });
-            
-            activeTripId = tripId;
-            localStorage.setItem('activeTripId', tripId);
-            
-            document.getElementById('createTripForm').reset();
-            document.getElementById('startDate').value = '2026-04-19';
-            document.getElementById('endDate').value = '2026-05-08';
-            
-            alert('Trip created successfully!');
-            await loadSettings();
+            try {
+                const tripRef = await db.collection('trips').add(tripData);
+                const tripId = tripRef.id;
+                
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                const currentTrips = userDoc.exists && userDoc.data().trips ? userDoc.data().trips : [];
+                
+                await db.collection('users').doc(currentUser.uid).set({
+                    email: currentUser.email,
+                    name: currentUser.displayName || currentUser.email.split('@')[0],
+                    trips: [...currentTrips, tripId],
+                    activeTrip: tripId
+                }, { merge: true });
+                
+                activeTripId = tripId;
+                localStorage.setItem('activeTripId', tripId);
+                
+                document.getElementById('createTripForm').reset();
+                document.getElementById('startDate').value = '2026-04-19';
+                document.getElementById('endDate').value = '2026-05-08';
+                
+                alert('✅ Trip created successfully!');
+                await loadSettings();
+            } catch (error) {
+                console.error('Error creating trip:', error);
+                alert('Error creating trip: ' + error.message);
+            }
         });
         
         async function setActiveTrip(tripId) {
