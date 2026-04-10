@@ -7,17 +7,17 @@
     <meta name="theme-color" content="#667eea">
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="https://em-content.zobj.net/thumbs/240/apple/354/ship_1f6a2.png">
-    <title>Cruise Planner</title>
+    <title>Daily Schedule - Cruise Planner</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
             min-height: 100vh;
             padding-bottom: 80px;
         }
         .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
             padding: 30px 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
@@ -26,166 +26,165 @@
         .header h1 { font-size: 2.2em; margin-bottom: 5px; }
         .header p { opacity: 0.9; }
         .container { padding: 15px; }
-        .no-trip-banner {
+        .day-selector {
             background: white;
-            padding: 30px 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            margin-bottom: 15px;
-        }
-        .no-trip-banner h2 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .no-trip-banner p {
-            color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-        .btn-setup {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .countdown-card {
-            background: white;
-            padding: 30px 20px;
+            padding: 15px;
             border-radius: 15px;
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            text-align: center;
         }
-        .countdown-label {
-            font-size: 1.1em;
-            color: #7f8c8d;
+        .day-selector label {
+            display: block;
+            font-weight: 700;
+            color: #2c3e50;
             margin-bottom: 10px;
         }
-        .countdown-number {
-            font-size: 4em;
-            font-weight: 900;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
+        .day-selector select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            background: white;
         }
-        .countdown-text {
-            font-size: 1.2em;
-            color: #2c3e50;
-            font-weight: 700;
-        }
-        .trip-info-card {
+        .day-info-card {
             background: white;
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .trip-name {
-            font-size: 1.5em;
+        .day-info-title {
+            font-size: 1.8em;
             font-weight: 700;
             color: #2c3e50;
-            margin-bottom: 10px;
-            text-align: center;
+            margin-bottom: 5px;
         }
-        .trip-dates {
-            text-align: center;
+        .day-info-date {
+            font-size: 1em;
             color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        .day-info-location {
+            font-size: 1.2em;
+            color: #11998e;
+            font-weight: 600;
             margin-bottom: 15px;
         }
-        .trip-members {
+        .port-info {
+            background: #e8f8f5;
+            padding: 15px;
+            border-radius: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+        .port-info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .port-info-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+        .port-info-value {
+            color: #555;
+        }
+        .timeline {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+        }
+        .timeline-header {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .timeline-item:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 26px;
+            top: 50px;
+            width: 2px;
+            height: calc(100% - 30px);
+            background: #e0e0e0;
+        }
+        .timeline-time {
+            min-width: 80px;
+            font-weight: 700;
+            color: #11998e;
+            font-size: 1em;
+            padding-top: 5px;
+        }
+        .timeline-content {
+            flex: 1;
             background: #f8f9fa;
             padding: 15px;
             border-radius: 10px;
+            border-left: 4px solid #11998e;
+            position: relative;
         }
-        .members-header {
+        .timeline-content.excursion { border-left-color: #e74c3c; background: #fef5f5; }
+        .timeline-content.backup { border-left-color: #95a5a6; opacity: 0.7; }
+        .timeline-content.dining { border-left-color: #f39c12; background: #fef9f3; }
+        .timeline-content.onboard { border-left-color: #9b59b6; background: #f9f5fc; }
+        .activity-name {
             font-weight: 700;
             color: #2c3e50;
-            margin-bottom: 10px;
+            font-size: 1.1em;
+            margin-bottom: 8px;
         }
-        .member-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-        }
-        .member-avatar {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
+        .activity-details {
             font-size: 0.9em;
+            color: #555;
+            margin-bottom: 8px;
         }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
+        .activity-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
         }
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: 900;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        .stat-label {
-            font-size: 0.9em;
-            color: #7f8c8d;
+        .badge {
+            font-size: 0.75em;
+            padding: 4px 8px;
+            border-radius: 5px;
             font-weight: 600;
         }
-        .quick-links {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        .badge-cost {
+            background: #d4edda;
+            color: #155724;
         }
-        .quick-link {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        .badge-backup {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-cancel {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .no-activities {
             text-align: center;
-            text-decoration: none;
-            color: #2c3e50;
-            transition: transform 0.3s;
+            padding: 40px 20px;
+            color: #7f8c8d;
+            font-style: italic;
         }
-        .quick-link:hover {
-            transform: translateY(-5px);
-        }
-        .quick-link-icon {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-        .quick-link-text {
-            font-weight: 700;
-            font-size: 1em;
-        }
-        .logout-btn {
-            width: 100%;
-            padding: 12px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 15px;
+        .no-activities-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
         }
         .bottom-nav {
             position: fixed;
@@ -216,14 +215,22 @@
 </head>
 <body>
     <div class="header">
-        <h1>🚢 Cruise Planner</h1>
-        <p>Your collaborative trip organizer</p>
+        <h1>🗓️ Daily Schedule</h1>
+        <p>Timeline view by day</p>
     </div>
 
-    <div class="container" id="main-content"></div>
+    <div class="container">
+        <div class="day-selector">
+            <label>Select Day:</label>
+            <select id="daySelect" onchange="loadDaySchedule()"></select>
+        </div>
+
+        <div id="day-info-container"></div>
+        <div id="schedule-container"></div>
+    </div>
 
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active">
+        <a href="index.html" class="nav-item">
             <div class="nav-item-icon">🏠</div>
             <div>Home</div>
         </a>
@@ -231,7 +238,7 @@
             <div class="nav-item-icon">🗺️</div>
             <div>Trip</div>
         </a>
-        <a href="schedule.html" class="nav-item">
+        <a href="schedule.html" class="nav-item active">
             <div class="nav-item-icon">🗓️</div>
             <div>Days</div>
         </a>
@@ -267,178 +274,190 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
-        db.enablePersistence({ synchronizeTabs: true })
-          .catch((err) => console.log('Offline persistence:', err.code));
+        db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.log('Offline:', err.code));
         
         let currentUser = null;
         let activeTripId = null;
+        let allActivities = [];
+        
+        const cruiseDays = [
+            {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure'},
+            {day: 2, date: '2026-04-20', location: 'At Sea', type: 'sea'},
+            {day: 3, date: '2026-04-21', location: 'Halifax, Canada', type: 'port', arrival: '9:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
+            {day: 4, date: '2026-04-22', location: 'At Sea', type: 'sea'},
+            {day: 5, date: '2026-04-23', location: 'At Sea', type: 'sea'},
+            {day: 6, date: '2026-04-24', location: 'At Sea', type: 'sea'},
+            {day: 7, date: '2026-04-25', location: 'At Sea', type: 'sea'},
+            {day: 8, date: '2026-04-26', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: '8:00 AM', allAboard: '5:30 PM', departure: '6:00 PM'},
+            {day: 9, date: '2026-04-27', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: 'In Port', allAboard: '7:00 PM', departure: '7:30 PM'},
+            {day: 10, date: '2026-04-28', location: 'At Sea', type: 'sea'},
+            {day: 11, date: '2026-04-29', location: 'Lisbon (Cascais), Portugal', type: 'port', arrival: '7:00 AM', allAboard: '7:00 PM', departure: '7:30 PM'},
+            {day: 12, date: '2026-04-30', location: 'At Sea', type: 'sea'},
+            {day: 13, date: '2026-05-01', location: 'Cadiz (Seville), Spain', type: 'port', arrival: '7:00 AM', allAboard: '5:00 PM', departure: '5:30 PM'},
+            {day: 14, date: '2026-05-02', location: 'Malaga (Granada), Spain', type: 'port', arrival: '11:00 AM', allAboard: '7:00 PM', departure: '7:30 PM'},
+            {day: 15, date: '2026-05-03', location: 'At Sea', type: 'sea'},
+            {day: 16, date: '2026-05-04', location: 'Marseille (Provence), France', type: 'port', arrival: '8:00 AM', allAboard: '6:00 PM', departure: '6:30 PM'},
+            {day: 17, date: '2026-05-05', location: 'Barcelona, Spain', type: 'arrival', arrival: '7:00 AM', allAboard: 'N/A', departure: 'Disembark'},
+            {day: 18, date: '2026-05-06', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
+            {day: 19, date: '2026-05-07', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
+            {day: 20, date: '2026-05-08', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'}
+        ];
         
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.href = 'login.html';
             } else {
                 currentUser = user;
-                await loadDashboard();
+                activeTripId = localStorage.getItem('activeTripId');
+                if (!activeTripId) {
+                    alert('No active trip. Go to Settings to create one.');
+                    window.location.href = 'settings.html';
+                } else {
+                    await loadActivities();
+                    populateDaySelect();
+                    loadDaySchedule();
+                }
             }
         });
         
-        async function loadDashboard() {
-            activeTripId = localStorage.getItem('activeTripId');
-            
-            if (!activeTripId) {
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                const userData = userDoc.data();
-                activeTripId = userData?.activeTrip;
-                if (activeTripId) {
-                    localStorage.setItem('activeTripId', activeTripId);
-                }
-            }
-            
-            if (!activeTripId) {
-                showNoTripDashboard();
-            } else {
-                await showTripDashboard();
-            }
+        async function loadActivities() {
+            const snapshot = await db.collection('trips').doc(activeTripId).collection('itinerary').get();
+            allActivities = [];
+            snapshot.forEach(doc => {
+                allActivities.push({ id: doc.id, ...doc.data() });
+            });
         }
         
-        function showNoTripDashboard() {
-            document.getElementById('main-content').innerHTML = `
-                <div class="no-trip-banner">
-                    <h2>👋 Welcome!</h2>
-                    <p>Get started by creating your first trip</p>
-                    <a href="settings.html" class="btn-setup">Create Trip</a>
-                </div>
-                
-                <div class="quick-links">
-                    <a href="settings.html" class="quick-link">
-                        <div class="quick-link-icon">⚙️</div>
-                        <div class="quick-link-text">Settings</div>
-                    </a>
-                    <div class="quick-link" onclick="logout()">
-                        <div class="quick-link-icon">🚪</div>
-                        <div class="quick-link-text">Logout</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        async function showTripDashboard() {
-            const tripDoc = await db.collection('trips').doc(activeTripId).get();
-            
-            if (!tripDoc.exists) {
-                showNoTripDashboard();
-                return;
-            }
-            
-            const trip = tripDoc.data();
-            const startDate = new Date(trip.startDate.split('-').join('/'));
+        function populateDaySelect() {
+            const select = document.getElementById('daySelect');
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            const daysUntil = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24));
             
-            const itineraryCount = await db.collection('trips').doc(activeTripId).collection('itinerary').get();
-            const packingSnapshot = await db.collection('trips').doc(activeTripId).collection('packing').get();
-            const notesCount = await db.collection('trips').doc(activeTripId).collection('notes').get();
-            
-            const totalPacking = packingSnapshot.size;
-            let packedCount = 0;
-            packingSnapshot.forEach(doc => {
-                if (doc.data().packed) packedCount++;
+            let defaultDay = 1;
+            cruiseDays.forEach(day => {
+                const dayDate = new Date(day.date.split('-').join('/'));
+                if (dayDate.getTime() === today.getTime()) {
+                    defaultDay = day.day;
+                }
             });
             
-            let membersHTML = '<div class="members-header">Trip Members:</div>';
-            for (const memberId of trip.members) {
-                const userDoc = await db.collection('users').doc(memberId).get();
-                const userData = userDoc.data();
-                const initials = (userData?.name || userData?.email || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-                membersHTML += `
-                    <div class="member-item">
-                        <div class="member-avatar">${initials}</div>
-                        <div>${userData?.name || userData?.email || 'User'}</div>
+            select.innerHTML = cruiseDays.map(day => 
+                `<option value="${day.day}" ${day.day === defaultDay ? 'selected' : ''}>
+                    Day ${day.day} - ${day.location}
+                </option>`
+            ).join('');
+        }
+        
+        function loadDaySchedule() {
+            const selectedDay = parseInt(document.getElementById('daySelect').value);
+            const dayInfo = cruiseDays.find(d => d.day === selectedDay);
+            const dayActivities = allActivities.filter(a => a.day === selectedDay);
+            
+            // Render day info
+            let portInfoHTML = '';
+            if (dayInfo.type === 'port' || dayInfo.type === 'arrival') {
+                portInfoHTML = `
+                    <div class="port-info">
+                        ${dayInfo.arrival ? `
+                            <div class="port-info-item">
+                                <div class="port-info-label">🚢 Arrival</div>
+                                <div class="port-info-value">${dayInfo.arrival}</div>
+                            </div>
+                        ` : ''}
+                        ${dayInfo.allAboard && dayInfo.allAboard !== 'N/A' ? `
+                            <div class="port-info-item">
+                                <div class="port-info-label">⏰ All Aboard</div>
+                                <div class="port-info-value">${dayInfo.allAboard}</div>
+                            </div>
+                        ` : ''}
+                        ${dayInfo.departure && dayInfo.departure !== 'Disembark' ? `
+                            <div class="port-info-item">
+                                <div class="port-info-label">⚓ Departure</div>
+                                <div class="port-info-value">${dayInfo.departure}</div>
+                            </div>
+                        ` : ''}
+                        ${dayInfo.departure === 'Disembark' ? `
+                            <div class="port-info-item">
+                                <div class="port-info-label">🏁 Disembark</div>
+                                <div class="port-info-value">End of Cruise</div>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             }
             
-            document.getElementById('main-content').innerHTML = `
-                <div class="countdown-card">
-                    <div class="countdown-label">Days Until Cruise</div>
-                    <div class="countdown-number">${daysUntil > 0 ? daysUntil : 0}</div>
-                    <div class="countdown-text">${daysUntil > 0 ? 'Days to go!' : daysUntil === 0 ? 'TODAY!' : 'Cruise completed!'}</div>
+            document.getElementById('day-info-container').innerHTML = `
+                <div class="day-info-card">
+                    <div class="day-info-title">Day ${dayInfo.day}</div>
+                    <div class="day-info-date">${formatDate(dayInfo.date)}</div>
+                    <div class="day-info-location">${dayInfo.location}</div>
+                    ${portInfoHTML}
                 </div>
-                
-                <div class="trip-info-card">
-                    <div class="trip-name">${trip.name}</div>
-                    <div class="trip-dates">${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}</div>
-                    <div class="trip-members">
-                        ${membersHTML}
-                    </div>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">${itineraryCount.size}</div>
-                        <div class="stat-label">Activities</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${packedCount}/${totalPacking}</div>
-                        <div class="stat-label">Packed</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${notesCount.size}</div>
-                        <div class="stat-label">Notes</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${trip.members.length}</div>
-                        <div class="stat-label">Members</div>
-                    </div>
-                </div>
-                
-                <div class="quick-links">
-                    <a href="itinerary.html" class="quick-link">
-                        <div class="quick-link-icon">🗺️</div>
-                        <div class="quick-link-text">Itinerary</div>
-                    </a>
-                    <a href="packing.html" class="quick-link">
-                        <div class="quick-link-icon">🧳</div>
-                        <div class="quick-link-text">Packing</div>
-                    </a>
-                    <a href="notes.html" class="quick-link">
-                        <div class="quick-link-icon">📝</div>
-                        <div class="quick-link-text">Notes</div>
-                    </a>
-                    <a href="settings.html" class="quick-link">
-                        <div class="quick-link-icon">⚙️</div>
-                        <div class="quick-link-text">Settings</div>
-                    </a>
-                </div>
-                
-                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             `;
+            
+            // Render timeline
+            if (dayActivities.length === 0) {
+                document.getElementById('schedule-container').innerHTML = `
+                    <div class="timeline">
+                        <div class="no-activities">
+                            <div class="no-activities-icon">📅</div>
+                            <div>No activities scheduled for this day</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                dayActivities.sort((a, b) => {
+                    if (!a.timeStart && !b.timeStart) return 0;
+                    if (!a.timeStart) return 1;
+                    if (!b.timeStart) return -1;
+                    return a.timeStart.localeCompare(b.timeStart);
+                });
+                
+                let timelineHTML = '<div class="timeline"><div class="timeline-header">Daily Timeline</div>';
+                
+                dayActivities.forEach(activity => {
+                    const badges = [];
+                    if (activity.cost > 0) badges.push(`<span class="badge badge-cost">$${activity.cost}</span>`);
+                    if (activity.priority === 'backup') badges.push(`<span class="badge badge-backup">BACKUP</span>`);
+                    if (activity.cancelDate) {
+                        const cancelBy = new Date(activity.cancelDate);
+                        const today = new Date();
+                        if (cancelBy < today) {
+                            badges.push(`<span class="badge badge-cancel">Cancel by ${formatDate(activity.cancelDate)}</span>`);
+                        }
+                    }
+                    
+                    const timeDisplay = activity.timeStart && activity.timeEnd 
+                        ? `${activity.timeStart}<br><small style="font-weight:400;color:#7f8c8d;">to</small><br>${activity.timeEnd}`
+                        : activity.timeStart 
+                        ? activity.timeStart 
+                        : 'All Day';
+                    
+                    const priorityClass = activity.priority === 'backup' ? 'backup' : '';
+                    
+                    timelineHTML += `
+                        <div class="timeline-item">
+                            <div class="timeline-time">${timeDisplay}</div>
+                            <div class="timeline-content ${activity.activityType} ${priorityClass}">
+                                <div class="activity-name">${activity.name}</div>
+                                ${activity.details ? `<div class="activity-details">${activity.details}</div>` : ''}
+                                ${badges.length > 0 ? `<div class="activity-badges">${badges.join('')}</div>` : ''}
+                                ${activity.bookingLink ? `<div style="margin-top: 10px;"><a href="${activity.bookingLink}" target="_blank" style="color: #11998e; text-decoration: none; font-weight: 600;">🔗 View Booking</a></div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                timelineHTML += '</div>';
+                document.getElementById('schedule-container').innerHTML = timelineHTML;
+            }
         }
         
         function formatDate(dateStr) {
             const [year, month, day] = dateStr.split('-');
             const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
         }
-        
-        function logout() {
-            if (confirm('Logout?')) {
-                auth.signOut().then(() => {
-                    window.location.href = 'login.html';
-                });
-            }
-        }
-    </script>
-
-    <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./service-worker.js')
-                .then((reg) => console.log('✅ Service Worker registered'))
-                .catch((err) => console.log('❌ Service Worker failed:', err));
-        });
-    }
     </script>
 </body>
 </html>
