@@ -293,15 +293,14 @@
             align-items: center;
             text-decoration: none;
             color: rgba(255,255,255,0.7);
-            font-size: 0.65em;
+            font-size: 0.6em;
             font-weight: 600;
-            padding: 8px 8px;
-            min-width: 50px;
+            padding: 8px 6px;
+            min-width: 48px;
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
         
-        /* PRINT STYLES */
         @media print {
             body {
                 background: white;
@@ -392,7 +391,6 @@
             <div class="stats-label">Items Packed</div>
         </div>
 
-        <!-- NEW: Filter Section -->
         <div class="filter-section">
             <div class="filter-header">🔍 Filters</div>
             <div class="filter-buttons">
@@ -508,6 +506,10 @@
             <div class="nav-item-icon">📝</div>
             <div>Notes</div>
         </a>
+        <a href="journal.html" class="nav-item">
+            <div class="nav-item-icon">📔</div>
+            <div>Journal</div>
+        </a>
         <a href="settings.html" class="nav-item">
             <div class="nav-item-icon">⚙️</div>
             <div>Set</div>
@@ -566,11 +568,9 @@
         }
         
         function applyFilter(type, value) {
-            // Update active button
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             
-            // Set filter
             if (type === 'all') {
                 currentFilter = { type: 'all', value: 'all' };
             } else {
