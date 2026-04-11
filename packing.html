@@ -1,217 +1,110 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Packing List</title>
+<!-- ===================== -->
+<!-- 1. ADD BUTTON -->
+<!-- ===================== -->
+<!-- Find: <div class="action-buttons"> -->
+<!-- Add this inside it -->
+<button class="btn-print" onclick="removeDuplicates()">🧹 Clean Duplicates</button>
 
-<style>
-body { font-family: Arial; background:#f5f5f5; }
-.container { padding:15px; }
-button { padding:10px; margin:5px; cursor:pointer; }
 
-.packing-item {
-    background:white;
-    padding:10px;
-    margin-bottom:10px;
-    border-radius:10px;
-    display:flex;
-    gap:10px;
-    align-items:center;
-}
+<!-- ===================== -->
+<!-- 2. REPLACE CHECKBOX BLOCK -->
+<!-- ===================== -->
+<!-- Find your checkbox in renderPackingList() and REPLACE it with this -->
 
-.packing-content { flex:1; }
+<div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+    <input type="checkbox" class="packing-checkbox" 
+        ${item.status === 'packed' ? 'checked' : ''} 
+        onchange="updateStatus('${item.id}', this.checked ? 'packed' : 'unpacked')">
 
-select, input {
-    padding:5px;
-    border-radius:5px;
-    border:1px solid #ccc;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h2>🧳 Cruise Packing List</h2>
-
-<button onclick="showAddItemModal()">+ Add Item</button>
-<button onclick="removeDuplicates()">🧹 Remove Duplicates</button>
-
-<div id="stats"></div>
-
-<div id="list"></div>
-
+    <select onchange="updateStatus('${item.id}', this.value)" style="font-size:0.7em;">
+        <option value="unpacked" ${item.status==='unpacked'?'selected':''}>❌</option>
+        <option value="packed" ${item.status==='packed'?'selected':''}>✅</option>
+        <option value="mary" ${item.status==='mary'?'selected':''}>Mary</option>
+        <option value="brian" ${item.status==='brian'?'selected':''}>Brian</option>
+        <option value="buy" ${item.status==='buy'?'selected':''}>Buy</option>
+    </select>
 </div>
 
-<!-- Modal -->
-<div id="modal" style="display:none; background:#00000080; position:fixed; inset:0;">
-    <div style="background:white; padding:20px; margin:50px auto; max-width:400px;">
-        <h3>Add Item</h3>
-        <input id="name" placeholder="Item name"><br><br>
-        <input id="location" placeholder="Location"><br><br>
-        <select id="category">
-            <option>Clothing</option>
-            <option>Toiletries</option>
-            <option>Electronics</option>
-            <option>Documents</option>
-            <option>Beach</option>
-        </select><br><br>
-        <button onclick="saveItem()">Save</button>
-        <button onclick="closeModal()">Cancel</button>
-    </div>
+
+<!-- ===================== -->
+<!-- 3. ADD INLINE LOCATION INPUT -->
+<!-- ===================== -->
+<!-- Find this line in renderPackingList(): -->
+<!-- ${badges.length > 0 ? `<div class="packing-meta">${badges.join('')}</div>` : ''} -->
+
+<!-- ADD THIS RIGHT UNDER IT -->
+
+<div style="margin-top:5px;">
+    <input 
+        type="text"
+        value="${item.house || ''}"
+        placeholder="📍 Location"
+        onchange="updateLocation('${item.id}', this.value)"
+        style="width:100%; font-size:0.8em; padding:3px;"
+    />
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-<script>
-const firebaseConfig = {
-    apiKey: "AIzaSy...",
-    authDomain: "cruise-planner-2026.firebaseapp.com",
-    projectId: "cruise-planner-2026"
-};
+<!-- ===================== -->
+<!-- 4. UPDATE STATS LOGIC -->
+<!-- ===================== -->
+<!-- Find: -->
+let packedItems = filteredItems.filter(i => i.packed).length;
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+<!-- Replace with: -->
+let packedItems = filteredItems.filter(i => i.status === 'packed').length;
 
-let items = [];
-let editingId = null;
-const tripId = "demoTrip"; // keep your existing logic if needed
 
-// LOAD
-async function load() {
-    const snap = await db.collection("trips").doc(tripId).collection("packing").get();
-    items = [];
+<!-- ===================== -->
+<!-- 5. ADD AUTO-MIGRATION -->
+<!-- ===================== -->
+<!-- Inside loadPackingList(), after loading items -->
 
-    snap.forEach(doc => {
-        let data = doc.data();
-
-        // MIGRATE OLD DATA
-        if (!data.status) {
-            data.status = data.packed ? "packed" : "unpacked";
-        }
-
-        items.push({ id: doc.id, ...data });
-    });
-
-    render();
-}
-
-// RENDER
-function render() {
-    const list = document.getElementById("list");
-    list.innerHTML = "";
-
-    let packedCount = items.filter(i => i.status === "packed").length;
-
-    document.getElementById("stats").innerText =
-        `${packedCount} / ${items.length} packed`;
-
-    items.forEach(item => {
-
-        const div = document.createElement("div");
-        div.className = "packing-item";
-
-        div.innerHTML = `
-            <div class="packing-content">
-                <b>${item.name}</b><br>
-
-                <select onchange="updateStatus('${item.id}', this.value)">
-                    <option value="unpacked" ${item.status==="unpacked"?"selected":""}>❌ Unpacked</option>
-                    <option value="packed" ${item.status==="packed"?"selected":""}>✅ Packed</option>
-                    <option value="mary" ${item.status==="mary"?"selected":""}>🏠 Mary's</option>
-                    <option value="brian" ${item.status==="brian"?"selected":""}>🏠 Brian's</option>
-                    <option value="buy" ${item.status==="buy"?"selected":""}>🛒 Need to Buy</option>
-                </select>
-
-                <br><br>
-
-                <input 
-                    value="${item.house || ""}" 
-                    placeholder="Location..."
-                    onchange="updateLocation('${item.id}', this.value)"
-                >
-            </div>
-
-            <button onclick="edit('${item.id}')">Edit</button>
-            <button onclick="del('${item.id}')">X</button>
-        `;
-
-        list.appendChild(div);
-    });
-}
-
-// ADD / EDIT
-function showAddItemModal() {
-    editingId = null;
-    document.getElementById("modal").style.display = "block";
-}
-
-function closeModal() {
-    document.getElementById("modal").style.display = "none";
-}
-
-async function saveItem() {
-    const data = {
-        name: document.getElementById("name").value,
-        house: document.getElementById("location").value,
-        category: document.getElementById("category").value,
-        status: "unpacked"
-    };
-
-    if (editingId) {
-        await db.collection("trips").doc(tripId).collection("packing").doc(editingId).update(data);
-    } else {
-        await db.collection("trips").doc(tripId).collection("packing").add(data);
+allItems = allItems.map(item => {
+    if (!item.status) {
+        item.status = item.packed ? 'packed' : 'unpacked';
     }
+    return item;
+});
 
-    closeModal();
-    load();
+
+<!-- ===================== -->
+<!-- 6. ADD FUNCTIONS -->
+<!-- ===================== -->
+<!-- Add these anywhere in your <script> -->
+
+async function updateStatus(itemId, status) {
+    await db.collection('trips')
+        .doc(activeTripId)
+        .collection('packing')
+        .doc(itemId)
+        .update({ status });
+
+    await loadPackingList();
 }
 
-// EDIT
-function edit(id) {
-    const item = items.find(i => i.id === id);
-
-    editingId = id;
-    document.getElementById("name").value = item.name;
-    document.getElementById("location").value = item.house || "";
-    document.getElementById("category").value = item.category;
-
-    showAddItemModal();
+async function updateLocation(itemId, house) {
+    await db.collection('trips')
+        .doc(activeTripId)
+        .collection('packing')
+        .doc(itemId)
+        .update({ house });
 }
 
-// DELETE
-async function del(id) {
-    await db.collection("trips").doc(tripId).collection("packing").doc(id).delete();
-    load();
-}
-
-// STATUS UPDATE
-async function updateStatus(id, status) {
-    await db.collection("trips").doc(tripId).collection("packing").doc(id).update({ status });
-    load();
-}
-
-// LOCATION UPDATE
-async function updateLocation(id, house) {
-    await db.collection("trips").doc(tripId).collection("packing").doc(id).update({ house });
-}
-
-// REMOVE DUPLICATES
 async function removeDuplicates() {
-    if (!confirm("Remove duplicates?")) return;
+    if (!confirm("Remove duplicate items?")) return;
 
     const seen = new Map();
     const batch = db.batch();
 
-    items.forEach(item => {
-        const key = item.name.toLowerCase() + "_" + item.category;
+    allItems.forEach(item => {
+        const key = `${item.name.toLowerCase()}_${item.category}`;
 
         if (seen.has(key)) {
-            const ref = db.collection("trips").doc(tripId).collection("packing").doc(item.id);
+            const ref = db.collection('trips')
+                .doc(activeTripId)
+                .collection('packing')
+                .doc(item.id);
             batch.delete(ref);
         } else {
             seen.set(key, true);
@@ -219,11 +112,5 @@ async function removeDuplicates() {
     });
 
     await batch.commit();
-    load();
+    await loadPackingList();
 }
-
-load();
-</script>
-
-</body>
-</html>
