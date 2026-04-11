@@ -371,7 +371,7 @@
             <div class="filter-divider"></div>
             <div class="filter-header">📦 Category</div>
             <div class="filter-buttons">
-                <button class="filter-btn" onclick="applyFilter('category','Clothing',this)">👕 Clothing</button>
+                <button class="filter-btn" onclick="applyFilter('category','Clothes',this)">👕 Clothes</button>
                 <button class="filter-btn" onclick="applyFilter('category','Toiletries',this)">🧴 Toiletries</button>
                 <button class="filter-btn" onclick="applyFilter('category','Electronics',this)">🔌 Electronics</button>
                 <button class="filter-btn" onclick="applyFilter('category','Documents',this)">📄 Documents</button>
@@ -448,7 +448,7 @@
                     <div class="form-group">
                         <label class="form-label">Category *</label>
                         <select id="category" class="form-select" required>
-                            <option value="Clothing">Clothing</option>
+                            <option value="Clothes">Clothes</option>
                             <option value="Toiletries">Toiletries</option>
                             <option value="Electronics">Electronics</option>
                             <option value="Documents">Documents</option>
@@ -600,8 +600,8 @@
             container.innerHTML = `<div class="category-section"><div class="no-items">No items match your filter. Try "Show All"!</div></div>`;
             return;
         }
-        const ORDER = ['Documents','Medications','Clothing','Toiletries','Electronics','Beach/Pool','Accessories','Miscellaneous'];
-        const ICONS = { Documents:'📄',Medications:'💊',Clothing:'👕',Toiletries:'🧴',Electronics:'🔌','Beach/Pool':'🏖️',Accessories:'👜',Miscellaneous:'📦' };
+        const ORDER = ['Documents','Medications','Clothes','Toiletries','Electronics','Beach/Pool','Accessories','Miscellaneous'];
+        const ICONS = { Documents:'📄',Medications:'💊',Clothes:'👕',Toiletries:'🧴',Electronics:'🔌','Beach/Pool':'🏖️',Accessories:'👜',Miscellaneous:'📦' };
         ORDER.forEach(catName => {
             if (!categories[catName]) return;
             const icon = ICONS[catName] || '📦';
