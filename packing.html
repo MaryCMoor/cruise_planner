@@ -15,417 +15,395 @@
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
             min-height: 100vh;
             padding-bottom: 80px;
+            transition: background 0.4s;
         }
-        .header {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
-            padding: 30px 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            text-align: center;
+
+        /* PACK DAY MODE */
+        body.packday-mode { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
+        body.packday-mode .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-bottom: 3px solid #00d2ff; }
+        body.packday-mode .packday-banner { display: flex !important; }
+        body.packday-mode .normal-only { display: none !important; }
+        body.packday-mode .filter-section,
+        body.packday-mode .stats-bar,
+        body.packday-mode .progress-section,
+        body.packday-mode .weight-section { display: none !important; }
+
+        .packday-banner {
+            display: none;
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            color: white; padding: 14px 20px; text-align: center;
+            font-weight: 700; font-size: 1.1em;
+            align-items: center; justify-content: center; gap: 12px;
         }
+        .packday-exit {
+            background: rgba(255,255,255,0.25); border: none; color: white;
+            padding: 6px 14px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.85em;
+        }
+
+        .header { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 30px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); text-align: center; }
         .header h1 { font-size: 2.2em; margin-bottom: 5px; }
         .header p { opacity: 0.9; }
         .container { padding: 15px; }
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
+
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .action-buttons-row2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .btn-add, .btn-print, .btn-dedup, .btn-clear-status, .btn-packday {
+            padding: 15px; border: none; border-radius: 10px; font-weight: 700; font-size: 0.95em; cursor: pointer; color: white;
         }
-        .btn-add, .btn-print {
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1em;
-            cursor: pointer;
-            color: white;
-        }
-        .btn-add {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        }
-        .btn-print {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-        .stats-bar {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        .stats-number {
-            font-size: 2em;
-            font-weight: 900;
-            color: #fa709a;
-        }
-        .stats-label {
-            color: #7f8c8d;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .filter-section {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .filter-header {
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 1em;
-        }
-        .filter-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            padding: 8px 14px;
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85em;
-            cursor: pointer;
-            color: #555;
-            transition: all 0.3s;
-        }
-        .filter-btn:hover {
-            background: #e9ecef;
-        }
-        .filter-btn.active {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
-            border-color: #fa709a;
-        }
-        .filter-divider {
-            margin: 10px 0;
-            border-top: 1px solid #e0e0e0;
-        }
-        .category-section {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .category-header {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .packing-item {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .packing-item.packed {
-            opacity: 0.5;
-            background: #e8f8f5;
-        }
-        .packing-checkbox {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        .packing-content {
-            flex: 1;
-        }
-        .packing-name {
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 4px;
-        }
-        .packing-meta {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            font-size: 0.85em;
-        }
-        .meta-badge {
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-weight: 600;
-        }
-        .badge-person {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-        .badge-qty {
-            background: #fff3e0;
-            color: #e65100;
-        }
-        .badge-house {
-            background: #f3e5f5;
-            color: #6a1b9a;
-        }
-        .packing-notes {
-            font-size: 0.85em;
-            color: #555;
-            margin-top: 5px;
-            font-style: italic;
-        }
-        .item-actions {
-            display: flex;
-            gap: 5px;
-            flex-shrink: 0;
-        }
-        .btn-edit-item, .btn-delete-item {
-            padding: 6px 10px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8em;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .btn-edit-item {
-            background: #3498db;
-            color: white;
-        }
-        .btn-delete-item {
-            background: #e74c3c;
-            color: white;
-        }
-        .no-items {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-            font-style: italic;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 10000;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        .modal-content {
-            background: white;
-            max-width: 500px;
-            margin: 20px auto;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .modal-header {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-label {
-            display: block;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 5px;
-            font-size: 0.9em;
-        }
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            font-family: inherit;
-        }
-        .form-textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .btn-save, .btn-cancel {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 1em;
-            margin-right: 10px;
-        }
-        .btn-save {
-            background: #27ae60;
-            color: white;
-        }
-        .btn-cancel {
-            background: #95a5a6;
-            color: white;
-        }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-            z-index: 9999;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.6em;
-            font-weight: 600;
-            padding: 8px 6px;
-            min-width: 48px;
-        }
+        .btn-add          { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .btn-print        { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .btn-dedup        { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .btn-clear-status { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .btn-packday      { background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%); font-size: 0.85em; }
+
+        .stats-bar { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); text-align: center; }
+        .stats-number { font-size: 2em; font-weight: 900; color: #fa709a; }
+        .stats-label  { color: #7f8c8d; font-size: 0.9em; margin-top: 5px; }
+
+        /* Progress bars */
+        .progress-section { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .progress-header { font-weight: 700; color: #2c3e50; margin-bottom: 12px; }
+        .progress-rows { display: flex; flex-direction: column; gap: 10px; }
+        .progress-row  { display: flex; align-items: center; gap: 10px; }
+        .progress-label { font-size: 0.85em; font-weight: 600; color: #555; width: 65px; flex-shrink: 0; }
+        .progress-track { flex: 1; height: 14px; background: #e0e0e0; border-radius: 10px; overflow: hidden; }
+        .progress-fill  { height: 100%; border-radius: 10px; transition: width 0.5s; }
+        .fill-mary   { background: linear-gradient(90deg, #fa709a, #fee140); }
+        .fill-brian  { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+        .fill-shared { background: linear-gradient(90deg, #43e97b, #38f9d7); }
+        .fill-total  { background: linear-gradient(90deg, #a18cd1, #fbc2eb); }
+        .progress-pct { font-size: 0.8em; font-weight: 700; color: #2c3e50; width: 38px; text-align: right; flex-shrink: 0; }
+
+        /* Weight bars */
+        .weight-section { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .weight-header { font-weight: 700; color: #2c3e50; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .weight-bags { display: flex; flex-direction: column; gap: 8px; }
+        .weight-bag-row { display: flex; align-items: center; gap: 10px; }
+        .weight-bag-label { font-size: 0.82em; font-weight: 600; color: #555; width: 130px; flex-shrink: 0; }
+        .weight-bar-track { flex: 1; height: 10px; background: #e0e0e0; border-radius: 10px; overflow: hidden; }
+        .weight-bar-fill  { height: 100%; border-radius: 10px; transition: width 0.4s; background: linear-gradient(90deg,#43e97b,#38f9d7); }
+        .weight-bar-fill.warn { background: linear-gradient(90deg,#f7971e,#ffd200); }
+        .weight-bar-fill.over { background: linear-gradient(90deg,#e74c3c,#ff6b6b); }
+        .weight-bag-num { font-size: 0.78em; font-weight: 700; color: #2c3e50; width: 80px; text-align: right; flex-shrink: 0; }
+
+        /* Filters */
+        .filter-section { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .filter-header { font-weight: 700; color: #2c3e50; margin-bottom: 10px; font-size: 1em; }
+        .filter-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 14px; background: #f8f9fa; border: 2px solid #e0e0e0; border-radius: 20px; font-weight: 600; font-size: 0.85em; cursor: pointer; color: #555; transition: all 0.3s; }
+        .filter-btn:hover { background: #e9ecef; }
+        .filter-btn.active { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border-color: #fa709a; }
+        .filter-divider { margin: 10px 0; border-top: 1px solid #e0e0e0; }
+
+        /* Items */
+        .category-section { background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .category-header  { font-size: 1.3em; font-weight: 700; color: #2c3e50; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .packing-item { background: #f8f9fa; padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 12px; }
+        .packing-item.packed       { opacity: 0.5; background: #e8f8f5; }
+        .packing-item.waiting-flag { border-left: 4px solid #f39c12; }
+        .packing-checkbox { width: 24px; height: 24px; cursor: pointer; flex-shrink: 0; margin-top: 4px; }
+        .packing-content { flex: 1; min-width: 0; }
+        .packing-name    { font-weight: 700; color: #2c3e50; margin-bottom: 6px; }
+        .packing-meta    { display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.82em; margin-bottom: 6px; }
+        .meta-badge      { padding: 3px 8px; border-radius: 5px; font-weight: 600; }
+        .badge-person  { background: #e3f2fd; color: #1565c0; }
+        .badge-qty     { background: #fff3e0; color: #e65100; }
+        .badge-house   { background: #f3e5f5; color: #6a1b9a; }
+        .badge-bag     { background: #e8f5e9; color: #2e7d32; }
+        .badge-weight  { background: #fce4ec; color: #880e4f; }
+        .badge-waiting { background: #fff8e1; color: #f57f17; }
+        .packing-notes { font-size: 0.85em; color: #555; margin-top: 4px; font-style: italic; }
+
+        .item-status-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+        .item-status-select { padding: 5px 8px; border: 1.5px solid #ddd; border-radius: 7px; font-size: 0.78em; font-family: inherit; background: white; color: #2c3e50; cursor: pointer; flex-shrink: 0; max-width: 200px; }
+        .item-status-select:focus { outline: none; border-color: #fa709a; }
+        .item-location-input { padding: 5px 8px; border: 1.5px solid #ddd; border-radius: 7px; font-size: 0.78em; font-family: inherit; background: white; color: #2c3e50; flex: 1; min-width: 90px; }
+        .item-location-input:focus { outline: none; border-color: #fa709a; }
+        .item-location-input::placeholder { color: #bbb; }
+        .item-status-select.status-packed { border-color:#27ae60; background:#eafaf1; color:#1e8449; }
+        .item-status-select.status-marys  { border-color:#8e44ad; background:#f5eef8; color:#6c3483; }
+        .item-status-select.status-brians { border-color:#2980b9; background:#eaf4fd; color:#1a5276; }
+        .item-status-select.status-buy    { border-color:#e67e22; background:#fef9e7; color:#d35400; }
+        .item-status-select.status-behind { border-color:#e74c3c; background:#fdedec; color:#c0392b; }
+        .item-status-select.status-none   { border-color:#ddd; }
+        .btn-waiting { padding: 4px 10px; border: 1.5px solid #f39c12; border-radius: 6px; font-size: 0.75em; cursor: pointer; font-weight: 700; background: white; color: #f39c12; flex-shrink: 0; transition: all 0.2s; }
+        .btn-waiting.active { background: #f39c12; color: white; }
+        .item-actions { display: flex; gap: 5px; flex-shrink: 0; }
+        .btn-edit-item   { padding: 6px 10px; border: none; border-radius: 6px; font-size: 0.8em; cursor: pointer; font-weight: 600; background: #3498db; color: white; }
+        .btn-delete-item { padding: 6px 10px; border: none; border-radius: 6px; font-size: 0.8em; cursor: pointer; font-weight: 600; background: #e74c3c; color: white; }
+
+        /* Pack Day */
+        .packday-bag-section { background: #1e2a35; border: 2px solid #2d4a5e; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
+        .packday-bag-header { font-size: 1.2em; font-weight: 800; color: #00d2ff; margin-bottom: 4px; }
+        .packday-bag-subheader { font-size: 0.8em; color: #7fb3c8; margin-bottom: 15px; }
+        .packday-item { background: #253545; padding: 14px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 12px; border-left: 4px solid #2d4a5e; }
+        .packday-item.waiting { border-left-color: #f39c12; }
+        .packday-done { text-align: center; padding: 40px 20px; color: #00d2ff; }
+        .packday-done .done-emoji { font-size: 4em; margin-bottom: 15px; }
+        .packday-done h2 { font-size: 1.8em; margin-bottom: 10px; color: #e8f4f8; }
+        .packday-done p  { color: #7fb3c8; }
+
+        #packday-bag-filter { display: none; margin-bottom: 15px; flex-wrap: wrap; gap: 8px; }
+        .no-items { text-align: center; padding: 20px; color: #7f8c8d; font-style: italic; }
+        body.packday-mode .no-items { color: #7fb3c8; }
+
+        .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: #2c3e50; color: white; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 0.95em; z-index: 99999; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; overflow-y: auto; padding: 20px; }
+        .modal-content { background: white; max-width: 500px; margin: 20px auto; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-header { font-size: 1.5em; font-weight: 700; color: #2c3e50; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-weight: 600; color: #2c3e50; margin-bottom: 5px; font-size: 0.9em; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; font-family: inherit; }
+        .form-textarea { resize: vertical; min-height: 60px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-save   { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1em; margin-right: 10px; background: #27ae60; color: white; }
+        .btn-cancel { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1em; background: #95a5a6; color: white; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); display: flex; justify-content: space-around; padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); box-shadow: 0 -4px 20px rgba(0,0,0,0.3); z-index: 9999; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: rgba(255,255,255,0.7); font-size: 0.6em; font-weight: 600; padding: 8px 6px; min-width: 48px; }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
-        
+
+        /* ══════════════════════════════════════════════════
+           PRINT STYLES — clean, black & white, no bubbles
+           ══════════════════════════════════════════════════ */
         @media print {
-            body {
-                background: white;
-                padding: 0;
+            * {
+                color: black !important;
+                background: white !important;
+                box-shadow: none !important;
+                border-color: #999 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
-            .header, .bottom-nav, .action-buttons, .stats-bar, .item-actions, .filter-section {
-                display: none !important;
+
+            body { background: white !important; padding: 0; font-size: 10pt; font-family: Arial, sans-serif; }
+
+            /* Hide everything that's not content */
+            .header, .bottom-nav, .packday-banner,
+            .action-buttons, .action-buttons-row2,
+            .stats-bar, .progress-section, .weight-section,
+            .filter-section, .item-status-row, .item-actions,
+            #packday-bag-filter, .toast, .modal,
+            .btn-waiting { display: none !important; }
+
+            /* Page title */
+            .container::before {
+                content: "Cruise Packing List";
+                display: block;
+                font-size: 16pt;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 14pt;
+                padding-bottom: 6pt;
+                border-bottom: 2pt solid black !important;
             }
-            .container {
-                padding: 0;
-                columns: 2;
-                column-gap: 20px;
-            }
+
+            /* Two-column layout */
+            .container { padding: 0; columns: 2; column-gap: 20pt; }
+
+            /* Category block */
             .category-section {
-                box-shadow: none;
-                border: 1px solid #ddd;
-                padding: 10px;
-                margin-bottom: 10px;
+                padding: 0;
+                margin-bottom: 12pt;
+                border: none !important;
                 break-inside: avoid;
                 page-break-inside: avoid;
+                display: block;
             }
+
+            /* Category heading */
             .category-header {
-                font-size: 11pt;
-                margin-bottom: 8px;
-                border-bottom: 2px solid #333;
-                padding-bottom: 5px;
+                font-size: 10.5pt !important;
+                font-weight: bold;
+                border-bottom: 1.5pt solid black !important;
+                padding-bottom: 3pt;
+                margin-bottom: 5pt;
+                display: block;
             }
+
+            /* Each row */
             .packing-item {
-                background: white;
-                padding: 6px;
-                margin-bottom: 6px;
-                border: 1px solid #e0e0e0;
-                font-size: 9pt;
+                padding: 3pt 0;
+                margin-bottom: 0;
+                border: none !important;
+                border-bottom: 0.5pt solid #ccc !important;
+                border-radius: 0 !important;
+                background: white !important;
+                display: flex;
+                align-items: flex-start;
+                gap: 6pt;
                 page-break-inside: avoid;
+                opacity: 1 !important;
             }
-            .packing-item.packed {
-                opacity: 1;
-                background: white;
-            }
+
+            /* Empty square checkbox for paper */
             .packing-checkbox {
-                width: 14px;
-                height: 14px;
-                border: 2px solid #333;
-                background: white;
-                appearance: none;
                 -webkit-appearance: none;
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
+                appearance: none;
+                width: 10pt;
+                height: 10pt;
+                border: 1.5pt solid black !important;
+                background: white !important;
+                flex-shrink: 0;
+                margin-top: 2pt;
             }
+
+            .packing-content { flex: 1; }
+
             .packing-name {
                 font-size: 9pt;
-                color: black;
+                font-weight: bold;
+                margin-bottom: 1pt;
+                color: black !important;
             }
+
+            /* Meta info: strip all badge styling, show as plain inline text */
             .packing-meta {
-                font-size: 8pt;
-                color: #555;
+                font-size: 7.5pt;
+                color: #444 !important;
+                margin-bottom: 0;
+                display: block;
             }
             .meta-badge {
-                background: none;
-                border: 1px solid #999;
-                color: black;
-                padding: 2px 5px;
+                background: none !important;
+                border: none !important;
+                padding: 0 !important;
+                color: #444 !important;
+                font-weight: normal;
+                font-size: inherit;
             }
+            .meta-badge::after { content: " ·"; }
+            .meta-badge:last-child::after { content: ""; }
+
             .packing-notes {
-                font-size: 8pt;
-                color: #666;
+                font-size: 7.5pt;
+                color: #555 !important;
+                font-style: italic;
+                margin-top: 1pt;
             }
-            .no-items {
-                display: none;
-            }
+
+            .no-items { display: none !important; }
         }
     </style>
 </head>
 <body>
+
+    <div class="packday-banner">
+        <span>🚢 PACK DAY MODE — Unpacked items only</span>
+        <button class="packday-exit" onclick="exitPackDay()">✕ Exit</button>
+    </div>
+
     <div class="header">
         <h1>🧳 Packing List</h1>
         <p>What to bring on your cruise</p>
     </div>
 
     <div class="container">
-        <div class="action-buttons">
-            <button class="btn-add" onclick="showAddItemModal()">+ Add Item</button>
+        <div class="action-buttons normal-only">
+            <button class="btn-add"   onclick="showAddItemModal()">+ Add Item</button>
             <button class="btn-print" onclick="window.print()">🖨️ Print List</button>
         </div>
+        <div class="action-buttons-row2 normal-only">
+            <button class="btn-dedup"        onclick="removeDuplicates()">🧹 Remove Dupes</button>
+            <button class="btn-clear-status" onclick="clearAllStatuses()">🔄 Reset Statuses</button>
+            <button class="btn-packday"      onclick="enterPackDay()">🚢 Pack Day!</button>
+        </div>
 
-        <div class="stats-bar">
+        <div class="stats-bar normal-only">
             <div class="stats-number" id="stats-display">0 / 0</div>
             <div class="stats-label">Items Packed</div>
         </div>
 
-        <div class="filter-section">
+        <div class="progress-section normal-only">
+            <div class="progress-header">📊 Packing Progress</div>
+            <div class="progress-rows">
+                <div class="progress-row">
+                    <div class="progress-label">Mary</div>
+                    <div class="progress-track"><div class="progress-fill fill-mary"   id="prog-mary"   style="width:0%"></div></div>
+                    <div class="progress-pct" id="pct-mary">0%</div>
+                </div>
+                <div class="progress-row">
+                    <div class="progress-label">Brian</div>
+                    <div class="progress-track"><div class="progress-fill fill-brian"  id="prog-brian"  style="width:0%"></div></div>
+                    <div class="progress-pct" id="pct-brian">0%</div>
+                </div>
+                <div class="progress-row">
+                    <div class="progress-label">Shared</div>
+                    <div class="progress-track"><div class="progress-fill fill-shared" id="prog-shared" style="width:0%"></div></div>
+                    <div class="progress-pct" id="pct-shared">0%</div>
+                </div>
+                <div class="progress-row">
+                    <div class="progress-label" style="font-weight:800">Total</div>
+                    <div class="progress-track"><div class="progress-fill fill-total"  id="prog-total"  style="width:0%"></div></div>
+                    <div class="progress-pct" id="pct-total">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="weight-section normal-only">
+            <div class="weight-header">
+                <span>⚖️ Estimated Bag Weights</span>
+                <span style="font-size:0.75em;color:#999;font-weight:400;">lbs · 50 lb limit</span>
+            </div>
+            <div class="weight-bags" id="weight-bags-container">
+                <div style="font-size:0.85em;color:#aaa;text-align:center;padding:4px 0;">Add weight when editing items to see bag totals.</div>
+            </div>
+        </div>
+
+        <div class="filter-section normal-only">
             <div class="filter-header">🔍 Filters</div>
             <div class="filter-buttons">
-                <button class="filter-btn active" onclick="applyFilter('all', 'all')">Show All</button>
-                <button class="filter-btn" onclick="applyFilter('status', 'unpacked')">❌ Unpacked</button>
-                <button class="filter-btn" onclick="applyFilter('status', 'packed')">✅ Packed</button>
+                <button class="filter-btn active" onclick="applyFilter('all','all',this)">Show All</button>
+                <button class="filter-btn" onclick="applyFilter('status','unpacked',this)">❌ Unpacked</button>
+                <button class="filter-btn" onclick="applyFilter('status','packed',this)">✅ Packed</button>
+                <button class="filter-btn" onclick="applyFilter('waiting','true',this)">⏳ Waiting On</button>
             </div>
             <div class="filter-divider"></div>
             <div class="filter-header">👤 Person</div>
             <div class="filter-buttons">
-                <button class="filter-btn" onclick="applyFilter('person', 'Mary')">Mary</button>
-                <button class="filter-btn" onclick="applyFilter('person', 'Brian')">Brian</button>
-                <button class="filter-btn" onclick="applyFilter('person', 'Shared')">Shared</button>
+                <button class="filter-btn" onclick="applyFilter('person','Mary',this)">Mary</button>
+                <button class="filter-btn" onclick="applyFilter('person','Brian',this)">Brian</button>
+                <button class="filter-btn" onclick="applyFilter('person','Shared',this)">Shared</button>
             </div>
             <div class="filter-divider"></div>
             <div class="filter-header">📦 Category</div>
             <div class="filter-buttons">
-                <button class="filter-btn" onclick="applyFilter('category', 'Clothing')">👕 Clothing</button>
-                <button class="filter-btn" onclick="applyFilter('category', 'Toiletries')">🧴 Toiletries</button>
-                <button class="filter-btn" onclick="applyFilter('category', 'Electronics')">🔌 Electronics</button>
-                <button class="filter-btn" onclick="applyFilter('category', 'Documents')">📄 Documents</button>
-                <button class="filter-btn" onclick="applyFilter('category', 'Medications')">💊 Medications</button>
-                <button class="filter-btn" onclick="applyFilter('category', 'Beach/Pool')">🏖️ Beach</button>
+                <button class="filter-btn" onclick="applyFilter('category','Clothing',this)">👕 Clothing</button>
+                <button class="filter-btn" onclick="applyFilter('category','Toiletries',this)">🧴 Toiletries</button>
+                <button class="filter-btn" onclick="applyFilter('category','Electronics',this)">🔌 Electronics</button>
+                <button class="filter-btn" onclick="applyFilter('category','Documents',this)">📄 Documents</button>
+                <button class="filter-btn" onclick="applyFilter('category','Medications',this)">💊 Medications</button>
+                <button class="filter-btn" onclick="applyFilter('category','Beach/Pool',this)">🏖️ Beach</button>
             </div>
             <div class="filter-divider"></div>
-            <div class="filter-header">🏠 Location</div>
+            <div class="filter-header">🧳 Bag</div>
+            <div class="filter-buttons" id="bag-filter-btns"></div>
+            <div class="filter-divider"></div>
+            <div class="filter-header">🏠 Source Location</div>
             <div class="filter-buttons">
-                <button class="filter-btn" onclick="applyFilter('house', 'Mary\'s House')">Mary's House</button>
-                <button class="filter-btn" onclick="applyFilter('house', 'Brian\'s House')">Brian's House</button>
-                <button class="filter-btn" onclick="applyFilter('house', 'Need to Buy')">🛒 Need to Buy</button>
+                <button class="filter-btn" onclick="applyFilter('house',&quot;Mary's House&quot;,this)">Mary's House</button>
+                <button class="filter-btn" onclick="applyFilter('house',&quot;Brian's House&quot;,this)">Brian's House</button>
+                <button class="filter-btn" onclick="applyFilter('house','Need to Buy',this)">🛒 Need to Buy</button>
+            </div>
+            <div class="filter-divider"></div>
+            <div class="filter-header">📋 Item Status</div>
+            <div class="filter-buttons">
+                <button class="filter-btn" onclick="applyFilter('itemStatus','Packed ✅',this)">✅ Packed</button>
+                <button class="filter-btn" onclick="applyFilter('itemStatus',&quot;From Mary's House 🏠&quot;,this)">🏠 From Mary's</button>
+                <button class="filter-btn" onclick="applyFilter('itemStatus',&quot;From Brian's House 🏡&quot;,this)">🏡 From Brian's</button>
+                <button class="filter-btn" onclick="applyFilter('itemStatus','Need to Purchase 🛒',this)">🛒 Need to Buy</button>
+                <button class="filter-btn" onclick="applyFilter('itemStatus','Left Behind ❌',this)">❌ Left Behind</button>
             </div>
         </div>
 
+        <div id="packday-bag-filter"></div>
         <div id="packing-container"></div>
     </div>
+
+    <div class="toast" id="toast"></div>
 
     <div id="itemModal" class="modal">
         <div class="modal-content">
@@ -441,11 +419,28 @@
                         <input type="number" id="quantity" class="form-input" value="1" min="1">
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Est. Weight (lbs)</label>
+                        <input type="number" id="weightLbs" class="form-input" value="" min="0" step="0.1" placeholder="optional">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
                         <label class="form-label">Person</label>
                         <select id="person" class="form-select">
                             <option value="Shared">Shared</option>
                             <option value="Mary">Mary</option>
                             <option value="Brian">Brian</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bag / Suitcase</label>
+                        <select id="bag" class="form-select">
+                            <option value="">Not Assigned</option>
+                            <option value="Mary – Carry-on">Mary – Carry-on</option>
+                            <option value="Mary – Checked">Mary – Checked</option>
+                            <option value="Brian – Carry-on">Brian – Carry-on</option>
+                            <option value="Brian – Checked">Brian – Checked</option>
+                            <option value="Shared Tote">Shared Tote</option>
                         </select>
                     </div>
                 </div>
@@ -464,7 +459,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Location</label>
+                        <label class="form-label">Source Location</label>
                         <select id="house" class="form-select">
                             <option value="">Not Specified</option>
                             <option value="Mary's House">Mary's House</option>
@@ -477,7 +472,7 @@
                     <label class="form-label">Notes</label>
                     <textarea id="notes" class="form-textarea" placeholder="Optional notes..."></textarea>
                 </div>
-                <div style="margin-top: 20px;">
+                <div style="margin-top:20px;">
                     <button type="submit" class="btn-save">Save Item</button>
                     <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
                 </div>
@@ -486,262 +481,426 @@
     </div>
 
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <div class="nav-item-icon">🏠</div>
-            <div>Home</div>
-        </a>
-        <a href="itinerary.html" class="nav-item">
-            <div class="nav-item-icon">🗺️</div>
-            <div>Trip</div>
-        </a>
-        <a href="schedule.html" class="nav-item">
-            <div class="nav-item-icon">🗓️</div>
-            <div>Days</div>
-        </a>
-        <a href="packing.html" class="nav-item active">
-            <div class="nav-item-icon">🧳</div>
-            <div>Pack</div>
-        </a>
-        <a href="notes.html" class="nav-item">
-            <div class="nav-item-icon">📝</div>
-            <div>Notes</div>
-        </a>
-        <a href="journal.html" class="nav-item">
-            <div class="nav-item-icon">📔</div>
-            <div>Journal</div>
-        </a>
-        <a href="settings.html" class="nav-item">
-            <div class="nav-item-icon">⚙️</div>
-            <div>Set</div>
-        </a>
+        <a href="index.html"     class="nav-item"><div class="nav-item-icon">🏠</div><div>Home</div></a>
+        <a href="itinerary.html" class="nav-item"><div class="nav-item-icon">🗺️</div><div>Trip</div></a>
+        <a href="schedule.html"  class="nav-item"><div class="nav-item-icon">🗓️</div><div>Days</div></a>
+        <a href="packing.html"   class="nav-item active"><div class="nav-item-icon">🧳</div><div>Pack</div></a>
+        <a href="notes.html"     class="nav-item"><div class="nav-item-icon">📝</div><div>Notes</div></a>
+        <a href="journal.html"   class="nav-item"><div class="nav-item-icon">📔</div><div>Journal</div></a>
+        <a href="settings.html"  class="nav-item"><div class="nav-item-icon">⚙️</div><div>Set</div></a>
     </nav>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
-            authDomain: "cruise-planner-2026.firebaseapp.com",
-            projectId: "cruise-planner-2026",
-            storageBucket: "cruise-planner-2026.firebasestorage.app",
-            messagingSenderId: "554027862680",
-            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.log('Offline:', err.code));
-        
-        let currentUser = null;
-        let activeTripId = null;
-        let editingItemId = null;
-        let allItems = [];
-        let currentFilter = { type: 'all', value: 'all' };
-        
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-            } else {
-                currentUser = user;
-                activeTripId = localStorage.getItem('activeTripId');
-                if (!activeTripId) {
-                    alert('No active trip. Go to Settings to create one.');
-                    window.location.href = 'settings.html';
-                } else {
-                    await loadPackingList();
-                }
+    const firebaseConfig = {
+        apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
+        authDomain: "cruise-planner-2026.firebaseapp.com",
+        projectId: "cruise-planner-2026",
+        storageBucket: "cruise-planner-2026.firebasestorage.app",
+        messagingSenderId: "554027862680",
+        appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
+    db.enablePersistence({ synchronizeTabs: true }).catch(e => console.log('Offline:', e.code));
+
+    let currentUser      = null;
+    let activeTripId     = null;
+    let editingItemId    = null;
+    let allItems         = [];
+    let currentFilter    = { type: 'all', value: 'all' };
+    let packDayMode      = false;
+    let packDayBagFilter = 'all';
+    const BAG_LIMIT_LBS  = 50;
+
+    const STATUS_OPTIONS = [
+        { value: '',                       label: '— No Status —',         cls: 'status-none'   },
+        { value: 'Packed ✅',              label: 'Packed ✅',             cls: 'status-packed' },
+        { value: "From Mary's House 🏠",   label: "From Mary's House 🏠",  cls: 'status-marys'  },
+        { value: "From Brian's House 🏡",  label: "From Brian's House 🏡", cls: 'status-brians' },
+        { value: 'Need to Purchase 🛒',    label: 'Need to Purchase 🛒',   cls: 'status-buy'    },
+        { value: 'Left Behind ❌',         label: 'Left Behind ❌',        cls: 'status-behind' },
+    ];
+    function statusClass(val) {
+        const o = STATUS_OPTIONS.find(o => o.value === val);
+        return o ? o.cls : 'status-none';
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) { window.location.href = 'login.html'; return; }
+        currentUser  = user;
+        activeTripId = localStorage.getItem('activeTripId');
+        if (!activeTripId) {
+            alert('No active trip. Go to Settings to create one.');
+            window.location.href = 'settings.html';
+        } else {
+            await loadPackingList();
+        }
+    });
+
+    async function loadPackingList() {
+        const snap = await db.collection('trips').doc(activeTripId).collection('packing').get();
+        allItems = [];
+        snap.forEach(doc => allItems.push({ id: doc.id, ...doc.data() }));
+        renderAll();
+    }
+
+    function renderAll() {
+        if (packDayMode) {
+            renderPackDay();
+        } else {
+            renderPackingList();
+            renderProgressBars();
+            renderWeightBars();
+            renderBagFilterButtons();
+        }
+    }
+
+    function applyFilter(type, value, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        currentFilter = (type === 'all') ? { type: 'all', value: 'all' } : { type, value };
+        renderPackingList();
+    }
+
+    function filterItems(items) {
+        if (currentFilter.type === 'all') return items;
+        return items.filter(item => {
+            if (currentFilter.type === 'status') {
+                if (currentFilter.value === 'packed')   return item.packed === true;
+                if (currentFilter.value === 'unpacked') return !item.packed;
             }
+            if (currentFilter.type === 'waiting')    return item.waitingOn === true;
+            if (currentFilter.type === 'person')     return item.person === currentFilter.value;
+            if (currentFilter.type === 'category')   return item.category === currentFilter.value;
+            if (currentFilter.type === 'house')      return item.house === currentFilter.value;
+            if (currentFilter.type === 'itemStatus') return item.itemStatus === currentFilter.value;
+            if (currentFilter.type === 'bag')        return item.bag === currentFilter.value;
+            return true;
         });
-        
-        async function loadPackingList() {
-            const snapshot = await db.collection('trips').doc(activeTripId).collection('packing').get();
-            allItems = [];
-            snapshot.forEach(doc => {
-                allItems.push({ id: doc.id, ...doc.data() });
-            });
-            
-            renderPackingList();
+    }
+
+    function renderPackingList() {
+        const filtered = filterItems(allItems);
+        const categories = {};
+        filtered.forEach(item => {
+            const cat = item.category || 'Miscellaneous';
+            if (!categories[cat]) categories[cat] = [];
+            categories[cat].push(item);
+        });
+        const total  = filtered.length;
+        const packed = filtered.filter(i => i.packed).length;
+        document.getElementById('stats-display').textContent = `${packed} / ${total}`;
+        const container = document.getElementById('packing-container');
+        container.innerHTML = '';
+        if (total === 0) {
+            container.innerHTML = `<div class="category-section"><div class="no-items">No items match your filter. Try "Show All"!</div></div>`;
+            return;
         }
-        
-        function applyFilter(type, value) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            if (type === 'all') {
-                currentFilter = { type: 'all', value: 'all' };
-            } else {
-                currentFilter = { type, value };
-            }
-            
-            renderPackingList();
-        }
-        
-        function filterItems(items) {
-            if (currentFilter.type === 'all') return items;
-            
-            return items.filter(item => {
-                if (currentFilter.type === 'status') {
-                    if (currentFilter.value === 'packed') return item.packed === true;
-                    if (currentFilter.value === 'unpacked') return !item.packed;
-                }
-                if (currentFilter.type === 'person') {
-                    return item.person === currentFilter.value;
-                }
-                if (currentFilter.type === 'category') {
-                    return item.category === currentFilter.value;
-                }
-                if (currentFilter.type === 'house') {
-                    return item.house === currentFilter.value;
-                }
-                return true;
-            });
-        }
-        
-        function renderPackingList() {
-            const filteredItems = filterItems(allItems);
-            const categories = {};
-            
-            filteredItems.forEach(item => {
-                const cat = item.category || 'Miscellaneous';
-                if (!categories[cat]) categories[cat] = [];
-                categories[cat].push(item);
-            });
-            
-            let totalItems = filteredItems.length;
-            let packedItems = filteredItems.filter(i => i.packed).length;
-            document.getElementById('stats-display').textContent = `${packedItems} / ${totalItems}`;
-            
-            const container = document.getElementById('packing-container');
-            container.innerHTML = '';
-            
-            if (totalItems === 0) {
-                container.innerHTML = `
-                    <div class="category-section">
-                        <div class="no-items">No items match your filter. Try "Show All"!</div>
+        const ORDER = ['Documents','Medications','Clothing','Toiletries','Electronics','Beach/Pool','Accessories','Miscellaneous'];
+        const ICONS = { Documents:'📄',Medications:'💊',Clothing:'👕',Toiletries:'🧴',Electronics:'🔌','Beach/Pool':'🏖️',Accessories:'👜',Miscellaneous:'📦' };
+        ORDER.forEach(catName => {
+            if (!categories[catName]) return;
+            const icon = ICONS[catName] || '📦';
+            const html = categories[catName].map(buildItemHTML).join('');
+            container.innerHTML += `<div class="category-section"><div class="category-header">${icon} ${catName}</div>${html}</div>`;
+        });
+    }
+
+    function buildItemHTML(item) {
+        const badges = [];
+        if (item.person)       badges.push(`<span class="meta-badge badge-person">${item.person}</span>`);
+        if ((item.quantity||1) > 1) badges.push(`<span class="meta-badge badge-qty">Qty: ${item.quantity}</span>`);
+        if (item.house)        badges.push(`<span class="meta-badge badge-house">${item.house}</span>`);
+        if (item.bag)          badges.push(`<span class="meta-badge badge-bag">🧳 ${item.bag}</span>`);
+        if (item.weightLbs)    badges.push(`<span class="meta-badge badge-weight">⚖️ ${item.weightLbs} lb</span>`);
+        if (item.waitingOn)    badges.push(`<span class="meta-badge badge-waiting">⏳ Waiting On</span>`);
+        const statusOpts = STATUS_OPTIONS.map(o =>
+            `<option value="${o.value}" ${item.itemStatus === o.value ? 'selected' : ''}>${o.label}</option>`
+        ).join('');
+        const scls = statusClass(item.itemStatus || '');
+        return `
+            <div class="packing-item ${item.packed ? 'packed' : ''} ${item.waitingOn ? 'waiting-flag' : ''}">
+                <input type="checkbox" class="packing-checkbox" ${item.packed ? 'checked' : ''} onchange="togglePacked('${item.id}', this.checked)">
+                <div class="packing-content">
+                    <div class="packing-name">${item.name}</div>
+                    ${badges.length ? `<div class="packing-meta">${badges.join('')}</div>` : ''}
+                    ${item.notes ? `<div class="packing-notes">${item.notes}</div>` : ''}
+                    <div class="item-status-row">
+                        <select class="item-status-select ${scls}" onchange="updateItemStatus('${item.id}', this.value, this)">${statusOpts}</select>
+                        <input type="text" class="item-location-input" placeholder="📍 Current location..."
+                            value="${item.currentLocation || ''}"
+                            onblur="updateItemLocation('${item.id}', this.value)"
+                            onkeydown="if(event.key==='Enter'){this.blur();}">
+                        <button class="btn-waiting ${item.waitingOn ? 'active' : ''}" title="Flag as Waiting On" onclick="toggleWaiting('${item.id}', ${!item.waitingOn})">⏳</button>
                     </div>
-                `;
-                return;
-            }
-            
-            const categoryOrder = ['Documents', 'Medications', 'Clothing', 'Toiletries', 'Electronics', 'Beach/Pool', 'Accessories', 'Miscellaneous'];
-            const categoryIcons = {
-                'Documents': '📄',
-                'Medications': '💊',
-                'Clothing': '👕',
-                'Toiletries': '🧴',
-                'Electronics': '🔌',
-                'Beach/Pool': '🏖️',
-                'Accessories': '👜',
-                'Miscellaneous': '📦'
-            };
-            
-            categoryOrder.forEach(catName => {
-                if (!categories[catName]) return;
-                
-                const items = categories[catName];
-                const icon = categoryIcons[catName] || '📦';
-                
-                let itemsHTML = '';
-                items.forEach(item => {
-                    const badges = [];
-                    if (item.person) badges.push(`<span class="meta-badge badge-person">${item.person}</span>`);
-                    if (item.quantity > 1) badges.push(`<span class="meta-badge badge-qty">Qty: ${item.quantity}</span>`);
-                    if (item.house) badges.push(`<span class="meta-badge badge-house">${item.house}</span>`);
-                    
-                    itemsHTML += `
-                        <div class="packing-item ${item.packed ? 'packed' : ''}">
-                            <input type="checkbox" class="packing-checkbox" 
-                                ${item.packed ? 'checked' : ''} 
-                                onchange="togglePacked('${item.id}', this.checked)">
-                            <div class="packing-content">
-                                <div class="packing-name">${item.name}</div>
-                                ${badges.length > 0 ? `<div class="packing-meta">${badges.join('')}</div>` : ''}
-                                ${item.notes ? `<div class="packing-notes">${item.notes}</div>` : ''}
-                            </div>
-                            <div class="item-actions">
-                                <button class="btn-edit-item" onclick="editItem('${item.id}')">Edit</button>
-                                <button class="btn-delete-item" onclick="deleteItem('${item.id}')">Del</button>
-                            </div>
+                </div>
+                <div class="item-actions">
+                    <button class="btn-edit-item"   onclick="editItem('${item.id}')">Edit</button>
+                    <button class="btn-delete-item" onclick="deleteItem('${item.id}')">Del</button>
+                </div>
+            </div>`;
+    }
+
+    function renderProgressBars() {
+        function set(barId, pctId, p, t) {
+            const v = t === 0 ? 0 : Math.round((p / t) * 100);
+            const bar = document.getElementById(barId); if (bar) bar.style.width = v + '%';
+            const pct = document.getElementById(pctId); if (pct) pct.textContent = v + '%';
+        }
+        ['Mary','Brian','Shared'].forEach(person => {
+            const sub = allItems.filter(i => i.person === person);
+            set(`prog-${person.toLowerCase()}`, `pct-${person.toLowerCase()}`, sub.filter(i => i.packed).length, sub.length);
+        });
+        set('prog-total', 'pct-total', allItems.filter(i => i.packed).length, allItems.length);
+    }
+
+    function renderWeightBars() {
+        const bagTotals = {};
+        allItems.forEach(item => {
+            if (!item.bag || !item.weightLbs) return;
+            bagTotals[item.bag] = (bagTotals[item.bag] || 0) + parseFloat(item.weightLbs) * (item.quantity || 1);
+        });
+        const c = document.getElementById('weight-bags-container');
+        if (!c) return;
+        if (!Object.keys(bagTotals).length) {
+            c.innerHTML = `<div style="font-size:0.85em;color:#aaa;text-align:center;padding:4px 0;">Add weight when editing items to see bag totals.</div>`;
+            return;
+        }
+        c.innerHTML = Object.entries(bagTotals).map(([bag, w]) => {
+            const pct  = Math.min((w / BAG_LIMIT_LBS) * 100, 100);
+            const cls  = pct >= 100 ? 'over' : pct >= 80 ? 'warn' : '';
+            const note = pct >= 100 ? ' ⚠️ OVER' : pct >= 80 ? ' ⚠️ Almost full' : '';
+            return `<div class="weight-bag-row">
+                <div class="weight-bag-label">${bag}</div>
+                <div class="weight-bar-track"><div class="weight-bar-fill ${cls}" style="width:${pct}%"></div></div>
+                <div class="weight-bag-num">${w.toFixed(1)} lb${note}</div>
+            </div>`;
+        }).join('');
+    }
+
+    function renderBagFilterButtons() {
+        const bags = [...new Set(allItems.map(i => i.bag).filter(Boolean))].sort();
+        const c = document.getElementById('bag-filter-btns');
+        if (!c) return;
+        c.innerHTML = bags.map(bag =>
+            `<button class="filter-btn" onclick="applyFilter('bag',${JSON.stringify(bag)},this)">🧳 ${bag}</button>`
+        ).join('');
+    }
+
+    // ── Pack Day ───────────────────────────────────────────────────────────────
+    function enterPackDay() {
+        packDayMode = true; packDayBagFilter = 'all';
+        document.body.classList.add('packday-mode');
+        const pdbf = document.getElementById('packday-bag-filter');
+        pdbf.style.display = 'flex';
+        renderPackDayBagFilterButtons();
+        renderPackDay();
+        window.scrollTo(0, 0);
+    }
+    function exitPackDay() {
+        packDayMode = false;
+        document.body.classList.remove('packday-mode');
+        document.getElementById('packday-bag-filter').style.display = 'none';
+        renderAll();
+        window.scrollTo(0, 0);
+    }
+    function renderPackDayBagFilterButtons() {
+        const bags = [...new Set(allItems.map(i => i.bag).filter(Boolean))].sort();
+        const c = document.getElementById('packday-bag-filter');
+        if (!c) return;
+        c.innerHTML = `<button class="filter-btn active" style="background:linear-gradient(135deg,#00d2ff,#3a7bd5);color:white;border-color:#00d2ff;" onclick="setPackDayBagFilter('all',this)">All Bags</button>`;
+        bags.forEach(bag => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.style.cssText = 'color:#7fb3c8;border-color:#2d4a5e;background:#253545;';
+            btn.textContent = '🧳 ' + bag;
+            btn.onclick = function(){ setPackDayBagFilter(bag, this); };
+            c.appendChild(btn);
+        });
+    }
+    function setPackDayBagFilter(bag, btn) {
+        packDayBagFilter = bag;
+        document.querySelectorAll('#packday-bag-filter button').forEach(b => {
+            b.style.background = '#253545'; b.style.color = '#7fb3c8'; b.style.borderColor = '#2d4a5e';
+        });
+        btn.style.background = 'linear-gradient(135deg,#00d2ff,#3a7bd5)';
+        btn.style.color = 'white'; btn.style.borderColor = '#00d2ff';
+        renderPackDay();
+    }
+    function renderPackDay() {
+        const unpacked = allItems.filter(i => !i.packed);
+        const container = document.getElementById('packing-container');
+        container.innerHTML = '';
+        if (unpacked.length === 0) {
+            container.innerHTML = `<div class="packday-done"><div class="done-emoji">🎉</div><h2>Everything is packed!</h2><p>You're ready to set sail. Bon voyage! 🚢</p></div>`;
+            return;
+        }
+        const UNASSIGNED = '(No Bag Assigned)';
+        const byBag = {};
+        unpacked.forEach(item => {
+            const key = item.bag || UNASSIGNED;
+            if (!byBag[key]) byBag[key] = [];
+            byBag[key].push(item);
+        });
+        const bagsToShow = packDayBagFilter === 'all' ? Object.keys(byBag) : [packDayBagFilter].filter(b => byBag[b]);
+        if (!bagsToShow.length) {
+            container.innerHTML = `<div class="packday-done"><div class="done-emoji">✅</div><h2>All packed for this bag!</h2><p>Switch bags or exit Pack Day.</p></div>`;
+            return;
+        }
+        bagsToShow.forEach(bagName => {
+            const items = byBag[bagName];
+            const totalInBag = allItems.filter(i => (i.bag || UNASSIGNED) === bagName).length;
+            const doneCount  = totalInBag - items.length;
+            const html = items.map(item => `
+                <div class="packday-item ${item.waitingOn ? 'waiting' : ''}">
+                    <input type="checkbox" class="packing-checkbox" onchange="togglePackedPackDay('${item.id}', this.checked)">
+                    <div class="packing-content">
+                        <div class="packing-name" style="color:#e8f4f8;">${item.name}</div>
+                        <div class="packing-meta">
+                            ${item.person ? `<span class="meta-badge badge-person">${item.person}</span>` : ''}
+                            ${(item.quantity||1) > 1 ? `<span class="meta-badge badge-qty">Qty: ${item.quantity}</span>` : ''}
+                            ${item.category ? `<span class="meta-badge" style="background:#1a3a4a;color:#7fb3c8;">${item.category}</span>` : ''}
+                            ${item.waitingOn ? `<span class="meta-badge badge-waiting">⏳ Waiting On</span>` : ''}
+                            ${item.currentLocation ? `<span class="meta-badge" style="background:#1e3a2f;color:#4caf8a;">📍 ${item.currentLocation}</span>` : ''}
                         </div>
-                    `;
-                });
-                
-                container.innerHTML += `
-                    <div class="category-section">
-                        <div class="category-header">${icon} ${catName}</div>
-                        ${itemsHTML}
+                        ${item.notes ? `<div class="packing-notes" style="color:#7fb3c8;">${item.notes}</div>` : ''}
                     </div>
-                `;
-            });
-        }
-        
-        async function togglePacked(itemId, packed) {
-            await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ packed });
-            await loadPackingList();
-        }
-        
-        function showAddItemModal() {
-            editingItemId = null;
-            document.getElementById('modal-title').textContent = 'Add Packing Item';
-            document.getElementById('itemForm').reset();
-            document.getElementById('quantity').value = 1;
-            document.getElementById('itemModal').style.display = 'block';
-        }
-        
-        function editItem(itemId) {
-            editingItemId = itemId;
-            const item = allItems.find(i => i.id === itemId);
-            if (!item) return;
-            
-            document.getElementById('modal-title').textContent = 'Edit Packing Item';
-            document.getElementById('itemName').value = item.name;
-            document.getElementById('quantity').value = item.quantity || 1;
-            document.getElementById('person').value = item.person || 'Shared';
-            document.getElementById('category').value = item.category || 'Misc';
-            document.getElementById('house').value = item.house || '';
-            document.getElementById('notes').value = item.notes || '';
-            document.getElementById('itemModal').style.display = 'block';
-        }
-        
-        async function deleteItem(itemId) {
-            if (!confirm('Delete this item?')) return;
-            await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).delete();
-            await loadPackingList();
-        }
-        
-        function closeModal() {
-            document.getElementById('itemModal').style.display = 'none';
-        }
-        
-        document.getElementById('itemForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const itemData = {
-                name: document.getElementById('itemName').value,
-                quantity: parseInt(document.getElementById('quantity').value) || 1,
-                person: document.getElementById('person').value,
-                category: document.getElementById('category').value,
-                house: document.getElementById('house').value,
-                notes: document.getElementById('notes').value,
-                packed: false,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            if (editingItemId) {
-                const existingItem = allItems.find(i => i.id === editingItemId);
-                itemData.packed = existingItem ? existingItem.packed : false;
-                await db.collection('trips').doc(activeTripId).collection('packing').doc(editingItemId).update(itemData);
-            } else {
-                await db.collection('trips').doc(activeTripId).collection('packing').add(itemData);
-            }
-            
-            closeModal();
-            await loadPackingList();
+                </div>`).join('');
+            container.innerHTML += `
+                <div class="packday-bag-section">
+                    <div class="packday-bag-header">🧳 ${bagName}</div>
+                    <div class="packday-bag-subheader">${doneCount} of ${totalInBag} packed · ${items.length} remaining</div>
+                    ${html}
+                </div>`;
         });
+    }
+
+    async function togglePackedPackDay(itemId, packed) {
+        await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ packed });
+        const item = allItems.find(i => i.id === itemId);
+        if (item) item.packed = packed;
+        if (packed) showToast('✅ Packed!');
+        renderPackDay();
+    }
+
+    // ── Firestore updates ──────────────────────────────────────────────────────
+    async function togglePacked(itemId, packed) {
+        await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ packed });
+        const item = allItems.find(i => i.id === itemId);
+        if (item) item.packed = packed;
+        renderProgressBars();
+        renderPackingList();
+    }
+    async function updateItemStatus(itemId, value, selectEl) {
+        selectEl.className = `item-status-select ${statusClass(value)}`;
+        await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ itemStatus: value });
+        const item = allItems.find(i => i.id === itemId);
+        if (item) item.itemStatus = value;
+    }
+    async function updateItemLocation(itemId, value) {
+        await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ currentLocation: value });
+        const item = allItems.find(i => i.id === itemId);
+        if (item) item.currentLocation = value;
+    }
+    async function toggleWaiting(itemId, val) {
+        await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ waitingOn: val });
+        const item = allItems.find(i => i.id === itemId);
+        if (item) item.waitingOn = val;
+        renderPackingList();
+        showToast(val ? '⏳ Marked as Waiting On' : '✅ Waiting On cleared');
+    }
+    async function removeDuplicates() {
+        if (!confirm('Remove duplicate items (same name + category + person), keeping the oldest? Continue?')) return;
+        const seen = new Set(); const toDelete = [];
+        [...allItems].sort((a,b) => (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0))
+            .forEach(item => {
+                const key = `${(item.name||'').trim().toLowerCase()}|${(item.category||'').toLowerCase()}|${(item.person||'').toLowerCase()}`;
+                if (seen.has(key)) toDelete.push(item.id); else seen.add(key);
+            });
+        if (!toDelete.length) { showToast('✅ No duplicates found!'); return; }
+        const batch = db.batch();
+        toDelete.forEach(id => batch.delete(db.collection('trips').doc(activeTripId).collection('packing').doc(id)));
+        await batch.commit();
+        showToast(`🧹 Removed ${toDelete.length} duplicate${toDelete.length > 1 ? 's' : ''}!`);
+        await loadPackingList();
+    }
+    async function clearAllStatuses() {
+        if (!confirm('Reset all item statuses and current locations to blank?')) return;
+        const batch = db.batch();
+        allItems.forEach(item => batch.update(
+            db.collection('trips').doc(activeTripId).collection('packing').doc(item.id),
+            { itemStatus: '', currentLocation: '' }
+        ));
+        await batch.commit();
+        showToast('🔄 All statuses reset!');
+        await loadPackingList();
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function showAddItemModal() {
+        editingItemId = null;
+        document.getElementById('modal-title').textContent = 'Add Packing Item';
+        document.getElementById('itemForm').reset();
+        document.getElementById('quantity').value = 1;
+        document.getElementById('itemModal').style.display = 'block';
+    }
+    function editItem(itemId) {
+        editingItemId = itemId;
+        const item = allItems.find(i => i.id === itemId);
+        if (!item) return;
+        document.getElementById('modal-title').textContent = 'Edit Packing Item';
+        document.getElementById('itemName').value  = item.name;
+        document.getElementById('quantity').value  = item.quantity || 1;
+        document.getElementById('weightLbs').value = item.weightLbs || '';
+        document.getElementById('person').value    = item.person || 'Shared';
+        document.getElementById('bag').value       = item.bag || '';
+        document.getElementById('category').value  = item.category || 'Misc';
+        document.getElementById('house').value     = item.house || '';
+        document.getElementById('notes').value     = item.notes || '';
+        document.getElementById('itemModal').style.display = 'block';
+    }
+    async function deleteItem(itemId) {
+        if (!confirm('Delete this item?')) return;
+        await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).delete();
+        await loadPackingList();
+    }
+    function closeModal() { document.getElementById('itemModal').style.display = 'none'; }
+
+    document.getElementById('itemForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const wv = document.getElementById('weightLbs').value;
+        const itemData = {
+            name:      document.getElementById('itemName').value,
+            quantity:  parseInt(document.getElementById('quantity').value) || 1,
+            weightLbs: wv ? parseFloat(wv) : null,
+            person:    document.getElementById('person').value,
+            bag:       document.getElementById('bag').value,
+            category:  document.getElementById('category').value,
+            house:     document.getElementById('house').value,
+            notes:     document.getElementById('notes').value,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        if (editingItemId) {
+            const existing = allItems.find(i => i.id === editingItemId);
+            itemData.packed = existing ? existing.packed : false;
+            await db.collection('trips').doc(activeTripId).collection('packing').doc(editingItemId).update(itemData);
+        } else {
+            itemData.packed    = false;
+            itemData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            await db.collection('trips').doc(activeTripId).collection('packing').add(itemData);
+        }
+        closeModal();
+        await loadPackingList();
+    });
     </script>
 </body>
 </html>
