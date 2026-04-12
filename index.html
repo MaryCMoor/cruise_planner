@@ -26,33 +26,26 @@
         .header h1 { font-size: 2.2em; margin-bottom: 5px; }
         .header p { opacity: 0.9; }
         .container { padding: 15px; }
-        .no-trip-banner {
+
+        /* ── Cards ── */
+        .card {
             background: white;
-            padding: 30px 20px;
             border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 20px;
             margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .no-trip-banner h2 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .no-trip-banner p {
-            color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-        .btn-setup {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
+        .card-title {
+            font-size: 1.1em;
             font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        /* ── Countdown ── */
         .countdown-card {
             background: white;
             padding: 30px 20px;
@@ -61,228 +54,165 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             text-align: center;
         }
-        .countdown-label {
-            font-size: 1.1em;
-            color: #7f8c8d;
-            margin-bottom: 10px;
-        }
+        .countdown-label { font-size: 1.1em; color: #7f8c8d; margin-bottom: 10px; }
         .countdown-number {
-            font-size: 4em;
-            font-weight: 900;
+            font-size: 4em; font-weight: 900;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
         }
-        .countdown-text {
-            font-size: 1.2em;
-            color: #2c3e50;
-            font-weight: 700;
-        }
-        .countdown-subtext {
-            font-size: 0.9em;
-            color: #7f8c8d;
-            margin-top: 10px;
-        }
-        .trip-info-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .trip-name {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .trip-dates {
-            text-align: center;
-            color: #7f8c8d;
-            margin-bottom: 15px;
-        }
-        .trip-members {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-        }
-        .members-header {
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .member-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-        }
+        .countdown-text { font-size: 1.2em; color: #2c3e50; font-weight: 700; }
+        .countdown-subtext { font-size: 0.9em; color: #7f8c8d; margin-top: 10px; }
+
+        /* ── Trip info ── */
+        .trip-info-card { background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .trip-name { font-size: 1.5em; font-weight: 700; color: #2c3e50; margin-bottom: 10px; text-align: center; }
+        .trip-dates { text-align: center; color: #7f8c8d; margin-bottom: 15px; }
+        .trip-members { background: #f8f9fa; padding: 15px; border-radius: 10px; }
+        .members-header { font-weight: 700; color: #2c3e50; margin-bottom: 10px; }
+        .member-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
         .member-avatar {
-            width: 32px;
-            height: 32px;
+            width: 32px; height: 32px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.9em;
+            color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9em;
         }
-        .packing-progress-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .progress-header {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .progress-bar-container {
-            background: #e0e0e0;
-            border-radius: 20px;
-            height: 30px;
-            overflow: hidden;
-            margin-bottom: 10px;
-            position: relative;
-        }
+
+        /* ── Packing progress ── */
+        .packing-progress-card { background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .progress-header { font-size: 1.2em; font-weight: 700; color: #2c3e50; margin-bottom: 15px; text-align: center; }
+        .progress-bar-container { background: #e0e0e0; border-radius: 20px; height: 30px; overflow: hidden; margin-bottom: 10px; }
         .progress-bar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100%;
-            border-radius: 20px;
-            transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 0.9em;
+            height: 100%; border-radius: 20px; transition: width 0.5s ease;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; font-size: 0.9em; min-width: 40px;
         }
-        .progress-label {
-            text-align: center;
-            color: #7f8c8d;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: 900;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        .stat-label {
-            font-size: 0.9em;
-            color: #7f8c8d;
-            font-weight: 600;
-        }
-        .budget-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            margin-bottom: 15px;
-        }
-        .budget-header {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .budget-amount {
-            font-size: 2.5em;
-            font-weight: 900;
-            color: #27ae60;
-            text-align: center;
-            margin-bottom: 5px;
-        }
-        .budget-label {
-            text-align: center;
-            color: #7f8c8d;
-            font-size: 0.9em;
-        }
-        .quick-links {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .quick-link {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            text-align: center;
-            text-decoration: none;
-            color: #2c3e50;
-            transition: transform 0.3s;
-        }
-        .quick-link:hover {
-            transform: translateY(-5px);
-        }
-        .quick-link-icon {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-        .quick-link-text {
-            font-weight: 700;
-            font-size: 1em;
-        }
-        .logout-btn {
-            width: 100%;
-            padding: 12px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+        .progress-label { text-align: center; color: #7f8c8d; font-size: 0.9em; margin-top: 5px; }
+
+        /* ── Stats grid ── */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); text-align: center; }
+        .stat-number { font-size: 2.5em; font-weight: 900; color: #2c3e50; margin-bottom: 5px; }
+        .stat-label { font-size: 0.9em; color: #7f8c8d; font-weight: 600; }
+
+        /* ── Budget hero ── */
+        .budget-hero {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            justify-content: space-around;
+            border-radius: 15px;
+            padding: 25px 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            color: white;
+            text-align: center;
+        }
+        .budget-hero-label { font-size: 0.85em; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .budget-hero-amount { font-size: 3em; font-weight: 900; margin-bottom: 4px; }
+        .budget-hero-sub { font-size: 0.9em; opacity: 0.75; }
+
+        .budget-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .budget-split-card {
+            background: white;
+            border-radius: 15px;
+            padding: 18px 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .budget-split-label { font-size: 0.78em; color: #7f8c8d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .budget-split-amount { font-size: 1.7em; font-weight: 900; color: #2c3e50; margin-bottom: 4px; }
+        .budget-split-note { font-size: 0.75em; color: #7f8c8d; }
+
+        /* ── Booking status row ── */
+        .status-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .status-card {
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+        .status-card.booked { background: #d4edda; }
+        .status-card.not-booked { background: #f8d7da; }
+        .status-card.waiting { background: #fff3cd; }
+        .status-num { font-size: 2em; font-weight: 900; margin-bottom: 2px; }
+        .status-card.booked .status-num { color: #155724; }
+        .status-card.not-booked .status-num { color: #721c24; }
+        .status-card.waiting .status-num { color: #856404; }
+        .status-lbl { font-size: 0.7em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-card.booked .status-lbl { color: #155724; }
+        .status-card.not-booked .status-lbl { color: #721c24; }
+        .status-card.waiting .status-lbl { color: #856404; }
+
+        /* ── Charts ── */
+        .chart-wrap { position: relative; width: 100%; }
+        .chart-legend {
+            display: flex; flex-wrap: wrap; gap: 10px;
+            margin-bottom: 12px; font-size: 0.8em; color: #555;
+        }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+        /* ── Quick links ── */
+        .quick-links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .quick-link {
+            background: white; padding: 20px; border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            text-align: center; text-decoration: none; color: #2c3e50; transition: transform 0.3s;
+        }
+        .quick-link:hover { transform: translateY(-5px); }
+        .quick-link-icon { font-size: 3em; margin-bottom: 10px; }
+        .quick-link-text { font-weight: 700; font-size: 1em; }
+        .logout-btn { width: 100%; padding: 12px; background: #e74c3c; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+
+        /* ── No trip ── */
+        .no-trip-banner { background: white; padding: 30px 20px; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); margin-bottom: 15px; }
+        .no-trip-banner h2 { color: #2c3e50; margin-bottom: 10px; }
+        .no-trip-banner p { color: #7f8c8d; margin-bottom: 20px; }
+        .btn-setup { padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; }
+
+        /* ── Bar item (card breakdown) ── */
+        .bar-item { margin-bottom: 12px; }
+        .bar-label-row { display: flex; justify-content: space-between; font-size: 0.85em; margin-bottom: 4px; color: #2c3e50; }
+        .bar-label-name { font-weight: 600; }
+        .bar-label-amt { color: #7f8c8d; }
+        .bar-track { background: #e0e0e0; border-radius: 10px; height: 8px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 10px; transition: width 0.6s ease; }
+
+        /* ── Day type breakdown ── */
+        .type-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 12px; border-radius: 20px; font-size: 0.8em;
+            font-weight: 700; margin: 4px;
+        }
+
+        /* ── Bottom nav ── */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex; justify-content: space-around;
             padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-            z-index: 9999;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3); z-index: 9999;
         }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.6em;
-            font-weight: 600;
-            padding: 8px 6px;
-            min-width: 48px;
-        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: rgba(255,255,255,0.7); font-size: 0.6em; font-weight: 600; padding: 8px 6px; min-width: 48px; }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
+
+        /* ── Section divider ── */
+        .section-divider {
+            font-size: 0.7em; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; color: rgba(255,255,255,0.7);
+            padding: 8px 4px 4px; margin-bottom: 6px;
+        }
     </style>
 </head>
 <body>
@@ -291,42 +221,24 @@
         <p>Your collaborative trip organizer</p>
     </div>
 
-    <div class="container" id="main-content"></div>
+    <div class="container" id="main-content">
+        <div style="text-align:center;color:white;padding:40px 0;opacity:0.8;">Loading your dashboard…</div>
+    </div>
 
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active">
-            <div class="nav-item-icon">🏠</div>
-            <div>Home</div>
-        </a>
-        <a href="itinerary.html" class="nav-item">
-            <div class="nav-item-icon">🗺️</div>
-            <div>Trip</div>
-        </a>
-        <a href="schedule.html" class="nav-item">
-            <div class="nav-item-icon">🗓️</div>
-            <div>Days</div>
-        </a>
-        <a href="packing.html" class="nav-item">
-            <div class="nav-item-icon">🧳</div>
-            <div>Pack</div>
-        </a>
-        <a href="notes.html" class="nav-item">
-            <div class="nav-item-icon">📝</div>
-            <div>Notes</div>
-        </a>
-        <a href="journal.html" class="nav-item">
-            <div class="nav-item-icon">📔</div>
-            <div>Journal</div>
-        </a>
-        <a href="settings.html" class="nav-item">
-            <div class="nav-item-icon">⚙️</div>
-            <div>Set</div>
-        </a>
+        <a href="index.html" class="nav-item active"><div class="nav-item-icon">🏠</div><div>Home</div></a>
+        <a href="itinerary.html" class="nav-item"><div class="nav-item-icon">🗺️</div><div>Trip</div></a>
+        <a href="schedule.html" class="nav-item"><div class="nav-item-icon">🗓️</div><div>Days</div></a>
+        <a href="packing.html" class="nav-item"><div class="nav-item-icon">🧳</div><div>Pack</div></a>
+        <a href="notes.html" class="nav-item"><div class="nav-item-icon">📝</div><div>Notes</div></a>
+        <a href="journal.html" class="nav-item"><div class="nav-item-icon">📔</div><div>Journal</div></a>
+        <a href="settings.html" class="nav-item"><div class="nav-item-icon">⚙️</div><div>Set</div></a>
     </nav>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
     <script>
         const firebaseConfig = {
@@ -337,45 +249,34 @@
             messagingSenderId: "554027862680",
             appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
         };
-        
+
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        
-        db.enablePersistence({ synchronizeTabs: true })
-          .catch((err) => console.log('Offline persistence:', err.code));
-        
+        db.enablePersistence({ synchronizeTabs: true }).catch(e => console.log('Offline:', e.code));
+
+        const EUR_TO_USD = 1.08;
+
         let currentUser = null;
         let activeTripId = null;
-        
+
         auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-            } else {
-                currentUser = user;
-                await loadDashboard();
-            }
+            if (!user) { window.location.href = 'login.html'; return; }
+            currentUser = user;
+            await loadDashboard();
         });
-        
+
         async function loadDashboard() {
             activeTripId = localStorage.getItem('activeTripId');
-            
             if (!activeTripId) {
                 const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                const userData = userDoc.data();
-                activeTripId = userData?.activeTrip;
-                if (activeTripId) {
-                    localStorage.setItem('activeTripId', activeTripId);
-                }
+                activeTripId = userDoc.data()?.activeTrip;
+                if (activeTripId) localStorage.setItem('activeTripId', activeTripId);
             }
-            
-            if (!activeTripId) {
-                showNoTripDashboard();
-            } else {
-                await showTripDashboard();
-            }
+            if (!activeTripId) { showNoTripDashboard(); return; }
+            await showTripDashboard();
         }
-        
+
         function showNoTripDashboard() {
             document.getElementById('main-content').innerHTML = `
                 <div class="no-trip-banner">
@@ -383,198 +284,428 @@
                     <p>Get started by creating your first trip</p>
                     <a href="settings.html" class="btn-setup">Create Trip</a>
                 </div>
-                
                 <div class="quick-links">
-                    <a href="settings.html" class="quick-link">
-                        <div class="quick-link-icon">⚙️</div>
-                        <div class="quick-link-text">Settings</div>
-                    </a>
-                    <div class="quick-link" onclick="logout()">
-                        <div class="quick-link-icon">🚪</div>
-                        <div class="quick-link-text">Logout</div>
-                    </div>
-                </div>
-            `;
+                    <a href="settings.html" class="quick-link"><div class="quick-link-icon">⚙️</div><div class="quick-link-text">Settings</div></a>
+                    <div class="quick-link" onclick="logout()"><div class="quick-link-icon">🚪</div><div class="quick-link-text">Logout</div></div>
+                </div>`;
         }
-        
+
+        // ─── Cost helpers ────────────────────────────────────────────────────
+        function toUSD(cost, currency) {
+            const c = parseFloat(cost) || 0;
+            return currency === 'EUR' ? c * EUR_TO_USD : c;
+        }
+        function activityTotalUSD(act) {
+            const base = toUSD(act.cost, act.currency);
+            return act.perPerson ? base * 2 : base;
+        }
+        function fmtUSD(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        // ─── Chart registry (destroy before re-render) ────────────────────
+        const chartRegistry = {};
+        function makeChart(id, config) {
+            if (chartRegistry[id]) { chartRegistry[id].destroy(); }
+            const ctx = document.getElementById(id);
+            if (!ctx) return;
+            chartRegistry[id] = new Chart(ctx, config);
+        }
+
         async function showTripDashboard() {
             const tripDoc = await db.collection('trips').doc(activeTripId).get();
-            
-            if (!tripDoc.exists) {
-                showNoTripDashboard();
-                return;
-            }
-            
+            if (!tripDoc.exists) { showNoTripDashboard(); return; }
             const trip = tripDoc.data();
-            
+
+            // ── Countdown ──────────────────────────────────────────────────
             const embarkDate = new Date('2026-04-19');
-            const endDate = new Date(trip.endDate.split('-').join('/'));
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            embarkDate.setHours(0, 0, 0, 0);
-            
-            const daysUntilEmbark = Math.ceil((embarkDate - today) / (1000 * 60 * 60 * 24));
-            const cruiseStarted = today >= embarkDate;
-            const cruiseEnded = today > endDate;
-            
+            const endDate    = new Date(trip.endDate.split('-').join('/'));
+            const today      = new Date(); today.setHours(0,0,0,0);
+            embarkDate.setHours(0,0,0,0);
+            const daysUntil  = Math.ceil((embarkDate - today) / 86400000);
+            const started    = today >= embarkDate;
+            const ended      = today > endDate;
+
             let countdownHTML = '';
-            if (cruiseEnded) {
-                countdownHTML = `
-                    <div class="countdown-card">
-                        <div class="countdown-label">Cruise Complete!</div>
-                        <div class="countdown-number">✨</div>
-                        <div class="countdown-text">Amazing memories made!</div>
-                        <div class="countdown-subtext">Hope you had a wonderful time!</div>
-                    </div>
-                `;
-            } else if (cruiseStarted) {
-                const daysRemaining = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
-                countdownHTML = `
-                    <div class="countdown-card">
-                        <div class="countdown-label">Cruise in Progress!</div>
-                        <div class="countdown-number">🚢</div>
-                        <div class="countdown-text">${daysRemaining} days remaining</div>
-                        <div class="countdown-subtext">Enjoy every moment!</div>
-                    </div>
-                `;
+            if (ended) {
+                countdownHTML = `<div class="countdown-card"><div class="countdown-label">Cruise Complete!</div><div class="countdown-number">✨</div><div class="countdown-text">Amazing memories made!</div><div class="countdown-subtext">Hope you had a wonderful time!</div></div>`;
+            } else if (started) {
+                const rem = Math.ceil((endDate - today) / 86400000);
+                countdownHTML = `<div class="countdown-card"><div class="countdown-label">Cruise in Progress!</div><div class="countdown-number">🚢</div><div class="countdown-text">${rem} days remaining</div><div class="countdown-subtext">Enjoy every moment!</div></div>`;
             } else {
-                countdownHTML = `
-                    <div class="countdown-card">
-                        <div class="countdown-label">Days Until Embarkation</div>
-                        <div class="countdown-number">${daysUntilEmbark > 0 ? daysUntilEmbark : 0}</div>
-                        <div class="countdown-text">${daysUntilEmbark > 0 ? 'Days to go!' : daysUntilEmbark === 0 ? 'Embark TODAY!' : 'Starting soon!'}</div>
-                        <div class="countdown-subtext">Setting sail April 19, 2026</div>
-                    </div>
-                `;
+                countdownHTML = `<div class="countdown-card"><div class="countdown-label">Days Until Embarkation</div><div class="countdown-number">${Math.max(0,daysUntil)}</div><div class="countdown-text">${daysUntil > 0 ? 'Days to go!' : 'Embark TODAY!'}</div><div class="countdown-subtext">Setting sail April 19, 2026</div></div>`;
             }
-            
-            const itinerarySnapshot = await db.collection('trips').doc(activeTripId).collection('itinerary').get();
-            const packingSnapshot = await db.collection('trips').doc(activeTripId).collection('packing').get();
-            const notesCount = await db.collection('trips').doc(activeTripId).collection('notes').get();
-            const journalCount = await db.collection('trips').doc(activeTripId).collection('journal').get();
-            
-            const totalPacking = packingSnapshot.size;
+
+            // ── Data snapshots ─────────────────────────────────────────────
+            const [itSnap, packSnap, notesSnap, journalSnap] = await Promise.all([
+                db.collection('trips').doc(activeTripId).collection('itinerary').get(),
+                db.collection('trips').doc(activeTripId).collection('packing').get(),
+                db.collection('trips').doc(activeTripId).collection('notes').get(),
+                db.collection('trips').doc(activeTripId).collection('journal').get(),
+            ]);
+
+            const activities = [];
+            itSnap.forEach(d => activities.push({ id: d.id, ...d.data() }));
+
+            // ── Packing ────────────────────────────────────────────────────
             let packedCount = 0;
-            let totalCost = 0;
-            
-            packingSnapshot.forEach(doc => {
-                if (doc.data().packed) packedCount++;
+            packSnap.forEach(d => { if (d.data().packed) packedCount++; });
+            const packPct = packSnap.size > 0 ? Math.round((packedCount / packSnap.size) * 100) : 0;
+
+            // ── Cost analysis ──────────────────────────────────────────────
+            const confirmed = activities.filter(a => a.priority !== 'backup');
+            const backup    = activities.filter(a => a.priority === 'backup');
+
+            const totalUSD   = activities.reduce((s,a) => s + activityTotalUSD(a), 0);
+            const primaryUSD = confirmed.reduce((s,a) => s + activityTotalUSD(a), 0);
+            const backupUSD  = backup.reduce((s,a) => s + activityTotalUSD(a), 0);
+
+            // ── Booking status counts ──────────────────────────────────────
+            const statusCounts = { booked: 0, not_booked: 0, waiting: 0 };
+            confirmed.forEach(a => {
+                const s = a.bookingStatus || 'not_booked';
+                if (statusCounts[s] !== undefined) statusCounts[s]++;
             });
-            
-            itinerarySnapshot.forEach(doc => {
-                const cost = doc.data().cost || 0;
-                totalCost += parseFloat(cost);
+
+            // ── Credit card breakdown ──────────────────────────────────────
+            const cardTotals = {};
+            activities.forEach(a => {
+                const card = a.creditCard || 'Unknown / Not Set';
+                const amt  = activityTotalUSD(a);
+                cardTotals[card] = (cardTotals[card] || 0) + amt;
             });
-            
-            const packingPercent = totalPacking > 0 ? Math.round((packedCount / totalPacking) * 100) : 0;
-            
+            const cardEntries = Object.entries(cardTotals).sort((a,b) => b[1]-a[1]);
+
+            // ── Booking site breakdown ─────────────────────────────────────
+            const siteTotals = {};
+            const siteCounts = {};
+            activities.forEach(a => {
+                const site = a.bookingSite || 'Unknown';
+                siteTotals[site] = (siteTotals[site] || 0) + activityTotalUSD(a);
+                siteCounts[site] = (siteCounts[site] || 0) + 1;
+            });
+            const siteEntries = Object.entries(siteTotals).sort((a,b) => b[1]-a[1]);
+
+            // ── Activity type breakdown ────────────────────────────────────
+            const typeTotals = {};
+            const typeCounts = {};
+            const typeNames  = { excursion: 'Excursions', dining: 'Dining', onboard: 'Onboard', general: 'General' };
+            activities.forEach(a => {
+                const t = a.activityType || 'general';
+                typeTotals[t] = (typeTotals[t] || 0) + activityTotalUSD(a);
+                typeCounts[t] = (typeCounts[t] || 0) + 1;
+            });
+
+            // ── Per-person cost (confirmed only, 2 travelers) ──────────────
+            const perPersonUSD = primaryUSD / 2;
+
+            // ── Account holder breakdown ───────────────────────────────────
+            const holderTotals = {};
+            activities.forEach(a => {
+                const h = a.accountHolder || 'Unassigned';
+                holderTotals[h] = (holderTotals[h] || 0) + activityTotalUSD(a);
+            });
+
+            // ── Members ───────────────────────────────────────────────────
             let membersHTML = '<div class="members-header">Trip Members:</div>';
             for (const memberId of trip.members) {
-                const userDoc = await db.collection('users').doc(memberId).get();
-                const userData = userDoc.data();
-                const initials = (userData?.name || userData?.email || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-                membersHTML += `
-                    <div class="member-item">
-                        <div class="member-avatar">${initials}</div>
-                        <div>${userData?.name || userData?.email || 'User'}</div>
-                    </div>
-                `;
+                const uDoc = await db.collection('users').doc(memberId).get();
+                const ud = uDoc.data();
+                const initials = (ud?.name || ud?.email || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+                membersHTML += `<div class="member-item"><div class="member-avatar">${initials}</div><div>${ud?.name || ud?.email || 'User'}</div></div>`;
             }
-            
+
+            // ── Color palettes ─────────────────────────────────────────────
+            const CARD_COLORS   = ['#667eea','#f39c12','#e74c3c','#27ae60','#9b59b6','#1abc9c','#e67e22','#3498db'];
+            const SITE_COLORS   = ['#2471a3','#117a65','#b7770d','#922b21','#7d3c98','#1a5276','#145a32'];
+            const TYPE_COLORS   = { excursion:'#e74c3c', dining:'#f39c12', onboard:'#9b59b6', general:'#3498db' };
+
+            // ── HTML ────────────────────────────────────────────────────────
             document.getElementById('main-content').innerHTML = `
                 ${countdownHTML}
-                
+
+                <!-- Trip info -->
                 <div class="trip-info-card">
                     <div class="trip-name">${trip.name}</div>
-                    <div class="trip-dates">${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}</div>
-                    <div class="trip-members">
-                        ${membersHTML}
-                    </div>
+                    <div class="trip-dates">${fmtDate(trip.startDate)} – ${fmtDate(trip.endDate)}</div>
+                    <div class="trip-members">${membersHTML}</div>
                 </div>
-                
+
+                <!-- Packing -->
                 <div class="packing-progress-card">
                     <div class="progress-header">🧳 Packing Progress</div>
                     <div class="progress-bar-container">
-                        <div class="progress-bar" style="width: ${packingPercent}%">
-                            ${packingPercent}%
+                        <div class="progress-bar" style="width:${packPct}%">${packPct}%</div>
+                    </div>
+                    <div class="progress-label">${packedCount} of ${packSnap.size} items packed</div>
+                </div>
+
+                <!-- Section: Budget Overview -->
+                <div class="section-divider">💰 Budget Overview</div>
+
+                <div class="budget-hero">
+                    <div class="budget-hero-label">Total Trip Spend (All Activities)</div>
+                    <div class="budget-hero-amount">${fmtUSD(totalUSD)}</div>
+                    <div class="budget-hero-sub">${activities.length} activities · 2 travelers</div>
+                </div>
+
+                <div class="budget-split">
+                    <div class="budget-split-card">
+                        <div class="budget-split-label">✅ Primary / Confirmed</div>
+                        <div class="budget-split-amount">${fmtUSD(primaryUSD)}</div>
+                        <div class="budget-split-note">${confirmed.length} activities</div>
+                    </div>
+                    <div class="budget-split-card">
+                        <div class="budget-split-label">🔄 Backup / Optional</div>
+                        <div class="budget-split-amount">${fmtUSD(backupUSD)}</div>
+                        <div class="budget-split-note">${backup.length} activities</div>
+                    </div>
+                </div>
+
+                <div class="budget-split">
+                    <div class="budget-split-card">
+                        <div class="budget-split-label">👤 Per Person (Primary)</div>
+                        <div class="budget-split-amount">${fmtUSD(perPersonUSD)}</div>
+                        <div class="budget-split-note">Brian · Mary</div>
+                    </div>
+                    <div class="budget-split-card">
+                        <div class="budget-split-label">📅 Avg Cost / Port Day</div>
+                        <div class="budget-split-amount">${fmtUSD(primaryUSD / Math.max(1, confirmed.filter(a=>a.activityType==='excursion').length || 8))}</div>
+                        <div class="budget-split-note">confirmed excursions</div>
+                    </div>
+                </div>
+
+                <!-- Booking status -->
+                <div class="section-divider">📋 Booking Status (Confirmed Activities)</div>
+                <div class="status-row">
+                    <div class="status-card booked">
+                        <div class="status-num">${statusCounts.booked}</div>
+                        <div class="status-lbl">✅ Booked</div>
+                    </div>
+                    <div class="status-card not-booked">
+                        <div class="status-num">${statusCounts.not_booked}</div>
+                        <div class="status-lbl">❌ Not Booked</div>
+                    </div>
+                    <div class="status-card waiting">
+                        <div class="status-num">${statusCounts.waiting}</div>
+                        <div class="status-lbl">⏳ Waiting</div>
+                    </div>
+                </div>
+
+                <!-- Activity type chart -->
+                <div class="section-divider">🗂️ Spending by Activity Type</div>
+                <div class="card">
+                    <div class="card-title">📊 Cost Breakdown</div>
+                    <div class="chart-legend" id="type-legend"></div>
+                    <div class="chart-wrap" style="height:220px;">
+                        <canvas id="typeChart" role="img" aria-label="Doughnut chart showing cruise spending broken down by activity type: excursions, dining, onboard, and general activities.">Spending by activity type across all cruise activities.</canvas>
+                    </div>
+                </div>
+
+                <!-- Credit card breakdown -->
+                <div class="section-divider">💳 Credit Card Charges</div>
+                <div class="card">
+                    <div class="card-title">💳 Charges by Card</div>
+                    <div id="card-bars"></div>
+                    <div style="margin-top:14px;">
+                        <div class="chart-wrap" style="height:${Math.max(180, cardEntries.length * 44 + 60)}px;">
+                            <canvas id="cardChart" role="img" aria-label="Horizontal bar chart showing total USD charged to each credit card for the cruise trip.">Credit card charge totals for the cruise trip.</canvas>
                         </div>
                     </div>
-                    <div class="progress-label">${packedCount} of ${totalPacking} items packed</div>
                 </div>
-                
-                ${totalCost > 0 ? `
-                <div class="budget-card">
-                    <div class="budget-header">💰 Trip Budget</div>
-                    <div class="budget-amount">$${totalCost.toFixed(2)}</div>
-                    <div class="budget-label">Total activities cost</div>
+
+                <!-- Booking site breakdown -->
+                <div class="section-divider">🌐 Booking Platforms</div>
+                <div class="card">
+                    <div class="card-title">🌐 Spend by Platform</div>
+                    <div class="chart-legend" id="site-legend"></div>
+                    <div class="chart-wrap" style="height:240px;">
+                        <canvas id="siteChart" role="img" aria-label="Pie chart showing the dollar amount booked through each travel platform such as Royal Caribbean, Viator, and GetYourGuide.">Spending by booking platform.</canvas>
+                    </div>
+                    <div id="site-table" style="margin-top:14px;"></div>
                 </div>
-                ` : ''}
-                
+
+                <!-- Account holder breakdown -->
+                ${Object.keys(holderTotals).length > 0 ? `
+                <div class="section-divider">👤 Account Holder Split</div>
+                <div class="card">
+                    <div class="card-title">👤 Who's Account</div>
+                    <div id="holder-bars"></div>
+                </div>` : ''}
+
+                <!-- General stats grid -->
+                <div class="section-divider">📈 Trip Stats</div>
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">${itinerarySnapshot.size}</div>
-                        <div class="stat-label">Activities</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${notesCount.size}</div>
-                        <div class="stat-label">Notes</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${journalCount.size}</div>
-                        <div class="stat-label">Journal Entries</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${trip.members.length}</div>
-                        <div class="stat-label">Members</div>
-                    </div>
+                    <div class="stat-card"><div class="stat-number">${activities.length}</div><div class="stat-label">Total Activities</div></div>
+                    <div class="stat-card"><div class="stat-number">${confirmed.length}</div><div class="stat-label">Confirmed</div></div>
+                    <div class="stat-card"><div class="stat-number">${notesSnap.size}</div><div class="stat-label">Notes</div></div>
+                    <div class="stat-card"><div class="stat-number">${journalSnap.size}</div><div class="stat-label">Journal Entries</div></div>
+                    <div class="stat-card"><div class="stat-number">${trip.members.length}</div><div class="stat-label">Travelers</div></div>
+                    <div class="stat-card"><div class="stat-number">${Object.keys(cardTotals).length}</div><div class="stat-label">Cards Used</div></div>
                 </div>
-                
+
+                <!-- Quick links -->
                 <div class="quick-links">
-                    <a href="itinerary.html" class="quick-link">
-                        <div class="quick-link-icon">🗺️</div>
-                        <div class="quick-link-text">Itinerary</div>
-                    </a>
-                    <a href="packing.html" class="quick-link">
-                        <div class="quick-link-icon">🧳</div>
-                        <div class="quick-link-text">Packing</div>
-                    </a>
-                    <a href="journal.html" class="quick-link">
-                        <div class="quick-link-icon">📔</div>
-                        <div class="quick-link-text">Journal</div>
-                    </a>
-                    <a href="settings.html" class="quick-link">
-                        <div class="quick-link-icon">⚙️</div>
-                        <div class="quick-link-text">Settings</div>
-                    </a>
+                    <a href="itinerary.html" class="quick-link"><div class="quick-link-icon">🗺️</div><div class="quick-link-text">Itinerary</div></a>
+                    <a href="packing.html"   class="quick-link"><div class="quick-link-icon">🧳</div><div class="quick-link-text">Packing</div></a>
+                    <a href="journal.html"   class="quick-link"><div class="quick-link-icon">📔</div><div class="quick-link-text">Journal</div></a>
+                    <a href="settings.html"  class="quick-link"><div class="quick-link-icon">⚙️</div><div class="quick-link-text">Settings</div></a>
                 </div>
-                
                 <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             `;
+
+            // ── Render charts & bars after DOM is ready ────────────────────
+
+            // 1. Type doughnut
+            const typeLabels = Object.keys(typeTotals).map(k => typeNames[k] || k);
+            const typeData   = Object.values(typeTotals);
+            const typeBgColors = Object.keys(typeTotals).map(k => TYPE_COLORS[k] || '#95a5a6');
+
+            const typeLegendEl = document.getElementById('type-legend');
+            typeLabels.forEach((lbl,i) => {
+                typeLegendEl.innerHTML += `<span class="legend-item"><span class="legend-dot" style="background:${typeBgColors[i]}"></span>${lbl}: ${fmtUSD(typeData[i])}</span>`;
+            });
+
+            makeChart('typeChart', {
+                type: 'doughnut',
+                data: {
+                    labels: typeLabels,
+                    datasets: [{ data: typeData, backgroundColor: typeBgColors, borderWidth: 2, borderColor: '#fff' }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${fmtUSD(ctx.raw)}` } }
+                    }
+                }
+            });
+
+            // 2. Card horizontal bar
+            const cardLabels  = cardEntries.map(e => e[0]);
+            const cardAmounts = cardEntries.map(e => e[1]);
+            const maxCard     = Math.max(...cardAmounts, 1);
+
+            const cardBarsEl = document.getElementById('card-bars');
+            if (cardBarsEl) {
+                cardBarsEl.innerHTML = cardEntries.map((e,i) => `
+                    <div class="bar-item">
+                        <div class="bar-label-row">
+                            <span class="bar-label-name">💳 ${e[0]}</span>
+                            <span class="bar-label-amt">${fmtUSD(e[1])}</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:${(e[1]/maxCard*100).toFixed(1)}%;background:${CARD_COLORS[i%CARD_COLORS.length]}"></div>
+                        </div>
+                    </div>`).join('');
+            }
+
+            makeChart('cardChart', {
+                type: 'bar',
+                data: {
+                    labels: cardLabels,
+                    datasets: [{
+                        label: 'Total Charged (USD)',
+                        data: cardAmounts,
+                        backgroundColor: cardLabels.map((_,i) => CARD_COLORS[i % CARD_COLORS.length]),
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: ctx => ` ${fmtUSD(ctx.raw)}` } }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { callback: v => fmtUSD(v) },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        y: { ticks: { font: { size: 11 } } }
+                    }
+                }
+            });
+
+            // 3. Booking site pie
+            const siteLegendEl = document.getElementById('site-legend');
+            siteEntries.forEach((e,i) => {
+                siteLegendEl.innerHTML += `<span class="legend-item"><span class="legend-dot" style="background:${SITE_COLORS[i%SITE_COLORS.length]}"></span>${e[0]}: ${fmtUSD(e[1])}</span>`;
+            });
+
+            makeChart('siteChart', {
+                type: 'pie',
+                data: {
+                    labels: siteEntries.map(e => e[0]),
+                    datasets: [{
+                        data: siteEntries.map(e => e[1]),
+                        backgroundColor: siteEntries.map((_,i) => SITE_COLORS[i%SITE_COLORS.length]),
+                        borderWidth: 2, borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${fmtUSD(ctx.raw)} (${siteCounts[ctx.label]} activities)` } }
+                    }
+                }
+            });
+
+            // Site detail table
+            const siteTableEl = document.getElementById('site-table');
+            if (siteTableEl) {
+                const maxSite = Math.max(...siteEntries.map(e=>e[1]), 1);
+                siteTableEl.innerHTML = siteEntries.map((e,i) => `
+                    <div class="bar-item">
+                        <div class="bar-label-row">
+                            <span class="bar-label-name">🌐 ${e[0]}</span>
+                            <span class="bar-label-amt">${fmtUSD(e[1])} · ${siteCounts[e[0]]} activities</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:${(e[1]/maxSite*100).toFixed(1)}%;background:${SITE_COLORS[i%SITE_COLORS.length]}"></div>
+                        </div>
+                    </div>`).join('');
+            }
+
+            // 4. Account holder bars
+            const holderBarsEl = document.getElementById('holder-bars');
+            if (holderBarsEl) {
+                const holderEntries = Object.entries(holderTotals).sort((a,b) => b[1]-a[1]);
+                const maxHolder = Math.max(...holderEntries.map(e=>e[1]), 1);
+                const holderColors = ['#667eea','#f39c12','#27ae60','#e74c3c'];
+                holderBarsEl.innerHTML = holderEntries.map((e,i) => `
+                    <div class="bar-item">
+                        <div class="bar-label-row">
+                            <span class="bar-label-name">👤 ${e[0]}</span>
+                            <span class="bar-label-amt">${fmtUSD(e[1])}</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:${(e[1]/maxHolder*100).toFixed(1)}%;background:${holderColors[i%holderColors.length]}"></div>
+                        </div>
+                    </div>`).join('');
+            }
         }
-        
-        function formatDate(dateStr) {
-            const [year, month, day] = dateStr.split('-');
-            const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+        function fmtDate(ds) {
+            const [y,m,d] = ds.split('-');
+            return new Date(y,m-1,d).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
         }
-        
+
         function logout() {
             if (confirm('Logout?')) {
-                auth.signOut().then(() => {
-                    window.location.href = 'login.html';
-                });
+                auth.signOut().then(() => window.location.href = 'login.html');
             }
         }
     </script>
 
     <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./service-worker.js')
-                .then((reg) => console.log('✅ Service Worker registered'))
-                .catch((err) => console.log('❌ Service Worker failed:', err));
-        });
-    }
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(() => console.log('✅ SW registered'))
+                    .catch(e => console.log('❌ SW failed:', e));
+            });
+        }
     </script>
 </body>
 </html>
