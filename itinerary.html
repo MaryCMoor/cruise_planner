@@ -1095,11 +1095,6 @@
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
-        function printItinerary() {
-            buildPrintDoc();
-            setTimeout(() => window.print(), 150);
-        }
-
         function fmt12(t) {
             if (!t) return '';
             const [h, m] = t.split(':').map(Number);
@@ -1108,22 +1103,11 @@
             return `${hr}:${String(m).padStart(2,'0')} ${ampm}`;
         }
 
-        function buildPrintDoc() {
+        function printItinerary() {
             const now = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-            let html = '';
 
-            // Cover page
-            html += `
-            <div class="pi-cover">
-                <div class="pi-cover-ship">🚢</div>
-                <div class="pi-cover-title">Cruise Itinerary</div>
-                <div class="pi-cover-subtitle">20-Day Transatlantic Voyage</div>
-                <div class="pi-cover-route">April 19 – May 8, 2026 &nbsp;·&nbsp; New York → Barcelona</div>
-                <div class="pi-cover-travelers">Brian &amp; Mary</div>
-                <div class="pi-cover-printed">Printed ${now}</div>
-            </div>`;
-
-            // Day pages
+            // ---- build day sections ----
+            let daySections = '';
             cruiseDays.forEach(day => {
                 const dayActivities = allActivities.filter(a => a.day === day.day)
                     .sort((a,b) => {
@@ -1133,94 +1117,244 @@
                         return a.timeStart.localeCompare(b.timeStart);
                     });
 
-                const isSea = day.type === 'sea';
                 const isPort = ['port','arrival','departure'].includes(day.type);
+                const isSea  = day.type === 'sea';
+                const isLand = day.type === 'land';
 
-                let shipTimesHTML = '';
+                // Port times box
+                let portBox = '';
                 if (isPort) {
-                    shipTimesHTML = `<div class="pi-ship-times">`;
-                    if (day.boarding)   shipTimesHTML += `<div>Boarding: ${day.boarding}</div>`;
-                    if (day.arrival)    shipTimesHTML += `<div>Arrival: ${day.arrival}</div>`;
-                    if (day.allAboard && day.allAboard !== 'N/A') shipTimesHTML += `<div>All Aboard: ${day.allAboard}</div>`;
-                    if (day.departure && day.departure !== 'Disembark') shipTimesHTML += `<div>Departure: ${day.departure}</div>`;
-                    if (day.departure === 'Disembark') shipTimesHTML += `<div>Disembark</div>`;
-                    shipTimesHTML += `</div>`;
+                    const rows = [];
+                    if (day.boarding)  rows.push(`<tr><td class="pt-label">Boarding</td><td class="pt-val">${day.boarding}</td></tr>`);
+                    if (day.arrival)   rows.push(`<tr><td class="pt-label">Arrival</td><td class="pt-val">${day.arrival}</td></tr>`);
+                    if (day.allAboard && day.allAboard !== 'N/A') rows.push(`<tr><td class="pt-label">All Aboard</td><td class="pt-val">${day.allAboard}</td></tr>`);
+                    if (day.departure && day.departure !== 'Disembark') rows.push(`<tr><td class="pt-label">Departure</td><td class="pt-val">${day.departure}</td></tr>`);
+                    if (day.departure === 'Disembark') rows.push(`<tr><td class="pt-label" colspan="2">Disembark</td></tr>`);
+                    if (rows.length) portBox = `<table class="port-box">${rows.join('')}</table>`;
                 }
 
-                let activitiesHTML = '';
+                // Activity rows
+                let actRows = '';
                 if (dayActivities.length === 0) {
-                    activitiesHTML = `<div class="pi-no-activities">No activities planned</div>`;
+                    actRows = `<div class="no-act">No activities planned for this day.</div>`;
                 } else {
                     dayActivities.forEach(act => {
                         const timeStr = act.timeStart
-                            ? (act.timeEnd ? `${fmt12(act.timeStart)} – ${fmt12(act.timeEnd)}` : fmt12(act.timeStart))
-                            : '—';
+                            ? (act.timeEnd ? `${fmt12(act.timeStart)}&ndash;${fmt12(act.timeEnd)}` : fmt12(act.timeStart))
+                            : '';
 
-                        const statusMap = {
-                            booked:     ['pi-act-status-booked',    'Booked'],
-                            not_booked: ['pi-act-status-not-booked','Not Booked'],
-                            waiting:    ['pi-act-status-waiting',   'Awaiting Confirmation']
+                        const colorMap = {
+                            excursion: '#c0392b',
+                            dining:    '#b7770d',
+                            onboard:   '#6c3483',
+                            general:   '#1a5276',
+                            backup:    '#888'
                         };
-                        const [statusCls, statusLabel] = statusMap[act.bookingStatus] || ['',''];
+                        const dotColor = colorMap[act.activityType] || '#888';
 
                         const costStr = (() => {
                             if (!act.cost || act.cost <= 0) return '';
-                            if (act.currency === 'EUR') {
-                                return `€${parseFloat(act.cost).toFixed(2)} (~$${(act.cost * EUR_TO_USD).toFixed(2)})`;
-                            }
+                            if (act.currency === 'EUR') return `&euro;${parseFloat(act.cost).toFixed(2)} (&asymp;$${(act.cost*1.08).toFixed(2)})`;
                             return `$${parseFloat(act.cost).toFixed(2)}`;
                         })();
 
-                        const metaParts = [];
-                        if (statusLabel) metaParts.push(`<span class="${statusCls}">${statusLabel}</span>`);
-                        if (costStr)     metaParts.push(`<span>${costStr}</span>`);
-                        if (act.accountHolder) metaParts.push(`<span>${act.accountHolder}'s account</span>`);
-                        if (act.creditCard)    metaParts.push(`<span>💳 ${act.creditCard}</span>`);
-                        if (act.bookingSite)   metaParts.push(`<span>via ${act.bookingSite}</span>`);
-                        if (act.cancelDate)    metaParts.push(`<span>Cancel by: ${formatDate(act.cancelDate)}</span>`);
+                        const statusIcons = {booked:'&#10003; Booked', not_booked:'&#10007; Not Booked', waiting:'&#8987; Awaiting'};
+                        const statusColors = {booked:'#1a7a3a', not_booked:'#a01010', waiting:'#8a6000'};
+                        const statusHtml = act.bookingStatus
+                            ? `<span style="color:${statusColors[act.bookingStatus]||'#555'};font-weight:600;">${statusIcons[act.bookingStatus]||''}</span>`
+                            : '';
+
+                        const metaPieces = [statusHtml];
+                        if (costStr)           metaPieces.push(`<span>${costStr}</span>`);
+                        if (act.accountHolder) metaPieces.push(`<span>${act.accountHolder}&rsquo;s acct</span>`);
+                        if (act.creditCard)    metaPieces.push(`<span>&#128179; ${act.creditCard}</span>`);
+                        if (act.bookingSite)   metaPieces.push(`<span>via ${act.bookingSite}</span>`);
+                        if (act.cancelDate) {
+                            const [y,mo,d] = act.cancelDate.split('-');
+                            const cd = new Date(y,mo-1,d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+                            metaPieces.push(`<span style="color:#a01010;">Cancel by ${cd}</span>`);
+                        }
+                        const metaHtml = metaPieces.filter(Boolean).join('<span class="meta-sep">&nbsp;&bull;&nbsp;</span>');
 
                         const isBackup = act.priority === 'backup';
-
-                        activitiesHTML += `
-                        <div class="pi-activity ${act.activityType}${isBackup ? ' backup' : ''}">
-                            <div class="pi-act-time">${timeStr}</div>
-                            <div class="pi-act-body">
-                                <div class="pi-act-name${isBackup ? ' backup-label' : ''}">${act.name}</div>
-                                ${act.details ? `<div class="pi-act-details">${act.details}</div>` : ''}
-                                ${metaParts.length ? `<div class="pi-act-meta">${metaParts.join('')}</div>` : ''}
+                        actRows += `
+                        <div class="act-row${isBackup?' act-backup':''}">
+                            <div class="act-dot-col">
+                                <div class="act-dot" style="background:${dotColor}"></div>
+                                <div class="act-line"></div>
+                            </div>
+                            <div class="act-content">
+                                <div class="act-top">
+                                    <span class="act-name">${act.name}${isBackup?' <em>(Backup)</em>':''}</span>
+                                    ${timeStr ? `<span class="act-time">${timeStr}</span>` : ''}
+                                </div>
+                                ${act.details ? `<div class="act-details">${act.details}</div>` : ''}
+                                <div class="act-meta">${metaHtml}</div>
                             </div>
                         </div>`;
                     });
                 }
 
-                html += `
-                <div class="pi-day${isSea ? ' pi-sea-day' : ''}">
-                    <div class="pi-day-header">
-                        <div class="pi-day-left">
-                            <div class="pi-day-number">Day ${day.day}</div>
-                            <div class="pi-day-title">${day.location}</div>
-                            <div class="pi-day-date">${formatDate(day.date)}</div>
+                const dayTypeLabel = isSea ? 'Day at Sea' : isLand ? 'Post-Cruise Day' : 'Port Day';
+                const headerAccent = isSea ? '#1a5276' : isLand ? '#2e7d32' : '#c0392b';
+
+                daySections += `
+                <div class="day-section">
+                    <div class="day-header-row" style="border-left:4px solid ${headerAccent};">
+                        <div class="day-header-left">
+                            <div class="day-label" style="color:${headerAccent};">DAY ${day.day} &mdash; ${dayTypeLabel.toUpperCase()}</div>
+                            <div class="day-location">${day.location}</div>
+                            <div class="day-date">${new Date(day.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</div>
                         </div>
-                        ${shipTimesHTML}
+                        ${portBox}
                     </div>
-                    <div class="pi-activities">${activitiesHTML}</div>
+                    <div class="act-list">${actRows}</div>
                 </div>`;
             });
 
-            // Legend
-            html += `
-            <div class="pi-legend">
-                <div class="pi-legend-title">Activity Type</div>
-                <div class="pi-legend-items">
-                    <div class="pi-legend-item"><div class="pi-legend-bar" style="background:#c0392b"></div> Port Excursion</div>
-                    <div class="pi-legend-item"><div class="pi-legend-bar" style="background:#d68910"></div> Dining</div>
-                    <div class="pi-legend-item"><div class="pi-legend-bar" style="background:#7d3c98"></div> Onboard Activity</div>
-                    <div class="pi-legend-item"><div class="pi-legend-bar" style="background:#2471a3"></div> General</div>
-                    <div class="pi-legend-item"><div class="pi-legend-bar" style="background:#aaa"></div> Backup / Optional</div>
-                </div>
-            </div>`;
+            // ---- full HTML document ----
+            const printHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cruise Itinerary &mdash; Brian &amp; Mary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&display=swap');
 
-            document.getElementById('print-itinerary-doc').innerHTML = html;
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Lato',sans-serif;color:#1a1a2e;background:#fff;font-size:10pt;line-height:1.55;}
+
+  /* ── COVER ── */
+  .cover{
+    page-break-after:always;
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:60pt 40pt;
+    position:relative;
+    overflow:hidden;
+  }
+  .cover-deco-tl{position:absolute;top:24pt;left:24pt;color:#b7770d;font-size:28pt;opacity:.55;}
+  .cover-deco-br{position:absolute;bottom:24pt;right:24pt;color:#b7770d;font-size:20pt;opacity:.55;}
+  .cover-wave{position:absolute;top:0;right:0;width:200pt;opacity:.07;pointer-events:none;}
+  .cover-script{font-family:'Playfair Display',serif;font-style:italic;color:#b7770d;font-size:36pt;letter-spacing:1pt;margin-bottom:0;}
+  .cover-title{font-family:'Lato',sans-serif;font-weight:700;font-size:44pt;letter-spacing:8pt;text-transform:uppercase;color:#1a1a2e;margin-bottom:28pt;line-height:1.1;}
+  .cover-fields{width:100%;max-width:380pt;border-top:1px solid #ccc;margin-bottom:32pt;}
+  .cover-field-row{display:flex;gap:24pt;padding:8pt 0;border-bottom:1px solid #e8e0d0;}
+  .cover-field-label{font-size:8pt;text-transform:uppercase;letter-spacing:1.5pt;color:#888;min-width:72pt;padding-top:2pt;}
+  .cover-field-val{font-size:10pt;color:#1a1a2e;font-weight:700;}
+  .cover-travelers{font-family:'Playfair Display',serif;font-style:italic;font-size:16pt;color:#1a1a2e;margin-top:8pt;}
+  .cover-printed{font-size:7.5pt;color:#bbb;margin-top:20pt;letter-spacing:.5pt;}
+
+  /* ── PAGE LAYOUT ── */
+  .page-wrap{padding:32pt 36pt 28pt;}
+
+  /* ── DAY SECTION ── */
+  .day-section{margin-bottom:22pt;page-break-inside:avoid;}
+  .day-header-row{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    padding:8pt 10pt;background:#f9f7f4;
+    margin-bottom:8pt;
+    gap:16pt;
+  }
+  .day-label{font-size:7.5pt;font-weight:700;letter-spacing:2pt;text-transform:uppercase;margin-bottom:2pt;}
+  .day-location{font-family:'Playfair Display',serif;font-size:15pt;font-weight:700;color:#1a1a2e;line-height:1.2;}
+  .day-date{font-size:8pt;color:#777;margin-top:2pt;}
+
+  /* port times box */
+  .port-box{font-size:7.5pt;border-collapse:collapse;min-width:120pt;flex-shrink:0;}
+  .port-box td{padding:2pt 5pt;}
+  .pt-label{color:#888;text-transform:uppercase;letter-spacing:.8pt;font-size:6.5pt;white-space:nowrap;}
+  .pt-val{font-weight:700;color:#1a1a2e;white-space:nowrap;}
+
+  /* ── ACTIVITY ROWS ── */
+  .act-list{padding-left:6pt;}
+  .act-row{display:flex;align-items:flex-start;margin-bottom:8pt;}
+  .act-backup{opacity:.7;}
+  .act-dot-col{display:flex;flex-direction:column;align-items:center;width:16pt;flex-shrink:0;padding-top:2pt;}
+  .act-dot{width:9pt;height:9pt;border-radius:50%;flex-shrink:0;}
+  .act-line{width:1.5pt;flex:1;background:#e0d8cc;min-height:12pt;margin-top:2pt;}
+  .act-content{flex:1;padding-left:8pt;padding-bottom:4pt;}
+  .act-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2pt;}
+  .act-name{font-weight:700;font-size:10pt;color:#1a1a2e;}
+  .act-name em{font-style:italic;font-weight:300;font-size:8.5pt;color:#888;}
+  .act-time{font-size:7.5pt;color:#777;font-family:'Lato',sans-serif;white-space:nowrap;margin-left:8pt;font-weight:300;}
+  .act-details{font-size:8.5pt;color:#444;margin-bottom:3pt;line-height:1.4;}
+  .act-meta{font-size:7.5pt;color:#666;display:flex;flex-wrap:wrap;gap:0;line-height:1.6;}
+  .meta-sep{color:#ccc;}
+  .no-act{font-size:8.5pt;color:#aaa;font-style:italic;padding:6pt 0 4pt 24pt;}
+
+  /* ── LEGEND ── */
+  .legend{margin-top:24pt;padding:8pt 12pt;border:1px solid #e0d8cc;page-break-inside:avoid;}
+  .legend-title{font-size:6.5pt;text-transform:uppercase;letter-spacing:2pt;color:#999;margin-bottom:6pt;}
+  .legend-items{display:flex;flex-wrap:wrap;gap:12pt;}
+  .legend-item{display:flex;align-items:center;gap:5pt;font-size:7.5pt;color:#555;}
+  .legend-dot{width:9pt;height:9pt;border-radius:50%;}
+
+  /* ── PRINT SETTINGS ── */
+  @page{margin:0;}
+  @media print{
+    body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .day-section{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-deco-tl">&#9906;</div>
+  <div class="cover-deco-br">&#10022;</div>
+  <svg class="cover-wave" viewBox="0 0 200 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M180 0 Q160 100 180 200 Q200 300 180 400" stroke="#1a1a2e" stroke-width="1.5" fill="none"/>
+    <path d="M160 0 Q140 100 160 200 Q180 300 160 400" stroke="#1a1a2e" stroke-width="1" fill="none"/>
+    <path d="M140 0 Q120 100 140 200 Q160 300 140 400" stroke="#1a1a2e" stroke-width=".5" fill="none"/>
+  </svg>
+  <div class="cover-script">Travel</div>
+  <div class="cover-title">Itinerary</div>
+  <div class="cover-fields">
+    <div class="cover-field-row">
+      <div class="cover-field-label">Destination</div>
+      <div class="cover-field-val">New York &rarr; Barcelona</div>
+      <div class="cover-field-label">Duration</div>
+      <div class="cover-field-val">20 Days</div>
+    </div>
+    <div class="cover-field-row">
+      <div class="cover-field-label">Departure</div>
+      <div class="cover-field-val">April 19, 2026</div>
+      <div class="cover-field-label">Arrival</div>
+      <div class="cover-field-val">May 8, 2026</div>
+    </div>
+  </div>
+  <div class="cover-travelers">Brian &amp; Mary</div>
+  <div class="cover-printed">Printed ${now}</div>
+</div>
+
+<!-- DAY PAGES -->
+<div class="page-wrap">
+${daySections}
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-title">Activity Type</div>
+  <div class="legend-items">
+    <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div>Port Excursion</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#b7770d"></div>Dining</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6c3483"></div>Onboard Activity</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1a5276"></div>General</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#888"></div>Backup / Optional</div>
+  </div>
+</div>
+</div>
+
+<script>window.onload=function(){window.print();}<\/script>
+</body>
+</html>`;
+
+            const pw = window.open('','_blank','width=900,height=700');
+            if (!pw) { alert('Please allow pop-ups for this page to print.'); return; }
+            pw.document.open();
+            pw.document.write(printHTML);
+            pw.document.close();
         }
     </script>
 </body>
