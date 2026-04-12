@@ -541,11 +541,33 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Start Time</label>
-                        <input type="time" id="timeStart" class="form-input">
+                        <input type="time" id="timeStart" class="form-input" oninput="autoCalcEndTime()">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">End Time</label>
-                        <input type="time" id="timeEnd" class="form-input">
+                        <label class="form-label">Duration (optional)</label>
+                        <select id="durationMins" class="form-select" onchange="autoCalcEndTime()">
+                            <option value="">— No duration —</option>
+                            <option value="30">30 min</option>
+                            <option value="45">45 min</option>
+                            <option value="60">1 hr</option>
+                            <option value="90">1.5 hrs</option>
+                            <option value="120">2 hrs</option>
+                            <option value="150">2.5 hrs</option>
+                            <option value="180">3 hrs</option>
+                            <option value="240">4 hrs</option>
+                            <option value="300">5 hrs</option>
+                            <option value="360">6 hrs</option>
+                            <option value="480">8 hrs</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">End Time <span style="font-weight:400;color:#999;">(auto-filled or manual)</span></label>
+                        <input type="time" id="timeEnd" class="form-input" oninput="updateDurationDisplay()">
+                    </div>
+                    <div class="form-group" style="display:flex;align-items:flex-end;">
+                        <div id="durationDisplay" style="font-size:0.85em;color:#7f8c8d;padding:10px 0;font-style:italic;"></div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -553,19 +575,26 @@
                     <textarea id="details" class="form-textarea"></textarea>
                 </div>
 
-                <!-- NEW: Currency + Cost row -->
+                <!-- Currency + Cost + Per Person -->
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Currency</label>
-                        <select id="currency" class="form-select">
+                        <select id="currency" class="form-select" onchange="updateCostPreview()">
                             <option value="USD">USD ($)</option>
                             <option value="EUR">EUR (€)</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Cost Amount</label>
-                        <input type="number" id="cost" class="form-input" step="0.01" min="0" placeholder="0.00">
+                        <input type="number" id="cost" class="form-input" step="0.01" min="0" placeholder="0.00" oninput="updateCostPreview()">
                     </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                        <input type="checkbox" id="perPerson" onchange="updateCostPreview()" style="width:18px;height:18px;cursor:pointer;">
+                        <span>Price is <strong>per person</strong> (will show total for 2)</span>
+                    </label>
+                    <div id="costPreview" style="margin-top:6px;font-size:0.85em;color:#27ae60;font-weight:600;min-height:18px;"></div>
                 </div>
 
                 <div class="form-row">
@@ -773,14 +802,19 @@
             updateDatalists();
         }
 
-        function formatCost(cost, currency) {
+        function formatCost(cost, currency, perPerson) {
             if (!cost || cost <= 0) return null;
             currency = currency || 'USD';
-            if (currency === 'EUR') {
-                const usd = (cost * EUR_TO_USD).toFixed(2);
-                return `€${parseFloat(cost).toFixed(2)} (~$${usd} USD)`;
+            const sym = currency === 'EUR' ? '€' : '$';
+            const fmt = (n) => {
+                if (currency === 'EUR') return `€${parseFloat(n).toFixed(2)} (~$${(n * EUR_TO_USD).toFixed(2)})`;
+                return `$${parseFloat(n).toFixed(2)}`;
+            };
+            if (perPerson) {
+                const total = cost * 2;
+                return `${fmt(cost)}/pp · ${fmt(total)} total`;
             }
-            return `$${parseFloat(cost).toFixed(2)}`;
+            return fmt(cost);
         }
 
         function bookingStatusBadge(status) {
@@ -849,8 +883,15 @@
                         badges.push(bookingStatusBadge(activity.bookingStatus));
 
                         // Cost + currency
-                        const costStr = formatCost(activity.cost, activity.currency);
+                        const costStr = formatCost(activity.cost, activity.currency, activity.perPerson);
                         if (costStr) badges.push(`<span class="activity-badge badge-cost">${costStr}</span>`);
+
+                        // Duration
+                        if (activity.durationMins) {
+                            const dm = parseInt(activity.durationMins);
+                            const dLabel = dm < 60 ? `${dm} min` : (dm % 60 === 0 ? `${dm/60} hr` : `${Math.floor(dm/60)}h ${dm%60}m`);
+                            badges.push(`<span class="activity-badge" style="background:#e8f0fe;color:#1a56c4;">⏱ ${dLabel}</span>`);
+                        }
 
                         // Account holder
                         if (activity.accountHolder) {
@@ -931,6 +972,9 @@
             editingActivityId = null;
             document.getElementById('modal-title').textContent = 'Add Activity';
             document.getElementById('activityForm').reset();
+            document.getElementById('perPerson').checked = false;
+            document.getElementById('costPreview').textContent = '';
+            document.getElementById('durationDisplay').textContent = '';
             document.getElementById('activityModal').style.display = 'block';
             document.getElementById('conflictWarning').style.display = 'none';
         }
@@ -1020,6 +1064,10 @@
             document.getElementById('bookingSite').value = activity.bookingSite || '';
             document.getElementById('bookingLink').value = activity.bookingLink || '';
             document.getElementById('cancelDate').value = activity.cancelDate || '';
+            document.getElementById('perPerson').checked = activity.perPerson || false;
+            document.getElementById('durationMins').value = activity.durationMins || '';
+            updateCostPreview();
+            updateDurationDisplay();
             document.getElementById('activityModal').style.display = 'block';
             document.getElementById('conflictWarning').style.display = 'none';
         }
@@ -1028,6 +1076,42 @@
             if (!confirm('Delete this activity?')) return;
             await db.collection('trips').doc(activeTripId).collection('itinerary').doc(activityId).delete();
             await loadItinerary();
+        }
+
+        function autoCalcEndTime() {
+            const start = document.getElementById('timeStart').value;
+            const dur   = document.getElementById('durationMins').value;
+            if (start && dur) {
+                document.getElementById('timeEnd').value = addMinutes(start, parseInt(dur));
+            }
+            updateDurationDisplay();
+        }
+
+        function updateDurationDisplay() {
+            const start = document.getElementById('timeStart').value;
+            const end   = document.getElementById('timeEnd').value;
+            const el    = document.getElementById('durationDisplay');
+            if (start && end && end > start) {
+                const [sh,sm] = start.split(':').map(Number);
+                const [eh,em] = end.split(':').map(Number);
+                const total = (eh*60+em) - (sh*60+sm);
+                if (total > 0) {
+                    const h = Math.floor(total/60), m = total%60;
+                    el.textContent = h > 0 ? (m > 0 ? `${h}h ${m}m total` : `${h}h total`) : `${m} min total`;
+                } else { el.textContent = ''; }
+            } else { el.textContent = ''; }
+        }
+
+        function updateCostPreview() {
+            const cost = parseFloat(document.getElementById('cost').value) || 0;
+            const cur  = document.getElementById('currency').value;
+            const pp   = document.getElementById('perPerson').checked;
+            const el   = document.getElementById('costPreview');
+            if (!cost || !pp) { el.textContent = ''; return; }
+            const fmt = (n) => cur === 'EUR'
+                ? `€${n.toFixed(2)} (~$${(n*EUR_TO_USD).toFixed(2)})`
+                : `$${n.toFixed(2)}`;
+            el.textContent = `${fmt(cost)} × 2 people = ${fmt(cost*2)} total`;
         }
 
         function closeModal() {
@@ -1052,6 +1136,8 @@
             const bookingSite   = document.getElementById('bookingSite').value;
             const bookingLink   = document.getElementById('bookingLink').value;
             const cancelDate    = document.getElementById('cancelDate').value;
+            const perPerson     = document.getElementById('perPerson').checked;
+            const durationMins  = document.getElementById('durationMins').value;
 
             const isBackupExcursion = (activityType === 'excursion' && priority === 'backup');
 
@@ -1074,7 +1160,7 @@
 
             const activityData = {
                 day, activityType, name, timeStart, timeEnd, details,
-                cost, currency, priority, bookingStatus, accountHolder, creditCard, bookingSite,
+                cost, currency, perPerson, durationMins, priority, bookingStatus, accountHolder, creditCard, bookingSite,
                 bookingLink, cancelDate,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
@@ -1154,8 +1240,18 @@
 
                         const costStr = (() => {
                             if (!act.cost || act.cost <= 0) return '';
-                            if (act.currency === 'EUR') return `&euro;${parseFloat(act.cost).toFixed(2)} (&asymp;$${(act.cost*1.08).toFixed(2)})`;
-                            return `$${parseFloat(act.cost).toFixed(2)}`;
+                            const fmt = (n) => act.currency === 'EUR'
+                                ? `&euro;${parseFloat(n).toFixed(2)} (&asymp;$${(n*1.08).toFixed(2)})`
+                                : `$${parseFloat(n).toFixed(2)}`;
+                            if (act.perPerson) {
+                                return `${fmt(act.cost)}/pp &bull; ${fmt(act.cost*2)} total`;
+                            }
+                            return fmt(act.cost);
+                        })();
+                        const durationStr = (() => {
+                            if (!act.durationMins) return '';
+                            const dm = parseInt(act.durationMins);
+                            return dm < 60 ? `${dm} min` : (dm%60===0 ? `${dm/60} hr` : `${Math.floor(dm/60)}h ${dm%60}m`);
                         })();
 
                         const statusIcons = {booked:'&#10003; Booked', not_booked:'&#10007; Not Booked', waiting:'&#8987; Awaiting'};
@@ -1165,6 +1261,7 @@
                             : '';
 
                         const metaPieces = [statusHtml];
+                        if (durationStr) metaPieces.push(`<span>&#9200; ${durationStr}</span>`);
                         if (costStr)           metaPieces.push(`<span>${costStr}</span>`);
                         if (act.accountHolder) metaPieces.push(`<span>${act.accountHolder}&rsquo;s acct</span>`);
                         if (act.creditCard)    metaPieces.push(`<span>&#128179; ${act.creditCard}</span>`);
