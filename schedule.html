@@ -16,16 +16,44 @@
             min-height: 100vh;
             padding-bottom: 80px;
         }
+
+        /* ── Header + status bar ── */
         .header {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
-            padding: 30px 20px;
+            padding: 30px 20px 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             text-align: center;
         }
-        .header h1 { font-size: 2.2em; margin-bottom: 5px; }
-        .header p { opacity: 0.9; }
+        .header h1 { font-size: 2.2em; margin-bottom: 4px; }
+        .header p { opacity: 0.9; margin-bottom: 12px; }
+
+        /* ── Online/Offline pill ── */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.78em;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            transition: background 0.4s, color 0.4s;
+        }
+        .status-pill.online  { background: rgba(255,255,255,0.25); color: white; }
+        .status-pill.offline { background: rgba(0,0,0,0.25);       color: #ffe57f; }
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            flex-shrink: 0;
+            transition: background 0.4s;
+        }
+        .status-pill.online  .status-dot { background: #7fffb0; }
+        .status-pill.offline .status-dot { background: #ffe57f; }
+
+        /* ── Container ── */
         .container { padding: 15px; }
+
+        /* ── Day selector ── */
         .day-selector {
             background: white;
             padding: 15px;
@@ -33,182 +61,128 @@
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .day-selector label {
-            display: block;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
+        .day-selector label { display: block; font-weight: 700; color: #2c3e50; margin-bottom: 10px; }
         .day-selector select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-            font-family: inherit;
-            background: white;
+            width: 100%; padding: 12px;
+            border: 2px solid #e0e0e0; border-radius: 8px;
+            font-size: 1em; font-family: inherit; background: white;
         }
+
+        /* ── Day info ── */
         .day-info-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: white; padding: 20px; border-radius: 15px;
+            margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .day-info-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        .day-info-date {
-            font-size: 1em;
-            color: #7f8c8d;
-            margin-bottom: 5px;
-        }
-        .day-info-location {
-            font-size: 1.2em;
-            color: #11998e;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
+        .day-info-title  { font-size: 1.8em; font-weight: 700; color: #2c3e50; margin-bottom: 5px; }
+        .day-info-date   { font-size: 1em; color: #7f8c8d; margin-bottom: 5px; }
+        .day-info-location { font-size: 1.2em; color: #11998e; font-weight: 600; margin-bottom: 15px; }
         .port-info {
-            background: #e8f8f5;
-            padding: 15px;
-            border-radius: 10px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            font-size: 0.9em;
+            background: #e8f8f5; padding: 15px; border-radius: 10px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9em;
         }
-        .port-info-item {
-            display: flex;
-            flex-direction: column;
+        .port-info-item  { display: flex; flex-direction: column; }
+        .port-info-label { font-weight: 600; color: #2c3e50; margin-bottom: 3px; }
+        .port-info-value { color: #555; }
+
+        /* ── Weather card ── */
+        .weather-card {
+            background: white; border-radius: 15px;
+            margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
         }
-        .port-info-label {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 3px;
+        .weather-card-header {
+            padding: 14px 18px 10px;
+            font-weight: 700; font-size: 1em; color: #2c3e50;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .port-info-value {
-            color: #555;
+        .weather-card-header .wh-left { display: flex; align-items: center; gap: 8px; }
+        .weather-forecast-badge {
+            font-size: 0.7em; font-weight: 700; padding: 3px 9px;
+            border-radius: 10px; background: #e8f8f5; color: #11998e;
         }
+        .weather-forecast-badge.historical {
+            background: #e8f4f8; color: #2471a3;
+        }
+        .weather-body { padding: 16px 18px; }
+
+        /* main row */
+        .weather-main {
+            display: flex; align-items: center; gap: 16px; margin-bottom: 14px;
+        }
+        .weather-icon { font-size: 3.4em; line-height: 1; flex-shrink: 0; }
+        .weather-temps { flex: 1; }
+        .weather-temp-hi  { font-size: 2em; font-weight: 900; color: #2c3e50; line-height: 1; }
+        .weather-temp-lo  { font-size: 1em; color: #7f8c8d; margin-top: 2px; }
+        .weather-desc     { font-size: 0.95em; color: #555; margin-top: 4px; }
+
+        /* detail pills */
+        .weather-details {
+            display: flex; flex-wrap: wrap; gap: 8px;
+        }
+        .weather-detail-pill {
+            display: flex; align-items: center; gap: 5px;
+            background: #f8f9fa; border-radius: 20px;
+            padding: 6px 12px; font-size: 0.82em; color: #2c3e50;
+        }
+        .weather-detail-pill span.pill-label { color: #7f8c8d; font-size: 0.85em; }
+
+        .weather-loading {
+            padding: 20px; text-align: center; color: #7f8c8d;
+            font-style: italic; font-size: 0.9em;
+        }
+        .weather-error {
+            padding: 14px 18px; font-size: 0.85em; color: #856404;
+            background: #fff3cd; border-radius: 0 0 15px 15px;
+        }
+        .weather-sea-note {
+            padding: 16px 18px; font-size: 0.9em; color: #7f8c8d;
+            text-align: center; font-style: italic;
+        }
+
+        /* ── Timeline ── */
         .timeline {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            margin-bottom: 15px;
+            background: white; padding: 20px; border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); margin-bottom: 15px;
         }
-        .timeline-header {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .timeline-item {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            position: relative;
-        }
+        .timeline-header { font-size: 1.3em; font-weight: 700; color: #2c3e50; margin-bottom: 20px; text-align: center; }
+        .timeline-item { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
         .timeline-item:not(:last-child)::before {
-            content: '';
-            position: absolute;
-            left: 26px;
-            top: 50px;
-            width: 2px;
-            height: calc(100% - 30px);
-            background: #e0e0e0;
+            content: ''; position: absolute; left: 26px; top: 50px;
+            width: 2px; height: calc(100% - 30px); background: #e0e0e0;
         }
-        .timeline-time {
-            min-width: 80px;
-            font-weight: 700;
-            color: #11998e;
-            font-size: 1em;
-            padding-top: 5px;
-        }
+        .timeline-time { min-width: 80px; font-weight: 700; color: #11998e; font-size: 1em; padding-top: 5px; }
         .timeline-content {
-            flex: 1;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #11998e;
-            position: relative;
+            flex: 1; background: #f8f9fa; padding: 15px;
+            border-radius: 10px; border-left: 4px solid #11998e; position: relative;
         }
         .timeline-content.excursion { border-left-color: #e74c3c; background: #fef5f5; }
-        .timeline-content.backup { border-left-color: #95a5a6; opacity: 0.7; }
-        .timeline-content.dining { border-left-color: #f39c12; background: #fef9f3; }
-        .timeline-content.onboard { border-left-color: #9b59b6; background: #f9f5fc; }
-        .activity-name {
-            font-weight: 700;
-            color: #2c3e50;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-        }
-        .activity-details {
-            font-size: 0.9em;
-            color: #555;
-            margin-bottom: 8px;
-        }
-        .activity-badges {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-        .badge {
-            font-size: 0.75em;
-            padding: 4px 8px;
-            border-radius: 5px;
-            font-weight: 600;
-        }
-        .badge-cost {
-            background: #d4edda;
-            color: #155724;
-        }
-        .badge-backup {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .badge-cancel {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        .no-activities {
-            text-align: center;
-            padding: 40px 20px;
-            color: #7f8c8d;
-            font-style: italic;
-        }
-        .no-activities-icon {
-            font-size: 4em;
-            margin-bottom: 15px;
-        }
+        .timeline-content.backup    { border-left-color: #95a5a6; opacity: 0.7; }
+        .timeline-content.dining    { border-left-color: #f39c12; background: #fef9f3; }
+        .timeline-content.onboard   { border-left-color: #9b59b6; background: #f9f5fc; }
+        .activity-name    { font-weight: 700; color: #2c3e50; font-size: 1.1em; margin-bottom: 8px; }
+        .activity-details { font-size: 0.9em; color: #555; margin-bottom: 8px; }
+        .activity-badges  { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .badge            { font-size: 0.75em; padding: 4px 8px; border-radius: 5px; font-weight: 600; }
+        .badge-cost   { background: #d4edda; color: #155724; }
+        .badge-backup { background: #fff3cd; color: #856404; }
+        .badge-cancel { background: #f8d7da; color: #721c24; }
+        .badge-booked     { background: #d4edda; color: #155724; }
+        .badge-not-booked { background: #f8d7da; color: #721c24; }
+        .badge-waiting    { background: #fff3cd; color: #856404; }
+
+        .no-activities { text-align: center; padding: 40px 20px; color: #7f8c8d; font-style: italic; }
+        .no-activities-icon { font-size: 4em; margin-bottom: 15px; }
+
+        /* ── Bottom nav ── */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            position: fixed; bottom: 0; left: 0; right: 0;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            justify-content: space-around;
+            display: flex; justify-content: space-around;
             padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-            z-index: 9999;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3); z-index: 9999;
         }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.6em;
-            font-weight: 600;
-            padding: 8px 6px;
-            min-width: 48px;
-        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: rgba(255,255,255,0.7); font-size: 0.6em; font-weight: 600; padding: 8px 6px; min-width: 48px; }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
     </style>
@@ -217,6 +191,10 @@
     <div class="header">
         <h1>🗓️ Daily Schedule</h1>
         <p>Timeline view by day</p>
+        <div id="status-pill" class="status-pill online">
+            <div class="status-dot"></div>
+            <span id="status-text">Online</span>
+        </div>
     </div>
 
     <div class="container">
@@ -226,38 +204,18 @@
         </div>
 
         <div id="day-info-container"></div>
+        <div id="weather-container"></div>
         <div id="schedule-container"></div>
     </div>
 
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <div class="nav-item-icon">🏠</div>
-            <div>Home</div>
-        </a>
-        <a href="itinerary.html" class="nav-item">
-            <div class="nav-item-icon">🗺️</div>
-            <div>Trip</div>
-        </a>
-        <a href="schedule.html" class="nav-item active">
-            <div class="nav-item-icon">🗓️</div>
-            <div>Days</div>
-        </a>
-        <a href="packing.html" class="nav-item">
-            <div class="nav-item-icon">🧳</div>
-            <div>Pack</div>
-        </a>
-        <a href="notes.html" class="nav-item">
-            <div class="nav-item-icon">📝</div>
-            <div>Notes</div>
-        </a>
-        <a href="journal.html" class="nav-item">
-            <div class="nav-item-icon">📔</div>
-            <div>Journal</div>
-        </a>
-        <a href="settings.html" class="nav-item">
-            <div class="nav-item-icon">⚙️</div>
-            <div>Set</div>
-        </a>
+        <a href="index.html"     class="nav-item"><div class="nav-item-icon">🏠</div><div>Home</div></a>
+        <a href="itinerary.html" class="nav-item"><div class="nav-item-icon">🗺️</div><div>Trip</div></a>
+        <a href="schedule.html"  class="nav-item active"><div class="nav-item-icon">🗓️</div><div>Days</div></a>
+        <a href="packing.html"   class="nav-item"><div class="nav-item-icon">🧳</div><div>Pack</div></a>
+        <a href="notes.html"     class="nav-item"><div class="nav-item-icon">📝</div><div>Notes</div></a>
+        <a href="journal.html"   class="nav-item"><div class="nav-item-icon">📔</div><div>Journal</div></a>
+        <a href="settings.html"  class="nav-item"><div class="nav-item-icon">⚙️</div><div>Set</div></a>
     </nav>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -265,207 +223,429 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
-            authDomain: "cruise-planner-2026.firebaseapp.com",
-            projectId: "cruise-planner-2026",
-            storageBucket: "cruise-planner-2026.firebasestorage.app",
-            messagingSenderId: "554027862680",
-            appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
+    /* ═══════════════════════════════════════════════════════
+       FIREBASE
+    ═══════════════════════════════════════════════════════ */
+    const firebaseConfig = {
+        apiKey: "AIzaSyDmuGiKOj_O1A2gt3j_5FDpAoLS1_hBMz4",
+        authDomain: "cruise-planner-2026.firebaseapp.com",
+        projectId: "cruise-planner-2026",
+        storageBucket: "cruise-planner-2026.firebasestorage.app",
+        messagingSenderId: "554027862680",
+        appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
+    db.enablePersistence({ synchronizeTabs: true }).catch(e => console.log('Offline:', e.code));
+
+    let currentUser  = null;
+    let activeTripId = null;
+    let allActivities = [];
+
+    /* ═══════════════════════════════════════════════════════
+       ONLINE / OFFLINE INDICATOR
+    ═══════════════════════════════════════════════════════ */
+    function updateStatusPill() {
+        const pill  = document.getElementById('status-pill');
+        const label = document.getElementById('status-text');
+        const online = navigator.onLine;
+        pill.className  = 'status-pill ' + (online ? 'online' : 'offline');
+        label.textContent = online ? 'Online' : 'Offline — showing cached data';
+    }
+    window.addEventListener('online',  updateStatusPill);
+    window.addEventListener('offline', updateStatusPill);
+    updateStatusPill();
+
+    /* ═══════════════════════════════════════════════════════
+       PORT LOCATIONS with coords
+    ═══════════════════════════════════════════════════════ */
+    const cruiseDays = [
+        {day:1,  date:'2026-04-19', location:'New York, USA',                   type:'departure', boarding:'11:00 AM', departure:'7:00 PM',
+         coords:{lat:40.7128,lng:-74.0060}, weatherName:'New York'},
+        {day:2,  date:'2026-04-20', location:'At Sea',                           type:'sea'},
+        {day:3,  date:'2026-04-21', location:'Halifax, Canada',                  type:'port', arrival:'9:00 AM', allAboard:'6:30 PM', departure:'7:00 PM',
+         coords:{lat:44.6488,lng:-63.5752}, weatherName:'Halifax'},
+        {day:4,  date:'2026-04-22', location:'At Sea',  type:'sea'},
+        {day:5,  date:'2026-04-23', location:'At Sea',  type:'sea'},
+        {day:6,  date:'2026-04-24', location:'At Sea',  type:'sea'},
+        {day:7,  date:'2026-04-25', location:'At Sea',  type:'sea'},
+        {day:8,  date:'2026-04-26', location:'Ponta Delgada, Azores (Portugal)', type:'port', arrival:'8:00 AM', allAboard:'(Overnight)', departure:'(See Day 9)',
+         coords:{lat:37.7412,lng:-25.6756}, weatherName:'Ponta Delgada'},
+        {day:9,  date:'2026-04-27', location:'Ponta Delgada, Azores (Portugal)', type:'port', arrival:'In Port', allAboard:'12:30 PM', departure:'1:00 PM',
+         coords:{lat:37.7412,lng:-25.6756}, weatherName:'Ponta Delgada'},
+        {day:10, date:'2026-04-28', location:'At Sea',  type:'sea'},
+        {day:11, date:'2026-04-29', location:'Lisbon (Cascais), Portugal',       type:'port', arrival:'8:00 AM', allAboard:'6:30 PM', departure:'7:00 PM',
+         coords:{lat:38.7169,lng:-9.1395}, weatherName:'Lisbon'},
+        {day:12, date:'2026-04-30', location:'At Sea',  type:'sea'},
+        {day:13, date:'2026-05-01', location:'Cadiz (Seville), Spain',           type:'port', arrival:'7:00 AM', allAboard:'5:30 PM', departure:'6:00 PM',
+         coords:{lat:36.5298,lng:-6.2929}, weatherName:'Cádiz'},
+        {day:14, date:'2026-05-02', location:'Malaga (Granada), Spain',          type:'port', arrival:'7:00 AM', allAboard:'6:30 PM', departure:'7:00 PM',
+         coords:{lat:36.7196,lng:-4.4200}, weatherName:'Málaga'},
+        {day:15, date:'2026-05-03', location:'At Sea',  type:'sea'},
+        {day:16, date:'2026-05-04', location:'Marseille (Provence), France',     type:'port', arrival:'7:00 AM', allAboard:'6:30 PM', departure:'7:00 PM',
+         coords:{lat:43.2965,lng:5.3698}, weatherName:'Marseille'},
+        {day:17, date:'2026-05-05', location:'Barcelona, Spain',                 type:'arrival', arrival:'7:00 AM', allAboard:'N/A', departure:'Disembark',
+         coords:{lat:41.3851,lng:2.1734}, weatherName:'Barcelona'},
+        {day:18, date:'2026-05-06', location:'Barcelona, Spain (Post-Cruise)',   type:'land',
+         coords:{lat:41.3851,lng:2.1734}, weatherName:'Barcelona'},
+        {day:19, date:'2026-05-07', location:'Barcelona, Spain (Post-Cruise)',   type:'land',
+         coords:{lat:41.3851,lng:2.1734}, weatherName:'Barcelona'},
+        {day:20, date:'2026-05-08', location:'Barcelona, Spain (Post-Cruise)',   type:'land',
+         coords:{lat:41.3851,lng:2.1734}, weatherName:'Barcelona'},
+    ];
+
+    /* ═══════════════════════════════════════════════════════
+       WEATHER CODE → emoji + description
+    ═══════════════════════════════════════════════════════ */
+    function decodeWMO(code) {
+        const map = {
+            0:  {icon:'☀️',  desc:'Clear sky'},
+            1:  {icon:'🌤️', desc:'Mainly clear'},
+            2:  {icon:'⛅',  desc:'Partly cloudy'},
+            3:  {icon:'☁️',  desc:'Overcast'},
+            45: {icon:'🌫️', desc:'Foggy'},
+            48: {icon:'🌫️', desc:'Rime fog'},
+            51: {icon:'🌦️', desc:'Light drizzle'},
+            53: {icon:'🌦️', desc:'Drizzle'},
+            55: {icon:'🌧️', desc:'Heavy drizzle'},
+            61: {icon:'🌧️', desc:'Light rain'},
+            63: {icon:'🌧️', desc:'Rain'},
+            65: {icon:'🌧️', desc:'Heavy rain'},
+            71: {icon:'🌨️', desc:'Light snow'},
+            73: {icon:'❄️',  desc:'Snow'},
+            75: {icon:'❄️',  desc:'Heavy snow'},
+            80: {icon:'🌦️', desc:'Light showers'},
+            81: {icon:'🌧️', desc:'Showers'},
+            82: {icon:'⛈️',  desc:'Heavy showers'},
+            95: {icon:'⛈️',  desc:'Thunderstorm'},
+            96: {icon:'⛈️',  desc:'Thunderstorm w/ hail'},
+            99: {icon:'⛈️',  desc:'Heavy thunderstorm'},
         };
-        
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.log('Offline:', err.code));
-        
-        let currentUser = null;
-        let activeTripId = null;
-        let allActivities = [];
-        
-        const cruiseDays = [
-            {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure', boarding: '11:00 AM', departure: '7:00 PM'},
-            {day: 2, date: '2026-04-20', location: 'At Sea', type: 'sea'},
-            {day: 3, date: '2026-04-21', location: 'Halifax, Canada', type: 'port', arrival: '9:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
-            {day: 4, date: '2026-04-22', location: 'At Sea', type: 'sea'},
-            {day: 5, date: '2026-04-23', location: 'At Sea', type: 'sea'},
-            {day: 6, date: '2026-04-24', location: 'At Sea', type: 'sea'},
-            {day: 7, date: '2026-04-25', location: 'At Sea', type: 'sea'},
-            {day: 8, date: '2026-04-26', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: '8:00 AM', allAboard: '(Overnight)', departure: '(See Day 9)'},
-            {day: 9, date: '2026-04-27', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: 'In Port', allAboard: '12:30 PM', departure: '1:00 PM'},
-            {day: 10, date: '2026-04-28', location: 'At Sea', type: 'sea'},
-            {day: 11, date: '2026-04-29', location: 'Lisbon (Cascais), Portugal', type: 'port', arrival: '8:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
-            {day: 12, date: '2026-04-30', location: 'At Sea', type: 'sea'},
-            {day: 13, date: '2026-05-01', location: 'Cadiz (Seville), Spain', type: 'port', arrival: '7:00 AM', allAboard: '5:30 PM', departure: '6:00 PM'},
-            {day: 14, date: '2026-05-02', location: 'Malaga (Granada), Spain', type: 'port', arrival: '7:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
-            {day: 15, date: '2026-05-03', location: 'At Sea', type: 'sea'},
-            {day: 16, date: '2026-05-04', location: 'Marseille (Provence), France', type: 'port', arrival: '7:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
-            {day: 17, date: '2026-05-05', location: 'Barcelona, Spain', type: 'arrival', arrival: '7:00 AM', allAboard: 'N/A', departure: 'Disembark'},
-            {day: 18, date: '2026-05-06', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
-            {day: 19, date: '2026-05-07', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
-            {day: 20, date: '2026-05-08', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'}
-        ];
-        
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-            } else {
-                currentUser = user;
-                activeTripId = localStorage.getItem('activeTripId');
-                if (!activeTripId) {
-                    alert('No active trip. Go to Settings to create one.');
-                    window.location.href = 'settings.html';
-                } else {
-                    await loadActivities();
-                    populateDaySelect();
-                    loadDaySchedule();
-                }
-            }
-        });
-        
-        async function loadActivities() {
-            const snapshot = await db.collection('trips').doc(activeTripId).collection('itinerary').get();
-            allActivities = [];
-            snapshot.forEach(doc => {
-                allActivities.push({ id: doc.id, ...doc.data() });
-            });
+        return map[code] || {icon:'🌡️', desc:'Mixed conditions'};
+    }
+
+    function cToF(c) { return Math.round(c * 9/5 + 32); }
+    function tempStr(c) { return `${cToF(c)}°F (${Math.round(c)}°C)`; }
+    function tempStrShort(c) { return `${cToF(c)}°F`; }
+
+    /* ═══════════════════════════════════════════════════════
+       WEATHER FETCHER
+       - If the date is within next 16 days → forecast API (real data)
+       - Otherwise → climate API (historical avg for that calendar date)
+    ═══════════════════════════════════════════════════════ */
+    async function fetchWeather(dayInfo) {
+        const el = document.getElementById('weather-container');
+        if (!dayInfo.coords) {
+            el.innerHTML = '';
+            return;
         }
-        
-        function populateDaySelect() {
-            const select = document.getElementById('daySelect');
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            let defaultDay = 1;
-            cruiseDays.forEach(day => {
-                const dayDate = new Date(day.date.split('-').join('/'));
-                if (dayDate.getTime() === today.getTime()) {
-                    defaultDay = day.day;
-                }
-            });
-            
-            select.innerHTML = cruiseDays.map(day => 
-                `<option value="${day.day}" ${day.day === defaultDay ? 'selected' : ''}>
-                    Day ${day.day} - ${day.location}
-                </option>`
-            ).join('');
+        if (dayInfo.type === 'sea') {
+            el.innerHTML = '';
+            return;
         }
-        
-        function loadDaySchedule() {
-            const selectedDay = parseInt(document.getElementById('daySelect').value);
-            const dayInfo = cruiseDays.find(d => d.day === selectedDay);
-            const dayActivities = allActivities.filter(a => a.day === selectedDay);
-            
-            let portInfoHTML = '';
-            if (dayInfo.type === 'port' || dayInfo.type === 'arrival' || dayInfo.type === 'departure') {
-                portInfoHTML = `
-                    <div class="port-info">
-                        ${dayInfo.boarding ? `
-                            <div class="port-info-item">
-                                <div class="port-info-label">🚢 Boarding</div>
-                                <div class="port-info-value">${dayInfo.boarding}</div>
-                            </div>
-                        ` : ''}
-                        ${dayInfo.arrival ? `
-                            <div class="port-info-item">
-                                <div class="port-info-label">🚢 Arrival</div>
-                                <div class="port-info-value">${dayInfo.arrival}</div>
-                            </div>
-                        ` : ''}
-                        ${dayInfo.allAboard && dayInfo.allAboard !== 'N/A' ? `
-                            <div class="port-info-item">
-                                <div class="port-info-label">⏰ All Aboard</div>
-                                <div class="port-info-value">${dayInfo.allAboard}</div>
-                            </div>
-                        ` : ''}
-                        ${dayInfo.departure && dayInfo.departure !== 'Disembark' ? `
-                            <div class="port-info-item">
-                                <div class="port-info-label">⚓ Departure</div>
-                                <div class="port-info-value">${dayInfo.departure}</div>
-                            </div>
-                        ` : ''}
-                        ${dayInfo.departure === 'Disembark' ? `
-                            <div class="port-info-item">
-                                <div class="port-info-label">🏁 Disembark</div>
-                                <div class="port-info-value">End of Cruise</div>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            }
-            
-            document.getElementById('day-info-container').innerHTML = `
-                <div class="day-info-card">
-                    <div class="day-info-title">Day ${dayInfo.day}</div>
-                    <div class="day-info-date">${formatDate(dayInfo.date)}</div>
-                    <div class="day-info-location">${dayInfo.location}</div>
-                    ${portInfoHTML}
+
+        el.innerHTML = `
+            <div class="weather-card">
+                <div class="weather-card-header">
+                    <div class="wh-left">🌤️ Weather — ${dayInfo.weatherName}</div>
                 </div>
-            `;
-            
-            if (dayActivities.length === 0) {
-                document.getElementById('schedule-container').innerHTML = `
-                    <div class="timeline">
-                        <div class="no-activities">
-                            <div class="no-activities-icon">📅</div>
-                            <div>No activities scheduled for this day</div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                dayActivities.sort((a, b) => {
-                    if (!a.timeStart && !b.timeStart) return 0;
-                    if (!a.timeStart) return 1;
-                    if (!b.timeStart) return -1;
-                    return a.timeStart.localeCompare(b.timeStart);
-                });
-                
-                let timelineHTML = '<div class="timeline"><div class="timeline-header">Daily Timeline</div>';
-                
-                dayActivities.forEach(activity => {
-                    const badges = [];
-                    if (activity.cost > 0) badges.push(`<span class="badge badge-cost">$${activity.cost}</span>`);
-                    if (activity.priority === 'backup') badges.push(`<span class="badge badge-backup">BACKUP</span>`);
-                    if (activity.cancelDate) {
-                        const cancelBy = new Date(activity.cancelDate);
-                        const today = new Date();
-                        if (cancelBy < today) {
-                            badges.push(`<span class="badge badge-cancel">Cancel by ${formatDate(activity.cancelDate)}</span>`);
-                        }
-                    }
-                    
-                    const timeDisplay = activity.timeStart && activity.timeEnd 
-                        ? `${activity.timeStart}<br><small style="font-weight:400;color:#7f8c8d;">to</small><br>${activity.timeEnd}`
-                        : activity.timeStart 
-                        ? activity.timeStart 
-                        : 'All Day';
-                    
-                    const priorityClass = activity.priority === 'backup' ? 'backup' : '';
-                    
-                    timelineHTML += `
-                        <div class="timeline-item">
-                            <div class="timeline-time">${timeDisplay}</div>
-                            <div class="timeline-content ${activity.activityType} ${priorityClass}">
-                                <div class="activity-name">${activity.name}</div>
-                                ${activity.details ? `<div class="activity-details">${activity.details}</div>` : ''}
-                                ${badges.length > 0 ? `<div class="activity-badges">${badges.join('')}</div>` : ''}
-                                ${activity.bookingLink ? `<div style="margin-top: 10px;"><a href="${activity.bookingLink}" target="_blank" style="color: #11998e; text-decoration: none; font-weight: 600;">🔗 View Booking</a></div>` : ''}
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                timelineHTML += '</div>';
-                document.getElementById('schedule-container').innerHTML = timelineHTML;
+                <div class="weather-loading">Loading forecast…</div>
+            </div>`;
+
+        const targetDate = new Date(dayInfo.date + 'T12:00:00');
+        const today = new Date(); today.setHours(0,0,0,0);
+        const diffDays = Math.round((targetDate - today) / 86400000);
+
+        const { lat, lng } = dayInfo.coords;
+
+        // ── Within 16-day forecast window ──────────────────────────────
+        if (diffDays >= 0 && diffDays <= 16) {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast`
+                    + `?latitude=${lat}&longitude=${lng}`
+                    + `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,weather_code`
+                    + `&temperature_unit=celsius&wind_speed_unit=kmh`
+                    + `&timezone=auto`
+                    + `&start_date=${dayInfo.date}&end_date=${dayInfo.date}`;
+
+                const res  = await fetch(url);
+                const data = await res.json();
+
+                if (data.error || !data.daily) throw new Error(data.reason || 'No data');
+
+                const d = data.daily;
+                const wmo = decodeWMO(d.weather_code[0]);
+                const hiF = cToF(d.temperature_2m_max[0]);
+                const loF = cToF(d.temperature_2m_min[0]);
+                const hiC = Math.round(d.temperature_2m_max[0]);
+                const loC = Math.round(d.temperature_2m_min[0]);
+                const rain = d.precipitation_sum[0]?.toFixed(1) ?? '—';
+                const rainPct = d.precipitation_probability_max[0] ?? null;
+                const wind = Math.round(d.wind_speed_10m_max[0] * 0.621371); // km/h → mph
+
+                const isToday = diffDays === 0;
+                const label   = isToday ? 'Today\'s Forecast' : `Forecast for ${formatDateShort(dayInfo.date)}`;
+
+                el.innerHTML = buildWeatherCard(dayInfo.weatherName, wmo, hiF, loF, hiC, loC, rain, rainPct, wind, label, false);
+            } catch (err) {
+                el.innerHTML = `
+                    <div class="weather-card">
+                        <div class="weather-card-header"><div class="wh-left">🌤️ Weather — ${dayInfo.weatherName}</div></div>
+                        <div class="weather-error">⚠️ Couldn't load forecast. Check your connection and try again.</div>
+                    </div>`;
             }
+
+        // ── Outside 16-day window → climate historical average ─────────
+        } else if (diffDays > 16) {
+            try {
+                // Use the same calendar date from 1991-2020 as the climate reference period
+                const dateStr = dayInfo.date; // e.g. 2026-04-29
+                const [, mm, dd] = dateStr.split('-');
+                // Climate API: query 1991-2020 for the same month/day
+                const climStart = `2019-${mm}-${dd}`;
+                const climEnd   = `2019-${mm}-${dd}`;
+
+                const url = `https://archive-api.open-meteo.com/v1/archive`
+                    + `?latitude=${lat}&longitude=${lng}`
+                    + `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max`
+                    + `&temperature_unit=celsius&wind_speed_unit=kmh`
+                    + `&timezone=auto`
+                    + `&start_date=${climStart}&end_date=${climEnd}`;
+
+                const res  = await fetch(url);
+                const data = await res.json();
+
+                if (data.error || !data.daily) throw new Error(data.reason || 'No data');
+
+                const d = data.daily;
+                const hiC = Math.round(d.temperature_2m_max[0]);
+                const loC = Math.round(d.temperature_2m_min[0]);
+                const hiF = cToF(d.temperature_2m_max[0]);
+                const loF = cToF(d.temperature_2m_min[0]);
+                const wind = Math.round(d.wind_speed_10m_max[0] * 0.621371);
+                const rain = d.precipitation_sum[0]?.toFixed(1) ?? '—';
+
+                // We don't have WMO code from archive, use rain amount to guess icon
+                const rainNum = parseFloat(rain) || 0;
+                const wmo = rainNum > 5 ? {icon:'🌧️', desc:'Historically rainy'} :
+                            rainNum > 1 ? {icon:'🌦️', desc:'Some rain typical'} :
+                                          {icon:'☀️',  desc:'Historically dry'};
+
+                const label = `Typical for ${formatMonthDay(dayInfo.date)} (historical avg)`;
+                el.innerHTML = buildWeatherCard(dayInfo.weatherName, wmo, hiF, loF, hiC, loC, rain, null, wind, label, true);
+
+            } catch (err) {
+                el.innerHTML = `
+                    <div class="weather-card">
+                        <div class="weather-card-header"><div class="wh-left">🌤️ Weather — ${dayInfo.weatherName}</div></div>
+                        <div class="weather-error">⚠️ Historical weather unavailable right now.</div>
+                    </div>`;
+            }
+
+        } else {
+            // Past date — we could show archive but just note it
+            el.innerHTML = `
+                <div class="weather-card">
+                    <div class="weather-card-header"><div class="wh-left">🌤️ Weather — ${dayInfo.weatherName}</div></div>
+                    <div class="weather-sea-note">📅 This day has already passed.</div>
+                </div>`;
         }
-        
-        function formatDate(dateStr) {
-            const [year, month, day] = dateStr.split('-');
-            const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    }
+
+    function buildWeatherCard(name, wmo, hiF, loF, hiC, loC, rain, rainPct, wind, label, isHistorical) {
+        const rainPctStr = rainPct !== null ? ` · ${rainPct}% chance` : '';
+        return `
+        <div class="weather-card">
+            <div class="weather-card-header">
+                <div class="wh-left">🌤️ Weather — ${name}</div>
+                <span class="weather-forecast-badge ${isHistorical ? 'historical' : ''}">${isHistorical ? '📅 Historical avg' : '🔴 Live forecast'}</span>
+            </div>
+            <div class="weather-body">
+                <div class="weather-main">
+                    <div class="weather-icon">${wmo.icon}</div>
+                    <div class="weather-temps">
+                        <div class="weather-temp-hi">${hiF}°F <span style="font-size:0.55em;color:#7f8c8d;">${hiC}°C</span></div>
+                        <div class="weather-temp-lo">Low ${loF}°F (${loC}°C)</div>
+                        <div class="weather-desc">${wmo.desc}</div>
+                    </div>
+                </div>
+                <div class="weather-details">
+                    <div class="weather-detail-pill">🌧️ <span class="pill-label">Rain</span> ${rain} mm${rainPctStr}</div>
+                    <div class="weather-detail-pill">💨 <span class="pill-label">Wind</span> ${wind} mph</div>
+                    <div class="weather-detail-pill">📍 <span class="pill-label">${label}</span></div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       FIREBASE AUTH + LOAD
+    ═══════════════════════════════════════════════════════ */
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) { window.location.href = 'login.html'; return; }
+        currentUser  = user;
+        activeTripId = localStorage.getItem('activeTripId');
+        if (!activeTripId) {
+            alert('No active trip. Go to Settings to create one.');
+            window.location.href = 'settings.html';
+        } else {
+            await loadActivities();
+            populateDaySelect();
+            loadDaySchedule();
         }
+    });
+
+    async function loadActivities() {
+        const snap = await db.collection('trips').doc(activeTripId).collection('itinerary').get();
+        allActivities = [];
+        snap.forEach(d => allActivities.push({ id: d.id, ...d.data() }));
+    }
+
+    function populateDaySelect() {
+        const select = document.getElementById('daySelect');
+        const today  = new Date(); today.setHours(0,0,0,0);
+        let defaultDay = 1;
+        cruiseDays.forEach(d => {
+            const dd = new Date(d.date + 'T12:00:00'); dd.setHours(0,0,0,0);
+            if (dd.getTime() === today.getTime()) defaultDay = d.day;
+        });
+        select.innerHTML = cruiseDays.map(d =>
+            `<option value="${d.day}" ${d.day === defaultDay ? 'selected' : ''}>Day ${d.day} — ${d.location}</option>`
+        ).join('');
+    }
+
+    function loadDaySchedule() {
+        const selectedDay  = parseInt(document.getElementById('daySelect').value);
+        const dayInfo      = cruiseDays.find(d => d.day === selectedDay);
+        const dayActivities = allActivities.filter(a => a.day === selectedDay);
+
+        // ── Port info ─────────────────────────────────────────────────
+        let portInfoHTML = '';
+        if (['port','arrival','departure'].includes(dayInfo.type)) {
+            const rows = [
+                dayInfo.boarding  ? `<div class="port-info-item"><div class="port-info-label">🚢 Boarding</div><div class="port-info-value">${dayInfo.boarding}</div></div>` : '',
+                dayInfo.arrival   ? `<div class="port-info-item"><div class="port-info-label">🚢 Arrival</div><div class="port-info-value">${dayInfo.arrival}</div></div>` : '',
+                dayInfo.allAboard && dayInfo.allAboard !== 'N/A' ? `<div class="port-info-item"><div class="port-info-label">⏰ All Aboard</div><div class="port-info-value">${dayInfo.allAboard}</div></div>` : '',
+                dayInfo.departure && dayInfo.departure !== 'Disembark' ? `<div class="port-info-item"><div class="port-info-label">⚓ Departure</div><div class="port-info-value">${dayInfo.departure}</div></div>` : '',
+                dayInfo.departure === 'Disembark' ? `<div class="port-info-item"><div class="port-info-label">🏁 Disembark</div><div class="port-info-value">End of Cruise</div></div>` : '',
+            ].filter(Boolean).join('');
+            portInfoHTML = `<div class="port-info">${rows}</div>`;
+        }
+
+        document.getElementById('day-info-container').innerHTML = `
+            <div class="day-info-card">
+                <div class="day-info-title">Day ${dayInfo.day}</div>
+                <div class="day-info-date">${formatDate(dayInfo.date)}</div>
+                <div class="day-info-location">${dayInfo.location}</div>
+                ${portInfoHTML}
+            </div>`;
+
+        // ── Weather (async, doesn't block timeline) ───────────────────
+        fetchWeather(dayInfo);
+
+        // ── Timeline ──────────────────────────────────────────────────
+        if (dayActivities.length === 0) {
+            document.getElementById('schedule-container').innerHTML = `
+                <div class="timeline">
+                    <div class="no-activities">
+                        <div class="no-activities-icon">📅</div>
+                        <div>No activities scheduled for this day</div>
+                    </div>
+                </div>`;
+            return;
+        }
+
+        dayActivities.sort((a,b) => {
+            if (!a.timeStart && !b.timeStart) return 0;
+            if (!a.timeStart) return 1;
+            if (!b.timeStart) return -1;
+            return a.timeStart.localeCompare(b.timeStart);
+        });
+
+        const EUR_TO_USD = 1.08;
+        function actCostStr(a) {
+            if (!a.cost || a.cost <= 0) return null;
+            const sym = a.currency === 'EUR' ? '€' : '$';
+            const base = parseFloat(a.cost);
+            if (a.perPerson) {
+                const total = base * 2;
+                const usd   = a.currency === 'EUR' ? ` (~$${(total * EUR_TO_USD).toFixed(0)} total)` : '';
+                return `${sym}${base.toFixed(0)}/pp · ${sym}${total.toFixed(0)} total${usd}`;
+            }
+            const usd = a.currency === 'EUR' ? ` (~$${(base * EUR_TO_USD).toFixed(0)})` : '';
+            return `${sym}${base.toFixed(0)}${usd}`;
+        }
+
+        const bookingBadge = {
+            booked:     `<span class="badge badge-booked">✅ Booked</span>`,
+            not_booked: `<span class="badge badge-not-booked">❌ Not Booked</span>`,
+            waiting:    `<span class="badge badge-waiting">⏳ Awaiting Confirm</span>`,
+        };
+
+        let html = '<div class="timeline"><div class="timeline-header">Daily Timeline</div>';
+
+        dayActivities.forEach(act => {
+            const badges = [];
+            if (act.bookingStatus) badges.push(bookingBadge[act.bookingStatus] || '');
+            const costStr = actCostStr(act);
+            if (costStr) badges.push(`<span class="badge badge-cost">${costStr}</span>`);
+            if (act.priority === 'backup') badges.push(`<span class="badge badge-backup">BACKUP</span>`);
+            if (act.cancelDate) {
+                const [y,m,d] = act.cancelDate.split('-');
+                const cDate = new Date(y, m-1, d);
+                const today = new Date(); today.setHours(0,0,0,0);
+                const diff  = Math.ceil((cDate - today) / 86400000);
+                const cls   = diff < 0 ? 'badge-cancel' : (diff <= 7 ? 'badge-cancel' : '');
+                const prefix = diff < 0 ? '⚠️ Expired — cancel by' : (diff <= 7 ? '🚨 Cancel by' : 'Cancel by');
+                if (cls) badges.push(`<span class="badge ${cls}">${prefix} ${formatDateShort(act.cancelDate)}</span>`);
+            }
+            if (act.confirmationNumber) badges.push(`<span class="badge" style="background:#e3e3ff;color:#3333aa;">🔖 #${act.confirmationNumber}</span>`);
+
+            const timeDisplay = act.timeStart && act.timeEnd
+                ? `${fmt12(act.timeStart)}<br><small style="font-weight:400;color:#7f8c8d;">to</small><br>${fmt12(act.timeEnd)}`
+                : act.timeStart ? fmt12(act.timeStart) : 'All Day';
+
+            const typeClass = act.priority === 'backup' ? 'backup' : (act.activityType || '');
+
+            html += `
+                <div class="timeline-item">
+                    <div class="timeline-time">${timeDisplay}</div>
+                    <div class="timeline-content ${typeClass}">
+                        <div class="activity-name">${act.name}</div>
+                        ${act.details ? `<div class="activity-details">${act.details}</div>` : ''}
+                        ${badges.filter(Boolean).length ? `<div class="activity-badges">${badges.filter(Boolean).join('')}</div>` : ''}
+                        ${act.bookingLink ? `<div style="margin-top:10px;"><a href="${act.bookingLink}" target="_blank" style="color:#11998e;text-decoration:none;font-weight:600;">🔗 View Booking</a></div>` : ''}
+                    </div>
+                </div>`;
+        });
+
+        html += '</div>';
+        document.getElementById('schedule-container').innerHTML = html;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       DATE HELPERS
+    ═══════════════════════════════════════════════════════ */
+    function formatDate(ds) {
+        const [y,m,d] = ds.split('-');
+        return new Date(y, m-1, d).toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+    }
+    function formatDateShort(ds) {
+        const [y,m,d] = ds.split('-');
+        return new Date(y, m-1, d).toLocaleDateString('en-US', { month:'short', day:'numeric' });
+    }
+    function formatMonthDay(ds) {
+        const [,m,d] = ds.split('-');
+        return new Date(2000, m-1, d).toLocaleDateString('en-US', { month:'long', day:'numeric' });
+    }
+    function fmt12(t) {
+        if (!t) return '';
+        const [h,m] = t.split(':').map(Number);
+        const ap = h >= 12 ? 'PM' : 'AM';
+        const hr = h % 12 || 12;
+        return `${hr}:${String(m).padStart(2,'0')} ${ap}`;
+    }
     </script>
 </body>
 </html>
