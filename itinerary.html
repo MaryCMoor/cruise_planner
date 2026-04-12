@@ -278,100 +278,203 @@
         .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
 
         /* ===== PRINT STYLES ===== */
-        @media print {
-            * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            body { background: white !important; padding: 0; font-family: Georgia, 'Times New Roman', serif; }
-            .header, .action-buttons, .bottom-nav, .activity-actions, .btn-edit, .btn-delete, .print-btn { display: none !important; }
-            .container { padding: 0; }
-            .print-cover {
-                display: block !important;
-                text-align: center;
-                padding: 60px 40px;
-                border-bottom: 3px solid #2c3e50;
-                margin-bottom: 30px;
-                page-break-after: always;
-            }
-            .print-cover h1 {
-                font-size: 2.8em;
-                color: #1a252f;
-                letter-spacing: 2px;
-                margin-bottom: 10px;
-                font-weight: 900;
-            }
-            .print-cover .print-subtitle {
-                font-size: 1.2em;
-                color: #7f8c8d;
-                margin-bottom: 30px;
-                font-style: italic;
-            }
-            .print-cover .print-dates {
-                font-size: 1em;
-                color: #2c3e50;
-                border: 2px solid #2c3e50;
-                display: inline-block;
-                padding: 10px 30px;
-                border-radius: 4px;
-                letter-spacing: 1px;
-            }
-            .day-card {
-                border-radius: 0 !important;
-                box-shadow: none !important;
-                border: none;
-                border-top: 2px solid #ecf0f1;
-                margin-bottom: 0 !important;
-                padding: 16px 0 !important;
-                page-break-inside: avoid;
-            }
-            .day-card:first-of-type { border-top: none; }
-            .day-header {
-                border-bottom: 1px solid #bdc3c7 !important;
-                padding-bottom: 10px !important;
-                margin-bottom: 10px !important;
-            }
-            .day-title { font-size: 1.2em !important; color: #1a252f !important; }
-            .day-date { font-size: 0.85em !important; }
-            .day-location { font-size: 0.95em !important; color: #2980b9 !important; }
-            .port-times {
-                background: #f4f6f7 !important;
-                border: 1px solid #bdc3c7;
-                font-size: 0.78em !important;
-            }
-            .activity-item {
-                background: white !important;
-                padding: 10px 12px !important;
-                border-radius: 0 !important;
-                margin-bottom: 6px !important;
-                border-left: 3px solid #bdc3c7 !important;
-                page-break-inside: avoid;
-            }
-            .activity-item.excursion { border-left-color: #e74c3c !important; }
-            .activity-item.dining { border-left-color: #f39c12 !important; }
-            .activity-item.onboard { border-left-color: #9b59b6 !important; }
-            .activity-item.general { border-left-color: #3498db !important; }
-            .activity-item.backup { border-left-color: #95a5a6 !important; opacity: 0.8 !important; }
-            .activity-name { font-size: 1em !important; }
-            .activity-time { font-size: 0.82em !important; }
-            .activity-details { font-size: 0.85em !important; margin-top: 4px !important; }
-            .activity-meta { margin-top: 5px !important; gap: 6px !important; }
-            .activity-badge { font-size: 0.72em !important; padding: 3px 6px !important; }
-            .no-activities { padding: 8px !important; font-size: 0.85em !important; }
-            .print-legend {
-                display: block !important;
-                margin-top: 30px;
-                padding: 16px;
-                border: 1px solid #bdc3c7;
-                border-radius: 4px;
-                page-break-inside: avoid;
-            }
-            .print-legend h3 { font-size: 0.95em; margin-bottom: 10px; color: #2c3e50; }
-            .print-legend-items { display: flex; gap: 16px; flex-wrap: wrap; }
-            .print-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8em; color: #555; }
-            .print-legend-dot { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
-        }
-
         @media screen {
             .print-cover { display: none; }
             .print-legend { display: none; }
+            #print-itinerary-doc { display: none; }
+        }
+
+        @media print {
+            body, html { margin: 0; padding: 0; background: white !important; }
+            body > *:not(#print-itinerary-doc) { display: none !important; }
+            #print-itinerary-doc {
+                display: block !important;
+                font-family: 'Georgia', serif;
+                color: #1a1a2e;
+                font-size: 10pt;
+                line-height: 1.5;
+                margin: 0;
+                padding: 0;
+            }
+        }
+
+        /* Print document styles (used by JS-generated content) */
+        #print-itinerary-doc {
+            font-family: 'Georgia', serif;
+        }
+        .pi-cover {
+            text-align: center;
+            padding: 72pt 54pt 54pt;
+            border-bottom: 2pt solid #1a1a2e;
+            page-break-after: always;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .pi-cover-ship { font-size: 48pt; margin-bottom: 16pt; }
+        .pi-cover-title {
+            font-size: 28pt;
+            font-weight: bold;
+            letter-spacing: 4pt;
+            text-transform: uppercase;
+            color: #1a1a2e;
+            margin-bottom: 6pt;
+        }
+        .pi-cover-subtitle {
+            font-size: 13pt;
+            color: #555;
+            font-style: italic;
+            margin-bottom: 28pt;
+        }
+        .pi-cover-route {
+            border: 1.5pt solid #1a1a2e;
+            padding: 10pt 28pt;
+            font-size: 10pt;
+            letter-spacing: 1.5pt;
+            text-transform: uppercase;
+            margin-bottom: 18pt;
+        }
+        .pi-cover-travelers {
+            font-size: 11pt;
+            color: #333;
+            margin-bottom: 6pt;
+        }
+        .pi-cover-printed {
+            font-size: 8pt;
+            color: #aaa;
+            margin-top: 20pt;
+            font-style: italic;
+        }
+        .pi-day {
+            padding: 14pt 0 10pt;
+            border-bottom: 0.5pt solid #ccc;
+            page-break-inside: avoid;
+        }
+        .pi-day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8pt;
+            padding-bottom: 6pt;
+            border-bottom: 1.5pt solid #1a1a2e;
+        }
+        .pi-day-left {}
+        .pi-day-number {
+            font-size: 7pt;
+            text-transform: uppercase;
+            letter-spacing: 2pt;
+            color: #888;
+            margin-bottom: 2pt;
+        }
+        .pi-day-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+        .pi-day-date {
+            font-size: 9pt;
+            color: #555;
+            font-style: italic;
+        }
+        .pi-ship-times {
+            text-align: right;
+            font-size: 8pt;
+            color: #333;
+            background: #f5f5f5;
+            padding: 5pt 8pt;
+            border: 0.5pt solid #ccc;
+            line-height: 1.8;
+        }
+        .pi-ship-times div { white-space: nowrap; }
+        .pi-activities { margin-top: 6pt; }
+        .pi-activity {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 6pt;
+            padding: 6pt 8pt;
+            border-left: 3pt solid #ccc;
+            background: #fafafa;
+        }
+        .pi-activity.excursion { border-left-color: #c0392b; }
+        .pi-activity.dining    { border-left-color: #d68910; }
+        .pi-activity.onboard   { border-left-color: #7d3c98; }
+        .pi-activity.general   { border-left-color: #2471a3; }
+        .pi-activity.backup    { border-left-color: #aaa; opacity: 0.75; }
+        .pi-act-time {
+            min-width: 72pt;
+            font-size: 8pt;
+            color: #555;
+            padding-top: 1pt;
+            font-family: 'Courier New', monospace;
+            flex-shrink: 0;
+        }
+        .pi-act-body { flex: 1; }
+        .pi-act-name {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #1a1a2e;
+            margin-bottom: 2pt;
+        }
+        .pi-act-name.backup-label::after {
+            content: " (Backup)";
+            font-weight: normal;
+            font-style: italic;
+            color: #888;
+            font-size: 8pt;
+        }
+        .pi-act-details {
+            font-size: 8.5pt;
+            color: #444;
+            margin-bottom: 3pt;
+        }
+        .pi-act-meta {
+            font-size: 7.5pt;
+            color: #666;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8pt;
+        }
+        .pi-act-meta span { white-space: nowrap; }
+        .pi-act-status-booked { color: #1a7a3a; }
+        .pi-act-status-waiting { color: #8a6000; }
+        .pi-act-status-not-booked { color: #a01010; }
+        .pi-no-activities {
+            font-size: 8.5pt;
+            color: #999;
+            font-style: italic;
+            padding: 4pt 0;
+        }
+        .pi-sea-day .pi-day-title { color: #2471a3; }
+        .pi-legend {
+            margin-top: 18pt;
+            padding: 10pt 12pt;
+            border: 0.5pt solid #ccc;
+            page-break-inside: avoid;
+        }
+        .pi-legend-title {
+            font-size: 7pt;
+            text-transform: uppercase;
+            letter-spacing: 2pt;
+            color: #888;
+            margin-bottom: 6pt;
+        }
+        .pi-legend-items {
+            display: flex;
+            gap: 16pt;
+            flex-wrap: wrap;
+        }
+        .pi-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4pt;
+            font-size: 7.5pt;
+            color: #444;
+        }
+        .pi-legend-bar {
+            width: 16pt;
+            height: 8pt;
         }
     </style>
 </head>
@@ -396,6 +499,9 @@
             <button class="print-btn" onclick="printItinerary()">🖨️ Print</button>
         </div>
         <div id="itinerary-container"></div>
+
+        <!-- Hidden print-only document rebuilt by JS on print -->
+        <div id="print-itinerary-doc"></div>
 
         <!-- Print legend (hidden on screen) -->
         <div class="print-legend">
@@ -492,32 +598,26 @@
                             <option value="Joint">Joint</option>
                         </select>
                     </div>
-                    <!-- NEW: Credit card -->
+                    <!-- Credit card - editable with datalist -->
                     <div class="form-group">
                         <label class="form-label">Credit Card</label>
-                        <select id="creditCard" class="form-select">
-                            <option value="">— None —</option>
-                            <option value="Visa ending 1234">Visa •1234</option>
-                            <option value="Mastercard ending 5678">MC •5678</option>
-                            <option value="Amex ending 9012">Amex •9012</option>
-                            <option value="Other">Other</option>
-                        </select>
+                        <input type="text" id="creditCard" class="form-input" list="creditCardList" placeholder="Type or pick a card…" autocomplete="off">
+                        <datalist id="creditCardList"></datalist>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Booked On (Site / Platform)</label>
-                    <select id="bookingSite" class="form-select">
-                        <option value="">— None —</option>
-                        <option value="Royal Caribbean">Royal Caribbean</option>
-                        <option value="Viator">Viator</option>
-                        <option value="GetYourGuide">GetYourGuide</option>
-                        <option value="Airbnb Experiences">Airbnb Experiences</option>
-                        <option value="TripAdvisor">TripAdvisor</option>
-                        <option value="Expedia">Expedia</option>
-                        <option value="Direct / Vendor">Direct / Vendor</option>
-                        <option value="Other">Other</option>
-                    </select>
+                    <input type="text" id="bookingSite" class="form-input" list="bookingSiteList" placeholder="Type or pick a platform…" autocomplete="off">
+                    <datalist id="bookingSiteList">
+                        <option value="Royal Caribbean">
+                        <option value="Viator">
+                        <option value="GetYourGuide">
+                        <option value="Airbnb Experiences">
+                        <option value="TripAdvisor">
+                        <option value="Expedia">
+                        <option value="Direct / Vendor">
+                    </datalist>
                 </div>
 
                 <div class="form-group">
@@ -670,6 +770,7 @@
                 allActivities.push({ id: doc.id, ...doc.data() });
             });
             renderItinerary();
+            updateDatalists();
         }
 
         function formatCost(cost, currency) {
@@ -691,6 +792,23 @@
             };
             const s = map[status];
             return s ? `<span class="activity-badge ${s.cls}">${s.label}</span>` : '';
+        }
+
+        function updateDatalists() {
+            // Credit cards
+            const cards = [...new Set(allActivities.map(a => a.creditCard).filter(Boolean))];
+            const cardList = document.getElementById('creditCardList');
+            if (cardList) {
+                cardList.innerHTML = cards.map(c => `<option value="${c}">`).join('');
+            }
+            // Booking sites
+            const defaultSites = ['Royal Caribbean','Viator','GetYourGuide','Airbnb Experiences','TripAdvisor','Expedia','Direct / Vendor'];
+            const usedSites = allActivities.map(a => a.bookingSite).filter(Boolean);
+            const sites = [...new Set([...defaultSites, ...usedSites])];
+            const siteList = document.getElementById('bookingSiteList');
+            if (siteList) {
+                siteList.innerHTML = sites.map(s => `<option value="${s}">`).join('');
+            }
         }
 
         function renderItinerary() {
@@ -978,10 +1096,131 @@
         }
 
         function printItinerary() {
-            document.getElementById('printDate').textContent = new Date().toLocaleDateString('en-US', {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            buildPrintDoc();
+            setTimeout(() => window.print(), 150);
+        }
+
+        function fmt12(t) {
+            if (!t) return '';
+            const [h, m] = t.split(':').map(Number);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const hr = h % 12 || 12;
+            return `${hr}:${String(m).padStart(2,'0')} ${ampm}`;
+        }
+
+        function buildPrintDoc() {
+            const now = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+            let html = '';
+
+            // Cover page
+            html += `
+            <div class="pi-cover">
+                <div class="pi-cover-ship">🚢</div>
+                <div class="pi-cover-title">Cruise Itinerary</div>
+                <div class="pi-cover-subtitle">20-Day Transatlantic Voyage</div>
+                <div class="pi-cover-route">April 19 – May 8, 2026 &nbsp;·&nbsp; New York → Barcelona</div>
+                <div class="pi-cover-travelers">Brian &amp; Mary</div>
+                <div class="pi-cover-printed">Printed ${now}</div>
+            </div>`;
+
+            // Day pages
+            cruiseDays.forEach(day => {
+                const dayActivities = allActivities.filter(a => a.day === day.day)
+                    .sort((a,b) => {
+                        if (!a.timeStart && !b.timeStart) return 0;
+                        if (!a.timeStart) return 1;
+                        if (!b.timeStart) return -1;
+                        return a.timeStart.localeCompare(b.timeStart);
+                    });
+
+                const isSea = day.type === 'sea';
+                const isPort = ['port','arrival','departure'].includes(day.type);
+
+                let shipTimesHTML = '';
+                if (isPort) {
+                    shipTimesHTML = `<div class="pi-ship-times">`;
+                    if (day.boarding)   shipTimesHTML += `<div>Boarding: ${day.boarding}</div>`;
+                    if (day.arrival)    shipTimesHTML += `<div>Arrival: ${day.arrival}</div>`;
+                    if (day.allAboard && day.allAboard !== 'N/A') shipTimesHTML += `<div>All Aboard: ${day.allAboard}</div>`;
+                    if (day.departure && day.departure !== 'Disembark') shipTimesHTML += `<div>Departure: ${day.departure}</div>`;
+                    if (day.departure === 'Disembark') shipTimesHTML += `<div>Disembark</div>`;
+                    shipTimesHTML += `</div>`;
+                }
+
+                let activitiesHTML = '';
+                if (dayActivities.length === 0) {
+                    activitiesHTML = `<div class="pi-no-activities">No activities planned</div>`;
+                } else {
+                    dayActivities.forEach(act => {
+                        const timeStr = act.timeStart
+                            ? (act.timeEnd ? `${fmt12(act.timeStart)} – ${fmt12(act.timeEnd)}` : fmt12(act.timeStart))
+                            : '—';
+
+                        const statusMap = {
+                            booked:     ['pi-act-status-booked',    'Booked'],
+                            not_booked: ['pi-act-status-not-booked','Not Booked'],
+                            waiting:    ['pi-act-status-waiting',   'Awaiting Confirmation']
+                        };
+                        const [statusCls, statusLabel] = statusMap[act.bookingStatus] || ['',''];
+
+                        const costStr = (() => {
+                            if (!act.cost || act.cost <= 0) return '';
+                            if (act.currency === 'EUR') {
+                                return `€${parseFloat(act.cost).toFixed(2)} (~$${(act.cost * EUR_TO_USD).toFixed(2)})`;
+                            }
+                            return `$${parseFloat(act.cost).toFixed(2)}`;
+                        })();
+
+                        const metaParts = [];
+                        if (statusLabel) metaParts.push(`<span class="${statusCls}">${statusLabel}</span>`);
+                        if (costStr)     metaParts.push(`<span>${costStr}</span>`);
+                        if (act.accountHolder) metaParts.push(`<span>${act.accountHolder}'s account</span>`);
+                        if (act.creditCard)    metaParts.push(`<span>💳 ${act.creditCard}</span>`);
+                        if (act.bookingSite)   metaParts.push(`<span>via ${act.bookingSite}</span>`);
+                        if (act.cancelDate)    metaParts.push(`<span>Cancel by: ${formatDate(act.cancelDate)}</span>`);
+
+                        const isBackup = act.priority === 'backup';
+
+                        activitiesHTML += `
+                        <div class="pi-activity ${act.activityType}${isBackup ? ' backup' : ''}">
+                            <div class="pi-act-time">${timeStr}</div>
+                            <div class="pi-act-body">
+                                <div class="pi-act-name${isBackup ? ' backup-label' : ''}">${act.name}</div>
+                                ${act.details ? `<div class="pi-act-details">${act.details}</div>` : ''}
+                                ${metaParts.length ? `<div class="pi-act-meta">${metaParts.join('')}</div>` : ''}
+                            </div>
+                        </div>`;
+                    });
+                }
+
+                html += `
+                <div class="pi-day${isSea ? ' pi-sea-day' : ''}">
+                    <div class="pi-day-header">
+                        <div class="pi-day-left">
+                            <div class="pi-day-number">Day ${day.day}</div>
+                            <div class="pi-day-title">${day.location}</div>
+                            <div class="pi-day-date">${formatDate(day.date)}</div>
+                        </div>
+                        ${shipTimesHTML}
+                    </div>
+                    <div class="pi-activities">${activitiesHTML}</div>
+                </div>`;
             });
-            window.print();
+
+            // Legend
+            html += `
+            <div class="pi-legend">
+                <div class="pi-legend-title">Activity Type</div>
+                <div class="pi-legend-items">
+                    <div class="pi-legend-item"><div class="pi-legend-bar" style="background:#c0392b"></div> Port Excursion</div>
+                    <div class="pi-legend-item"><div class="pi-legend-bar" style="background:#d68910"></div> Dining</div>
+                    <div class="pi-legend-item"><div class="pi-legend-bar" style="background:#7d3c98"></div> Onboard Activity</div>
+                    <div class="pi-legend-item"><div class="pi-legend-bar" style="background:#2471a3"></div> General</div>
+                    <div class="pi-legend-item"><div class="pi-legend-bar" style="background:#aaa"></div> Backup / Optional</div>
+                </div>
+            </div>`;
+
+            document.getElementById('print-itinerary-doc').innerHTML = html;
         }
     </script>
 </body>
