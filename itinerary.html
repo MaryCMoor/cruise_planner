@@ -28,7 +28,7 @@
         .container { padding: 15px; }
         .action-buttons {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             margin-bottom: 15px;
         }
@@ -112,6 +112,7 @@
             gap: 10px;
             margin-top: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
         .activity-badge {
             font-size: 0.75em;
@@ -119,18 +120,16 @@
             border-radius: 5px;
             font-weight: 600;
         }
-        .badge-cost {
-            background: #d4edda;
-            color: #155724;
-        }
-        .badge-backup {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .badge-cancelled {
-            background: #f8d7da;
-            color: #721c24;
-        }
+        .badge-cost { background: #d4edda; color: #155724; }
+        .badge-backup { background: #fff3cd; color: #856404; }
+        .badge-cancelled { background: #f8d7da; color: #721c24; }
+        .badge-booked { background: #d4edda; color: #155724; }
+        .badge-not-booked { background: #f8d7da; color: #721c24; }
+        .badge-waiting { background: #fff3cd; color: #856404; }
+        .badge-account { background: #e3e3ff; color: #3333aa; }
+        .badge-card { background: #ffe8d6; color: #8b4500; }
+        .badge-eur { background: #e8f4f8; color: #1a6080; }
+        .badge-site { background: #f0e6ff; color: #5b21b6; }
         .activity-actions {
             display: flex;
             gap: 8px;
@@ -144,29 +143,20 @@
             cursor: pointer;
             font-weight: 600;
         }
-        .btn-edit {
-            background: #3498db;
-            color: white;
-        }
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
-        }
-        .add-activity-btn, .dining-schedule-btn {
+        .btn-edit { background: #3498db; color: white; }
+        .btn-delete { background: #e74c3c; color: white; }
+        .add-activity-btn, .dining-schedule-btn, .print-btn {
             padding: 15px;
             border: none;
             border-radius: 10px;
             font-weight: 700;
-            font-size: 1em;
+            font-size: 0.9em;
             cursor: pointer;
             color: white;
         }
-        .add-activity-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-        .dining-schedule-btn {
-            background: linear-gradient(135deg, #f39c12 0%, #e74c3c 100%);
-        }
+        .add-activity-btn { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .dining-schedule-btn { background: linear-gradient(135deg, #f39c12 0%, #e74c3c 100%); }
+        .print-btn { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: #1a3a2a; }
         .no-activities {
             text-align: center;
             padding: 20px;
@@ -176,10 +166,7 @@
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5);
             z-index: 10000;
             overflow-y: auto;
@@ -199,9 +186,7 @@
             color: #2c3e50;
             margin-bottom: 20px;
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
+        .form-group { margin-bottom: 15px; }
         .form-label {
             display: block;
             font-weight: 600;
@@ -217,10 +202,7 @@
             font-size: 1em;
             font-family: inherit;
         }
-        .form-textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
+        .form-textarea { resize: vertical; min-height: 80px; }
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -235,14 +217,8 @@
             font-size: 1em;
             margin-right: 10px;
         }
-        .btn-save {
-            background: #27ae60;
-            color: white;
-        }
-        .btn-cancel {
-            background: #95a5a6;
-            color: white;
-        }
+        .btn-save { background: #27ae60; color: white; }
+        .btn-cancel { background: #95a5a6; color: white; }
         .conflict-warning {
             background: #fff3cd;
             border: 2px solid #ffc107;
@@ -266,14 +242,8 @@
             background: #f8f9fa;
             border-radius: 6px;
         }
-        .day-checkbox-item input {
-            cursor: pointer;
-        }
-        .day-checkbox-item label {
-            cursor: pointer;
-            font-size: 0.9em;
-            color: #2c3e50;
-        }
+        .day-checkbox-item input { cursor: pointer; }
+        .day-checkbox-item label { cursor: pointer; font-size: 0.9em; color: #2c3e50; }
         .info-box {
             background: #e3f2fd;
             padding: 12px;
@@ -285,9 +255,7 @@
         }
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             display: flex;
             justify-content: space-around;
@@ -308,6 +276,103 @@
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); border-radius: 12px; }
         .nav-item-icon { font-size: 1.6em; margin-bottom: 4px; }
+
+        /* ===== PRINT STYLES ===== */
+        @media print {
+            * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body { background: white !important; padding: 0; font-family: Georgia, 'Times New Roman', serif; }
+            .header, .action-buttons, .bottom-nav, .activity-actions, .btn-edit, .btn-delete, .print-btn { display: none !important; }
+            .container { padding: 0; }
+            .print-cover {
+                display: block !important;
+                text-align: center;
+                padding: 60px 40px;
+                border-bottom: 3px solid #2c3e50;
+                margin-bottom: 30px;
+                page-break-after: always;
+            }
+            .print-cover h1 {
+                font-size: 2.8em;
+                color: #1a252f;
+                letter-spacing: 2px;
+                margin-bottom: 10px;
+                font-weight: 900;
+            }
+            .print-cover .print-subtitle {
+                font-size: 1.2em;
+                color: #7f8c8d;
+                margin-bottom: 30px;
+                font-style: italic;
+            }
+            .print-cover .print-dates {
+                font-size: 1em;
+                color: #2c3e50;
+                border: 2px solid #2c3e50;
+                display: inline-block;
+                padding: 10px 30px;
+                border-radius: 4px;
+                letter-spacing: 1px;
+            }
+            .day-card {
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                border: none;
+                border-top: 2px solid #ecf0f1;
+                margin-bottom: 0 !important;
+                padding: 16px 0 !important;
+                page-break-inside: avoid;
+            }
+            .day-card:first-of-type { border-top: none; }
+            .day-header {
+                border-bottom: 1px solid #bdc3c7 !important;
+                padding-bottom: 10px !important;
+                margin-bottom: 10px !important;
+            }
+            .day-title { font-size: 1.2em !important; color: #1a252f !important; }
+            .day-date { font-size: 0.85em !important; }
+            .day-location { font-size: 0.95em !important; color: #2980b9 !important; }
+            .port-times {
+                background: #f4f6f7 !important;
+                border: 1px solid #bdc3c7;
+                font-size: 0.78em !important;
+            }
+            .activity-item {
+                background: white !important;
+                padding: 10px 12px !important;
+                border-radius: 0 !important;
+                margin-bottom: 6px !important;
+                border-left: 3px solid #bdc3c7 !important;
+                page-break-inside: avoid;
+            }
+            .activity-item.excursion { border-left-color: #e74c3c !important; }
+            .activity-item.dining { border-left-color: #f39c12 !important; }
+            .activity-item.onboard { border-left-color: #9b59b6 !important; }
+            .activity-item.general { border-left-color: #3498db !important; }
+            .activity-item.backup { border-left-color: #95a5a6 !important; opacity: 0.8 !important; }
+            .activity-name { font-size: 1em !important; }
+            .activity-time { font-size: 0.82em !important; }
+            .activity-details { font-size: 0.85em !important; margin-top: 4px !important; }
+            .activity-meta { margin-top: 5px !important; gap: 6px !important; }
+            .activity-badge { font-size: 0.72em !important; padding: 3px 6px !important; }
+            .no-activities { padding: 8px !important; font-size: 0.85em !important; }
+            .print-legend {
+                display: block !important;
+                margin-top: 30px;
+                padding: 16px;
+                border: 1px solid #bdc3c7;
+                border-radius: 4px;
+                page-break-inside: avoid;
+            }
+            .print-legend h3 { font-size: 0.95em; margin-bottom: 10px; color: #2c3e50; }
+            .print-legend-items { display: flex; gap: 16px; flex-wrap: wrap; }
+            .print-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8em; color: #555; }
+            .print-legend-dot { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+        }
+
+        @media screen {
+            .print-cover { display: none; }
+            .print-legend { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -317,13 +382,35 @@
     </div>
 
     <div class="container">
+        <!-- Print cover page (hidden on screen) -->
+        <div class="print-cover">
+            <h1>🚢 CRUISE ITINERARY</h1>
+            <div class="print-subtitle">20-Day Transatlantic Voyage</div>
+            <div class="print-dates">April 19 – May 8, 2026 &nbsp;|&nbsp; New York → Barcelona</div>
+            <div style="margin-top: 30px; font-size: 0.85em; color: #95a5a6;">Printed: <span id="printDate"></span></div>
+        </div>
+
         <div class="action-buttons">
             <button class="add-activity-btn" onclick="showAddActivityModal()">+ Add Activity</button>
             <button class="dining-schedule-btn" onclick="showDiningModal()">🍽️ Set Dining</button>
+            <button class="print-btn" onclick="printItinerary()">🖨️ Print</button>
         </div>
         <div id="itinerary-container"></div>
+
+        <!-- Print legend (hidden on screen) -->
+        <div class="print-legend">
+            <h3>Activity Type Key</h3>
+            <div class="print-legend-items">
+                <div class="print-legend-item"><div class="print-legend-dot" style="background:#e74c3c"></div>Port Excursion</div>
+                <div class="print-legend-item"><div class="print-legend-dot" style="background:#f39c12"></div>Dining</div>
+                <div class="print-legend-item"><div class="print-legend-dot" style="background:#9b59b6"></div>Onboard Activity</div>
+                <div class="print-legend-item"><div class="print-legend-dot" style="background:#3498db"></div>General</div>
+                <div class="print-legend-item"><div class="print-legend-dot" style="background:#95a5a6"></div>Backup / Optional</div>
+            </div>
+        </div>
     </div>
 
+    <!-- Activity Modal -->
     <div id="activityModal" class="modal">
         <div class="modal-content">
             <div class="modal-header" id="modal-title">Add Activity</div>
@@ -359,11 +446,23 @@
                     <label class="form-label">Details</label>
                     <textarea id="details" class="form-textarea"></textarea>
                 </div>
+
+                <!-- NEW: Currency + Cost row -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Cost (USD)</label>
-                        <input type="number" id="cost" class="form-input" step="0.01" min="0">
+                        <label class="form-label">Currency</label>
+                        <select id="currency" class="form-select">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                        </select>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Cost Amount</label>
+                        <input type="number" id="cost" class="form-input" step="0.01" min="0" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Priority</label>
                         <select id="priority" class="form-select">
@@ -371,7 +470,56 @@
                             <option value="backup">Backup</option>
                         </select>
                     </div>
+                    <!-- NEW: Booking Status -->
+                    <div class="form-group">
+                        <label class="form-label">Booking Status</label>
+                        <select id="bookingStatus" class="form-select">
+                            <option value="booked">✅ Booked</option>
+                            <option value="not_booked">❌ Not Booked</option>
+                            <option value="waiting">⏳ Waiting Confirmation</option>
+                        </select>
+                    </div>
                 </div>
+
+                <div class="form-row">
+                    <!-- NEW: Who's account -->
+                    <div class="form-group">
+                        <label class="form-label">Account Holder</label>
+                        <select id="accountHolder" class="form-select">
+                            <option value="">— None —</option>
+                            <option value="Brian">Brian</option>
+                            <option value="Mary">Mary</option>
+                            <option value="Joint">Joint</option>
+                        </select>
+                    </div>
+                    <!-- NEW: Credit card -->
+                    <div class="form-group">
+                        <label class="form-label">Credit Card</label>
+                        <select id="creditCard" class="form-select">
+                            <option value="">— None —</option>
+                            <option value="Visa ending 1234">Visa •1234</option>
+                            <option value="Mastercard ending 5678">MC •5678</option>
+                            <option value="Amex ending 9012">Amex •9012</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Booked On (Site / Platform)</label>
+                    <select id="bookingSite" class="form-select">
+                        <option value="">— None —</option>
+                        <option value="Royal Caribbean">Royal Caribbean</option>
+                        <option value="Viator">Viator</option>
+                        <option value="GetYourGuide">GetYourGuide</option>
+                        <option value="Airbnb Experiences">Airbnb Experiences</option>
+                        <option value="TripAdvisor">TripAdvisor</option>
+                        <option value="Expedia">Expedia</option>
+                        <option value="Direct / Vendor">Direct / Vendor</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <label class="form-label">Booking Link</label>
                     <input type="url" id="bookingLink" class="form-input" placeholder="https://">
@@ -389,6 +537,7 @@
         </div>
     </div>
 
+    <!-- Dining Modal -->
     <div id="diningModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">🍽️ Set Recurring Dining Schedule</div>
@@ -460,41 +609,44 @@
             messagingSenderId: "554027862680",
             appId: "1:554027862680:web:d6a392181aca12fe8a5eed"
         };
-        
+
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        
+
         db.enablePersistence({ synchronizeTabs: true }).catch((err) => console.log('Offline:', err.code));
-        
+
         let currentUser = null;
         let activeTripId = null;
         let editingActivityId = null;
         let allActivities = [];
-        
+
+        // EUR → USD conversion rate (update as needed)
+        const EUR_TO_USD = 1.08;
+
         const cruiseDays = [
-            {day: 1, date: '2026-04-19', location: 'New York, USA', type: 'departure', boarding: '11:00 AM', departure: '7:00 PM'},
-            {day: 2, date: '2026-04-20', location: 'At Sea', type: 'sea'},
-            {day: 3, date: '2026-04-21', location: 'Halifax, Canada', type: 'port', arrival: '9:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
-            {day: 4, date: '2026-04-22', location: 'At Sea', type: 'sea'},
-            {day: 5, date: '2026-04-23', location: 'At Sea', type: 'sea'},
-            {day: 6, date: '2026-04-24', location: 'At Sea', type: 'sea'},
-            {day: 7, date: '2026-04-25', location: 'At Sea', type: 'sea'},
-            {day: 8, date: '2026-04-26', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: '8:00 AM', allAboard: '(Overnight)', departure: '(See Day 9)'},
-            {day: 9, date: '2026-04-27', location: 'Ponta Delgada, Azores (Portugal)', type: 'port', arrival: 'In Port', allAboard: '12:30 PM', departure: '1:00 PM'},
-            {day: 10, date: '2026-04-28', location: 'At Sea', type: 'sea'},
-            {day: 11, date: '2026-04-29', location: 'Lisbon (Cascais), Portugal', type: 'port', arrival: '8:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
-            {day: 12, date: '2026-04-30', location: 'At Sea', type: 'sea'},
-            {day: 13, date: '2026-05-01', location: 'Cadiz (Seville), Spain', type: 'port', arrival: '7:00 AM', allAboard: '5:30 PM', departure: '6:00 PM'},
-            {day: 14, date: '2026-05-02', location: 'Malaga (Granada), Spain', type: 'port', arrival: '7:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
-            {day: 15, date: '2026-05-03', location: 'At Sea', type: 'sea'},
-            {day: 16, date: '2026-05-04', location: 'Marseille (Provence), France', type: 'port', arrival: '7:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
-            {day: 17, date: '2026-05-05', location: 'Barcelona, Spain', type: 'arrival', arrival: '7:00 AM', allAboard: 'N/A', departure: 'Disembark'},
-            {day: 18, date: '2026-05-06', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
-            {day: 19, date: '2026-05-07', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'},
-            {day: 20, date: '2026-05-08', location: 'Barcelona, Spain (Post-Cruise)', type: 'land'}
+            {day: 1,  date: '2026-04-19', location: 'New York, USA',                       type: 'departure', boarding: '11:00 AM', departure: '7:00 PM'},
+            {day: 2,  date: '2026-04-20', location: 'At Sea',                               type: 'sea'},
+            {day: 3,  date: '2026-04-21', location: 'Halifax, Canada',                      type: 'port', arrival: '9:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
+            {day: 4,  date: '2026-04-22', location: 'At Sea',                               type: 'sea'},
+            {day: 5,  date: '2026-04-23', location: 'At Sea',                               type: 'sea'},
+            {day: 6,  date: '2026-04-24', location: 'At Sea',                               type: 'sea'},
+            {day: 7,  date: '2026-04-25', location: 'At Sea',                               type: 'sea'},
+            {day: 8,  date: '2026-04-26', location: 'Ponta Delgada, Azores (Portugal)',     type: 'port', arrival: '8:00 AM', allAboard: '(Overnight)', departure: '(See Day 9)'},
+            {day: 9,  date: '2026-04-27', location: 'Ponta Delgada, Azores (Portugal)',     type: 'port', arrival: 'In Port', allAboard: '12:30 PM', departure: '1:00 PM'},
+            {day: 10, date: '2026-04-28', location: 'At Sea',                               type: 'sea'},
+            {day: 11, date: '2026-04-29', location: 'Lisbon (Cascais), Portugal',           type: 'port', arrival: '8:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
+            {day: 12, date: '2026-04-30', location: 'At Sea',                               type: 'sea'},
+            {day: 13, date: '2026-05-01', location: 'Cadiz (Seville), Spain',               type: 'port', arrival: '7:00 AM', allAboard: '5:30 PM', departure: '6:00 PM'},
+            {day: 14, date: '2026-05-02', location: 'Malaga (Granada), Spain',              type: 'port', arrival: '7:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
+            {day: 15, date: '2026-05-03', location: 'At Sea',                               type: 'sea'},
+            {day: 16, date: '2026-05-04', location: 'Marseille (Provence), France',         type: 'port', arrival: '7:00 AM', allAboard: '6:30 PM', departure: '7:00 PM'},
+            {day: 17, date: '2026-05-05', location: 'Barcelona, Spain',                     type: 'arrival', arrival: '7:00 AM', allAboard: 'N/A', departure: 'Disembark'},
+            {day: 18, date: '2026-05-06', location: 'Barcelona, Spain (Post-Cruise)',       type: 'land'},
+            {day: 19, date: '2026-05-07', location: 'Barcelona, Spain (Post-Cruise)',       type: 'land'},
+            {day: 20, date: '2026-05-08', location: 'Barcelona, Spain (Post-Cruise)',       type: 'land'}
         ];
-        
+
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.href = 'login.html';
@@ -510,37 +662,57 @@
                 }
             }
         });
-        
+
         async function loadItinerary() {
             const snapshot = await db.collection('trips').doc(activeTripId).collection('itinerary').get();
             allActivities = [];
             snapshot.forEach(doc => {
                 allActivities.push({ id: doc.id, ...doc.data() });
             });
-            
             renderItinerary();
         }
-        
+
+        function formatCost(cost, currency) {
+            if (!cost || cost <= 0) return null;
+            currency = currency || 'USD';
+            if (currency === 'EUR') {
+                const usd = (cost * EUR_TO_USD).toFixed(2);
+                return `€${parseFloat(cost).toFixed(2)} (~$${usd} USD)`;
+            }
+            return `$${parseFloat(cost).toFixed(2)}`;
+        }
+
+        function bookingStatusBadge(status) {
+            if (!status) return '';
+            const map = {
+                booked:     { cls: 'badge-booked',     label: '✅ Booked' },
+                not_booked: { cls: 'badge-not-booked', label: '❌ Not Booked' },
+                waiting:    { cls: 'badge-waiting',    label: '⏳ Awaiting Confirm' }
+            };
+            const s = map[status];
+            return s ? `<span class="activity-badge ${s.cls}">${s.label}</span>` : '';
+        }
+
         function renderItinerary() {
             const container = document.getElementById('itinerary-container');
             container.innerHTML = '';
-            
+
             cruiseDays.forEach(day => {
                 const dayActivities = allActivities.filter(a => a.day === day.day);
-                
+
                 let portTimesHTML = '';
                 if (day.type === 'port' || day.type === 'arrival' || day.type === 'departure') {
                     portTimesHTML = `
                         <div class="port-times">
                             ${day.boarding ? `<div>🚢 Boarding: ${day.boarding}</div>` : ''}
-                            ${day.arrival ? `<div>🚢 Arrival: ${day.arrival}</div>` : ''}
+                            ${day.arrival  ? `<div>🚢 Arrival: ${day.arrival}</div>` : ''}
                             ${day.allAboard && day.allAboard !== 'N/A' ? `<div>⏰ All Aboard: ${day.allAboard}</div>` : ''}
                             ${day.departure && day.departure !== 'Disembark' ? `<div>⚓ Departure: ${day.departure}</div>` : ''}
                             ${day.departure === 'Disembark' ? `<div>🏁 Disembark</div>` : ''}
                         </div>
                     `;
                 }
-                
+
                 let activitiesHTML = '';
                 if (dayActivities.length === 0) {
                     activitiesHTML = '<div class="no-activities">No activities planned</div>';
@@ -551,27 +723,51 @@
                         if (!b.timeStart) return -1;
                         return a.timeStart.localeCompare(b.timeStart);
                     });
-                    
+
                     dayActivities.forEach(activity => {
                         const badges = [];
-                        if (activity.cost > 0) badges.push(`<span class="activity-badge badge-cost">$${activity.cost}</span>`);
-                        if (activity.priority === 'backup') badges.push(`<span class="activity-badge badge-backup">BACKUP</span>`);
+
+                        // Booking status
+                        badges.push(bookingStatusBadge(activity.bookingStatus));
+
+                        // Cost + currency
+                        const costStr = formatCost(activity.cost, activity.currency);
+                        if (costStr) badges.push(`<span class="activity-badge badge-cost">${costStr}</span>`);
+
+                        // Account holder
+                        if (activity.accountHolder) {
+                            badges.push(`<span class="activity-badge badge-account">👤 ${activity.accountHolder}</span>`);
+                        }
+
+                        // Credit card
+                        if (activity.creditCard) {
+                            badges.push(`<span class="activity-badge badge-card">💳 ${activity.creditCard}</span>`);
+                        }
+
+                        // Booking site
+                        if (activity.bookingSite) {
+                            badges.push(`<span class="activity-badge badge-site">🌐 ${activity.bookingSite}</span>`);
+                        }
+
+                        // Backup
+                        if (activity.priority === 'backup') {
+                            badges.push(`<span class="activity-badge badge-backup">BACKUP</span>`);
+                        }
+
+                        // Cancel date
                         if (activity.cancelDate) {
                             const cancelBy = new Date(activity.cancelDate);
                             const today = new Date();
-                            if (cancelBy < today) {
-                                badges.push(`<span class="activity-badge badge-cancelled">Cancel by ${formatDate(activity.cancelDate)}</span>`);
-                            } else {
-                                badges.push(`<span class="activity-badge">Cancel by ${formatDate(activity.cancelDate)}</span>`);
-                            }
+                            const cls = cancelBy < today ? 'badge-cancelled' : '';
+                            badges.push(`<span class="activity-badge ${cls}">Cancel by ${formatDate(activity.cancelDate)}</span>`);
                         }
-                        
-                        const timeStr = activity.timeStart && activity.timeEnd 
-                            ? `${activity.timeStart} - ${activity.timeEnd}` 
+
+                        const timeStr = activity.timeStart && activity.timeEnd
+                            ? `${activity.timeStart} – ${activity.timeEnd}`
                             : activity.timeStart ? activity.timeStart : '';
-                        
+
                         const priorityClass = activity.priority === 'backup' ? 'backup' : '';
-                        
+
                         activitiesHTML += `
                             <div class="activity-item ${activity.activityType} ${priorityClass}">
                                 <div class="activity-header">
@@ -579,7 +775,7 @@
                                     ${timeStr ? `<div class="activity-time">${timeStr}</div>` : ''}
                                 </div>
                                 ${activity.details ? `<div class="activity-details">${activity.details}</div>` : ''}
-                                ${badges.length > 0 ? `<div class="activity-meta">${badges.join('')}</div>` : ''}
+                                ${badges.filter(Boolean).length > 0 ? `<div class="activity-meta">${badges.filter(Boolean).join('')}</div>` : ''}
                                 ${activity.bookingLink ? `<div class="activity-meta"><a href="${activity.bookingLink}" target="_blank" style="color: #3498db; text-decoration: none;">🔗 Booking Link</a></div>` : ''}
                                 <div class="activity-actions">
                                     <button class="btn-edit" onclick="editActivity('${activity.id}')">Edit</button>
@@ -589,7 +785,7 @@
                         `;
                     });
                 }
-                
+
                 container.innerHTML += `
                     <div class="day-card">
                         <div class="day-header">
@@ -605,14 +801,14 @@
                 `;
             });
         }
-        
+
         function populateDaySelect() {
             const select = document.getElementById('daySelect');
-            select.innerHTML = cruiseDays.map(day => 
-                `<option value="${day.day}">Day ${day.day} - ${day.location}</option>`
+            select.innerHTML = cruiseDays.map(day =>
+                `<option value="${day.day}">Day ${day.day} – ${day.location}</option>`
             ).join('');
         }
-        
+
         function showAddActivityModal() {
             editingActivityId = null;
             document.getElementById('modal-title').textContent = 'Add Activity';
@@ -620,11 +816,10 @@
             document.getElementById('activityModal').style.display = 'block';
             document.getElementById('conflictWarning').style.display = 'none';
         }
-        
+
         function showDiningModal() {
             const container = document.getElementById('dayCheckboxes');
             container.innerHTML = '';
-            
             cruiseDays.forEach(day => {
                 if (day.day >= 1 && day.day <= 17) {
                     container.innerHTML += `
@@ -635,61 +830,49 @@
                     `;
                 }
             });
-            
             document.getElementById('diningModal').style.display = 'block';
         }
-        
+
         function closeDiningModal() {
             document.getElementById('diningModal').style.display = 'none';
         }
-        
+
         document.getElementById('diningForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const diningTime = document.getElementById('diningTime').value;
             const duration = parseInt(document.getElementById('diningDuration').value);
-            
             const startTime = diningTime;
             const endTime = addMinutes(diningTime, duration);
-            
+
             const selectedDays = [];
             cruiseDays.forEach(day => {
                 const checkbox = document.getElementById(`day${day.day}`);
-                if (checkbox && checkbox.checked) {
-                    selectedDays.push(day.day);
-                }
+                if (checkbox && checkbox.checked) selectedDays.push(day.day);
             });
-            
-            if (selectedDays.length === 0) {
-                alert('Please select at least one day!');
-                return;
-            }
-            
+
+            if (selectedDays.length === 0) { alert('Please select at least one day!'); return; }
+
             let addedCount = 0;
             for (const day of selectedDays) {
                 const activityData = {
-                    day: day,
-                    activityType: 'dining',
-                    name: 'Main Dining Room',
-                    timeStart: startTime,
-                    timeEnd: endTime,
+                    day, activityType: 'dining', name: 'Main Dining Room',
+                    timeStart: startTime, timeEnd: endTime,
                     details: 'Assigned seating time',
-                    cost: 0,
-                    priority: 'confirmed',
-                    bookingLink: '',
-                    cancelDate: '',
+                    cost: 0, currency: 'USD',
+                    priority: 'confirmed', bookingStatus: 'booked',
+                    accountHolder: '', creditCard: '',
+                    bookingSite: '', bookingLink: '', cancelDate: '',
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
-                
                 await db.collection('trips').doc(activeTripId).collection('itinerary').add(activityData);
                 addedCount++;
             }
-            
+
             closeDiningModal();
             alert(`Added dining schedule to ${addedCount} days!`);
             await loadItinerary();
         });
-        
+
         function addMinutes(time, minutes) {
             const [hours, mins] = time.split(':').map(Number);
             const totalMins = hours * 60 + mins + minutes;
@@ -697,12 +880,12 @@
             const newMins = totalMins % 60;
             return `${String(newHours).padStart(2, '0')}:${String(newMins).padStart(2, '0')}`;
         }
-        
+
         function editActivity(activityId) {
             editingActivityId = activityId;
             const activity = allActivities.find(a => a.id === activityId);
             if (!activity) return;
-            
+
             document.getElementById('modal-title').textContent = 'Edit Activity';
             document.getElementById('daySelect').value = activity.day;
             document.getElementById('activityType').value = activity.activityType;
@@ -711,76 +894,94 @@
             document.getElementById('timeEnd').value = activity.timeEnd || '';
             document.getElementById('details').value = activity.details || '';
             document.getElementById('cost').value = activity.cost || '';
+            document.getElementById('currency').value = activity.currency || 'USD';
             document.getElementById('priority').value = activity.priority || 'confirmed';
+            document.getElementById('bookingStatus').value = activity.bookingStatus || 'booked';
+            document.getElementById('accountHolder').value = activity.accountHolder || '';
+            document.getElementById('creditCard').value = activity.creditCard || '';
+            document.getElementById('bookingSite').value = activity.bookingSite || '';
             document.getElementById('bookingLink').value = activity.bookingLink || '';
             document.getElementById('cancelDate').value = activity.cancelDate || '';
             document.getElementById('activityModal').style.display = 'block';
             document.getElementById('conflictWarning').style.display = 'none';
         }
-        
+
         async function deleteActivity(activityId) {
             if (!confirm('Delete this activity?')) return;
             await db.collection('trips').doc(activeTripId).collection('itinerary').doc(activityId).delete();
             await loadItinerary();
         }
-        
+
         function closeModal() {
             document.getElementById('activityModal').style.display = 'none';
         }
-        
+
         document.getElementById('activityForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const day = parseInt(document.getElementById('daySelect').value);
-            const activityType = document.getElementById('activityType').value;
-            const name = document.getElementById('activityName').value;
-            const timeStart = document.getElementById('timeStart').value;
-            const timeEnd = document.getElementById('timeEnd').value;
-            const details = document.getElementById('details').value;
-            const cost = parseFloat(document.getElementById('cost').value) || 0;
-            const priority = document.getElementById('priority').value;
-            const bookingLink = document.getElementById('bookingLink').value;
-            const cancelDate = document.getElementById('cancelDate').value;
-            
+
+            const day           = parseInt(document.getElementById('daySelect').value);
+            const activityType  = document.getElementById('activityType').value;
+            const name          = document.getElementById('activityName').value;
+            const timeStart     = document.getElementById('timeStart').value;
+            const timeEnd       = document.getElementById('timeEnd').value;
+            const details       = document.getElementById('details').value;
+            const cost          = parseFloat(document.getElementById('cost').value) || 0;
+            const currency      = document.getElementById('currency').value;
+            const priority      = document.getElementById('priority').value;
+            const bookingStatus = document.getElementById('bookingStatus').value;
+            const accountHolder = document.getElementById('accountHolder').value;
+            const creditCard    = document.getElementById('creditCard').value;
+            const bookingSite   = document.getElementById('bookingSite').value;
+            const bookingLink   = document.getElementById('bookingLink').value;
+            const cancelDate    = document.getElementById('cancelDate').value;
+
             const isBackupExcursion = (activityType === 'excursion' && priority === 'backup');
-            
+
             if (timeStart && timeEnd && !isBackupExcursion) {
                 const conflicts = allActivities.filter(a => {
                     if (editingActivityId && a.id === editingActivityId) return false;
                     if (a.day !== day) return false;
                     if (!a.timeStart || !a.timeEnd) return false;
                     if (a.activityType === 'excursion' && a.priority === 'backup') return false;
-                    
                     return (timeStart < a.timeEnd && timeEnd > a.timeStart);
                 });
-                
+
                 if (conflicts.length > 0) {
-                    document.getElementById('conflictWarning').innerHTML = 
+                    document.getElementById('conflictWarning').innerHTML =
                         `⚠️ Time conflict with: ${conflicts.map(c => c.name).join(', ')}`;
                     document.getElementById('conflictWarning').style.display = 'block';
                     if (!confirm('There is a time conflict. Save anyway?')) return;
                 }
             }
-            
+
             const activityData = {
-                day, activityType, name, timeStart, timeEnd, details, cost, priority, bookingLink, cancelDate,
+                day, activityType, name, timeStart, timeEnd, details,
+                cost, currency, priority, bookingStatus, accountHolder, creditCard, bookingSite,
+                bookingLink, cancelDate,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
-            
+
             if (editingActivityId) {
                 await db.collection('trips').doc(activeTripId).collection('itinerary').doc(editingActivityId).update(activityData);
             } else {
                 await db.collection('trips').doc(activeTripId).collection('itinerary').add(activityData);
             }
-            
+
             closeModal();
             await loadItinerary();
         });
-        
+
         function formatDate(dateStr) {
             const [year, month, day] = dateStr.split('-');
             const date = new Date(year, month - 1, day);
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function printItinerary() {
+            document.getElementById('printDate').textContent = new Date().toLocaleDateString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+            window.print();
         }
     </script>
 </body>
