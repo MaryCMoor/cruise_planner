@@ -28,13 +28,25 @@
         body.packday-mode .progress-section,
         body.packday-mode .weight-section { display: none !important; }
 
-        .packday-banner {
+        /* PRE-PACK MODE */
+        body.prepack-mode { background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #8e24aa 100%); }
+        body.prepack-mode .header { background: linear-gradient(135deg, #311b92 0%, #4527a0 100%); border-bottom: 3px solid #b388ff; }
+        body.prepack-mode .prepack-banner { display: flex !important; }
+        body.prepack-mode .normal-only { display: none !important; }
+        body.prepack-mode .filter-section,
+        body.prepack-mode .stats-bar,
+        body.prepack-mode .progress-section,
+        body.prepack-mode .weight-section { display: none !important; }
+
+        .packday-banner, .prepack-banner {
             display: none;
             background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
             color: white; padding: 14px 20px; text-align: center;
             font-weight: 700; font-size: 1.1em;
             align-items: center; justify-content: center; gap: 12px;
         }
+        .prepack-banner { background: linear-gradient(135deg, #b388ff 0%, #7c4dff 100%); }
+        
         .packday-exit {
             background: rgba(255,255,255,0.25); border: none; color: white;
             padding: 6px 14px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.85em;
@@ -46,8 +58,9 @@
         .container { padding: 15px; }
 
         .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .action-buttons-row2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .btn-add, .btn-print, .btn-dedup, .btn-clear-status, .btn-packday {
+        .action-buttons-row2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .action-buttons-row3 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .btn-add, .btn-print, .btn-dedup, .btn-clear-status, .btn-packday, .btn-prepack {
             padding: 15px; border: none; border-radius: 10px; font-weight: 700; font-size: 0.95em; cursor: pointer; color: white;
         }
         .btn-add          { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
@@ -55,6 +68,7 @@
         .btn-dedup        { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
         .btn-clear-status { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
         .btn-packday      { background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%); font-size: 0.85em; }
+        .btn-prepack      { background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 100%); font-size: 0.85em; }
 
         .stats-bar { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); text-align: center; }
         .stats-number { font-size: 2em; font-weight: 900; color: #fa709a; }
@@ -112,6 +126,7 @@
         .badge-bag     { background: #e8f5e9; color: #2e7d32; }
         .badge-weight  { background: #fce4ec; color: #880e4f; }
         .badge-waiting { background: #fff8e1; color: #f57f17; }
+        .badge-prepacked { background: #e1bee7; color: #6a1b9a; }
         .packing-notes { font-size: 0.85em; color: #555; margin-top: 4px; font-style: italic; }
 
         .item-status-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
@@ -138,12 +153,21 @@
         .packday-bag-subheader { font-size: 0.8em; color: #7fb3c8; margin-bottom: 15px; }
         .packday-item { background: #253545; padding: 14px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 12px; border-left: 4px solid #2d4a5e; }
         .packday-item.waiting { border-left-color: #f39c12; }
+        .packday-item.prepacked { border-left-color: #b388ff; }
         .packday-done { text-align: center; padding: 40px 20px; color: #00d2ff; }
         .packday-done .done-emoji { font-size: 4em; margin-bottom: 15px; }
         .packday-done h2 { font-size: 1.8em; margin-bottom: 10px; color: #e8f4f8; }
         .packday-done p  { color: #7fb3c8; }
 
-        #packday-bag-filter { display: none; margin-bottom: 15px; flex-wrap: wrap; gap: 8px; }
+        /* Pre-Pack Mode */
+        .prepack-bag-section { background: #2d1b4e; border: 2px solid #4a2c6d; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
+        .prepack-bag-header { font-size: 1.2em; font-weight: 800; color: #b388ff; margin-bottom: 4px; }
+        .prepack-bag-subheader { font-size: 0.8em; color: #9575cd; margin-bottom: 15px; }
+        .prepack-item { background: #3d2661; padding: 14px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 12px; border-left: 4px solid #4a2c6d; }
+        .prepack-item.waiting { border-left-color: #f39c12; }
+        body.prepack-mode .no-items { color: #9575cd; }
+
+        #packday-bag-filter, #prepack-bag-filter { display: none; margin-bottom: 15px; flex-wrap: wrap; gap: 8px; }
         .no-items { text-align: center; padding: 20px; color: #7f8c8d; font-style: italic; }
         body.packday-mode .no-items { color: #7fb3c8; }
 
@@ -182,11 +206,11 @@
             body { background: white !important; padding: 0; font-size: 10pt; font-family: Arial, sans-serif; }
 
             /* Hide everything that's not content */
-            .header, .bottom-nav, .packday-banner,
-            .action-buttons, .action-buttons-row2,
+            .header, .bottom-nav, .packday-banner, .prepack-banner,
+            .action-buttons, .action-buttons-row2, .action-buttons-row3,
             .stats-bar, .progress-section, .weight-section,
             .filter-section, .item-status-row, .item-actions,
-            #packday-bag-filter, .toast, .modal,
+            #packday-bag-filter, #prepack-bag-filter, .toast, .modal,
             .btn-waiting { display: none !important; }
 
             /* Page title */
@@ -292,8 +316,13 @@
 <body>
 
     <div class="packday-banner">
-        <span>🚢 PACK DAY MODE — Unpacked items only</span>
+        <span>🚢 PACK DAY MODE — Final packing into suitcases</span>
         <button class="packday-exit" onclick="exitPackDay()">✕ Exit</button>
+    </div>
+
+    <div class="prepack-banner">
+        <span>🏠 PRE-PACK MODE — Gathering items at my house</span>
+        <button class="packday-exit" onclick="exitPrePack()">✕ Exit</button>
     </div>
 
     <div class="header">
@@ -310,6 +339,10 @@
             <button class="btn-dedup"        onclick="removeDuplicates()">🧹 Remove Dupes</button>
             <button class="btn-clear-status" onclick="clearAllStatuses()">🔄 Reset Statuses</button>
             <button class="btn-packday"      onclick="enterPackDay()">🚢 Pack Day!</button>
+        </div>
+        <div class="action-buttons-row3 normal-only">
+            <button class="btn-prepack" onclick="enterPrePack()">🏠 Pre-Pack at My House</button>
+            <button class="btn-prepack" onclick="clearPrePacked()" style="background: linear-gradient(135deg, #e67e22 0%, #e74c3c 100%);">🔄 Reset Pre-Packed</button>
         </div>
 
         <div class="stats-bar normal-only">
@@ -360,6 +393,7 @@
                 <button class="filter-btn" onclick="applyFilter('status','unpacked',this)">❌ Unpacked</button>
                 <button class="filter-btn" onclick="applyFilter('status','packed',this)">✅ Packed</button>
                 <button class="filter-btn" onclick="applyFilter('waiting','true',this)">⏳ Waiting On</button>
+                <button class="filter-btn" onclick="applyFilter('prepacked','true',this)">📦 Pre-Packed</button>
             </div>
             <div class="filter-divider"></div>
             <div class="filter-header">👤 Person</div>
@@ -377,6 +411,8 @@
                 <button class="filter-btn" onclick="applyFilter('category','Documents',this)">📄 Documents</button>
                 <button class="filter-btn" onclick="applyFilter('category','Medications',this)">💊 Medications</button>
                 <button class="filter-btn" onclick="applyFilter('category','Beach/Pool',this)">🏖️ Beach</button>
+                <button class="filter-btn" onclick="applyFilter('category','Accessories',this)">👜 Accessories</button>
+                <button class="filter-btn" onclick="applyFilter('category','Miscellaneous',this)">📦 Misc</button>
             </div>
             <div class="filter-divider"></div>
             <div class="filter-header">🧳 Bag</div>
@@ -400,6 +436,7 @@
         </div>
 
         <div id="packday-bag-filter"></div>
+        <div id="prepack-bag-filter"></div>
         <div id="packing-container"></div>
     </div>
 
@@ -455,7 +492,7 @@
                             <option value="Medications">Medications</option>
                             <option value="Beach/Pool">Beach/Pool</option>
                             <option value="Accessories">Accessories</option>
-                            <option value="Misc">Miscellaneous</option>
+                            <option value="Miscellaneous">Miscellaneous</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -513,7 +550,9 @@
     let allItems         = [];
     let currentFilter    = { type: 'all', value: 'all' };
     let packDayMode      = false;
+    let prePackMode      = false;
     let packDayBagFilter = 'all';
+    let prePackBagFilter = 'all';
     const BAG_LIMIT_LBS  = 50;
 
     const STATUS_OPTIONS = [
@@ -551,6 +590,8 @@
     function renderAll() {
         if (packDayMode) {
             renderPackDay();
+        } else if (prePackMode) {
+            renderPrePack();
         } else {
             renderPackingList();
             renderProgressBars();
@@ -574,6 +615,7 @@
                 if (currentFilter.value === 'unpacked') return !item.packed;
             }
             if (currentFilter.type === 'waiting')    return item.waitingOn === true;
+            if (currentFilter.type === 'prepacked')  return item.prePacked === true && !item.packed;
             if (currentFilter.type === 'person')     return item.person === currentFilter.value;
             if (currentFilter.type === 'category')   return item.category === currentFilter.value;
             if (currentFilter.type === 'house')      return item.house === currentFilter.value;
@@ -618,6 +660,7 @@
         if (item.bag)          badges.push(`<span class="meta-badge badge-bag">🧳 ${item.bag}</span>`);
         if (item.weightLbs)    badges.push(`<span class="meta-badge badge-weight">⚖️ ${item.weightLbs} lb</span>`);
         if (item.waitingOn)    badges.push(`<span class="meta-badge badge-waiting">⏳ Waiting On</span>`);
+        if (item.prePacked && !item.packed) badges.push(`<span class="meta-badge badge-prepacked">📦 Ready at Parents</span>`);
         const statusOpts = STATUS_OPTIONS.map(o =>
             `<option value="${o.value}" ${item.itemStatus === o.value ? 'selected' : ''}>${o.label}</option>`
         ).join('');
@@ -691,6 +734,119 @@
         ).join('');
     }
 
+    // ── Pre-Pack Mode ──────────────────────────────────────────────────────────
+    function enterPrePack() {
+        prePackMode = true; prePackBagFilter = 'all';
+        document.body.classList.add('prepack-mode');
+        const pdbf = document.getElementById('prepack-bag-filter');
+        pdbf.style.display = 'flex';
+        renderPrePackBagFilterButtons();
+        renderPrePack();
+        window.scrollTo(0, 0);
+    }
+    function exitPrePack() {
+        prePackMode = false;
+        document.body.classList.remove('prepack-mode');
+        document.getElementById('prepack-bag-filter').style.display = 'none';
+        renderAll();
+        window.scrollTo(0, 0);
+    }
+    function renderPrePackBagFilterButtons() {
+        const bags = [...new Set(allItems.map(i => i.bag).filter(Boolean))].sort();
+        const c = document.getElementById('prepack-bag-filter');
+        if (!c) return;
+        c.innerHTML = `<button class="filter-btn active" style="background:linear-gradient(135deg,#b388ff,#7c4dff);color:white;border-color:#b388ff;" onclick="setPrePackBagFilter('all',this)">All Bags</button>`;
+        bags.forEach(bag => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.style.cssText = 'color:#9575cd;border-color:#4a2c6d;background:#3d2661;';
+            btn.textContent = '🧳 ' + bag;
+            btn.onclick = function(){ setPrePackBagFilter(bag, this); };
+            c.appendChild(btn);
+        });
+    }
+    function setPrePackBagFilter(bag, btn) {
+        prePackBagFilter = bag;
+        document.querySelectorAll('#prepack-bag-filter button').forEach(b => {
+            b.style.background = '#3d2661'; b.style.color = '#9575cd'; b.style.borderColor = '#4a2c6d';
+        });
+        btn.style.background = 'linear-gradient(135deg,#b388ff,#7c4dff)';
+        btn.style.color = 'white'; btn.style.borderColor = '#b388ff';
+        renderPrePack();
+    }
+    function renderPrePack() {
+        // Show items that are NOT packed and NOT pre-packed yet
+        const needsPrePacking = allItems.filter(i => !i.packed && !i.prePacked);
+        const container = document.getElementById('packing-container');
+        container.innerHTML = '';
+        if (needsPrePacking.length === 0) {
+            container.innerHTML = `<div class="packday-done"><div class="done-emoji">✅</div><h2>Everything is gathered!</h2><p>All items are ready to go to your parents' house for final packing.</p></div>`;
+            return;
+        }
+        const UNASSIGNED = '(No Bag Assigned)';
+        const byBag = {};
+        needsPrePacking.forEach(item => {
+            const key = item.bag || UNASSIGNED;
+            if (!byBag[key]) byBag[key] = [];
+            byBag[key].push(item);
+        });
+        const bagsToShow = prePackBagFilter === 'all' ? Object.keys(byBag) : [prePackBagFilter].filter(b => byBag[b]);
+        if (!bagsToShow.length) {
+            container.innerHTML = `<div class="packday-done"><div class="done-emoji">✅</div><h2>All gathered for this bag!</h2><p>Switch bags or exit Pre-Pack Mode.</p></div>`;
+            return;
+        }
+        bagsToShow.forEach(bagName => {
+            const items = byBag[bagName];
+            const totalInBag = allItems.filter(i => (i.bag || UNASSIGNED) === bagName).length;
+            const prePackedCount = allItems.filter(i => (i.bag || UNASSIGNED) === bagName && i.prePacked).length;
+            const html = items.map(item => `
+                <div class="prepack-item ${item.waitingOn ? 'waiting' : ''}">
+                    <input type="checkbox" class="packing-checkbox" onchange="togglePrePacked('${item.id}', this.checked)">
+                    <div class="packing-content">
+                        <div class="packing-name" style="color:#e1bee7;">${item.name}</div>
+                        <div class="packing-meta">
+                            ${item.person ? `<span class="meta-badge badge-person">${item.person}</span>` : ''}
+                            ${(item.quantity||1) > 1 ? `<span class="meta-badge badge-qty">Qty: ${item.quantity}</span>` : ''}
+                            ${item.category ? `<span class="meta-badge" style="background:#2d1b4e;color:#9575cd;">${item.category}</span>` : ''}
+                            ${item.waitingOn ? `<span class="meta-badge badge-waiting">⏳ Waiting On</span>` : ''}
+                            ${item.currentLocation ? `<span class="meta-badge" style="background:#2d1b4e;color:#9575cd;">📍 ${item.currentLocation}</span>` : ''}
+                        </div>
+                        ${item.notes ? `<div class="packing-notes" style="color:#9575cd;">${item.notes}</div>` : ''}
+                    </div>
+                </div>`).join('');
+            container.innerHTML += `
+                <div class="prepack-bag-section">
+                    <div class="prepack-bag-header">🧳 ${bagName}</div>
+                    <div class="prepack-bag-subheader">${prePackedCount} of ${totalInBag} gathered · ${items.length} remaining</div>
+                    ${html}
+                </div>`;
+        });
+    }
+
+    async function togglePrePacked(itemId, prePacked) {
+        await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ prePacked });
+        const item = allItems.find(i => i.id === itemId);
+        if (item) item.prePacked = prePacked;
+        if (prePacked) showToast('📦 Gathered at your house!');
+        renderPrePack();
+    }
+
+    async function clearPrePacked() {
+        if (!confirm('Reset all pre-packed statuses? Items will show up in Pre-Pack Mode again.')) return;
+        const batch = db.batch();
+        allItems.forEach(item => {
+            if (item.prePacked) {
+                batch.update(
+                    db.collection('trips').doc(activeTripId).collection('packing').doc(item.id),
+                    { prePacked: false }
+                );
+            }
+        });
+        await batch.commit();
+        showToast('🔄 Pre-packed statuses cleared!');
+        await loadPackingList();
+    }
+
     // ── Pack Day ───────────────────────────────────────────────────────────────
     function enterPackDay() {
         packDayMode = true; packDayBagFilter = 'all';
@@ -756,7 +912,7 @@
             const totalInBag = allItems.filter(i => (i.bag || UNASSIGNED) === bagName).length;
             const doneCount  = totalInBag - items.length;
             const html = items.map(item => `
-                <div class="packday-item ${item.waitingOn ? 'waiting' : ''}">
+                <div class="packday-item ${item.waitingOn ? 'waiting' : ''} ${item.prePacked ? 'prepacked' : ''}">
                     <input type="checkbox" class="packing-checkbox" onchange="togglePackedPackDay('${item.id}', this.checked)">
                     <div class="packing-content">
                         <div class="packing-name" style="color:#e8f4f8;">${item.name}</div>
@@ -764,6 +920,7 @@
                             ${item.person ? `<span class="meta-badge badge-person">${item.person}</span>` : ''}
                             ${(item.quantity||1) > 1 ? `<span class="meta-badge badge-qty">Qty: ${item.quantity}</span>` : ''}
                             ${item.category ? `<span class="meta-badge" style="background:#1a3a4a;color:#7fb3c8;">${item.category}</span>` : ''}
+                            ${item.prePacked ? `<span class="meta-badge" style="background:#6a1b9a;color:#e1bee7;">📦 Ready</span>` : ''}
                             ${item.waitingOn ? `<span class="meta-badge badge-waiting">⏳ Waiting On</span>` : ''}
                             ${item.currentLocation ? `<span class="meta-badge" style="background:#1e3a2f;color:#4caf8a;">📍 ${item.currentLocation}</span>` : ''}
                         </div>
@@ -783,7 +940,7 @@
         await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ packed });
         const item = allItems.find(i => i.id === itemId);
         if (item) item.packed = packed;
-        if (packed) showToast('✅ Packed!');
+        if (packed) showToast('✅ Packed into suitcase!');
         renderPackDay();
     }
 
@@ -863,7 +1020,7 @@
         document.getElementById('weightLbs').value = item.weightLbs || '';
         document.getElementById('person').value    = item.person || 'Shared';
         document.getElementById('bag').value       = item.bag || '';
-        document.getElementById('category').value  = item.category || 'Misc';
+        document.getElementById('category').value  = item.category || 'Miscellaneous';
         document.getElementById('house').value     = item.house || '';
         document.getElementById('notes').value     = item.notes || '';
         document.getElementById('itemModal').style.display = 'block';
@@ -892,9 +1049,11 @@
         if (editingItemId) {
             const existing = allItems.find(i => i.id === editingItemId);
             itemData.packed = existing ? existing.packed : false;
+            itemData.prePacked = existing ? existing.prePacked : false;
             await db.collection('trips').doc(activeTripId).collection('packing').doc(editingItemId).update(itemData);
         } else {
             itemData.packed    = false;
+            itemData.prePacked = false;
             itemData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             await db.collection('trips').doc(activeTripId).collection('packing').add(itemData);
         }
