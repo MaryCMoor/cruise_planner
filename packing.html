@@ -130,8 +130,10 @@
         .packing-notes { font-size: 0.85em; color: #555; margin-top: 4px; font-style: italic; }
 
         .item-status-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
-        .item-status-select { padding: 5px 8px; border: 1.5px solid #ddd; border-radius: 7px; font-size: 0.78em; font-family: inherit; background: white; color: #2c3e50; cursor: pointer; flex-shrink: 0; max-width: 200px; }
-        .item-status-select:focus { outline: none; border-color: #fa709a; }
+        .item-status-select, .item-bag-select { padding: 5px 8px; border: 1.5px solid #ddd; border-radius: 7px; font-size: 0.78em; font-family: inherit; background: white; color: #2c3e50; cursor: pointer; flex-shrink: 0; max-width: 200px; }
+        .item-status-select:focus, .item-bag-select:focus { outline: none; border-color: #fa709a; }
+        .item-bag-select { border-color: #2e7d32; }
+        .item-bag-select:focus { border-color: #27ae60; }
         .item-location-input { padding: 5px 8px; border: 1.5px solid #ddd; border-radius: 7px; font-size: 0.78em; font-family: inherit; background: white; color: #2c3e50; flex: 1; min-width: 90px; }
         .item-location-input:focus { outline: none; border-color: #fa709a; }
         .item-location-input::placeholder { color: #bbb; }
@@ -563,6 +565,16 @@
         { value: 'Need to Purchase 🛒',    label: 'Need to Purchase 🛒',   cls: 'status-buy'    },
         { value: 'Left Behind ❌',         label: 'Left Behind ❌',        cls: 'status-behind' },
     ];
+    
+    const BAG_OPTIONS = [
+        { value: '', label: '— No Bag —' },
+        { value: 'Mary – Carry-on', label: '🧳 Mary – Carry-on' },
+        { value: 'Mary – Checked', label: '🧳 Mary – Checked' },
+        { value: 'Brian – Carry-on', label: '🧳 Brian – Carry-on' },
+        { value: 'Brian – Checked', label: '🧳 Brian – Checked' },
+        { value: 'Shared Tote', label: '🧳 Shared Tote' },
+    ];
+    
     function statusClass(val) {
         const o = STATUS_OPTIONS.find(o => o.value === val);
         return o ? o.cls : 'status-none';
@@ -661,10 +673,17 @@
         if (item.weightLbs)    badges.push(`<span class="meta-badge badge-weight">⚖️ ${item.weightLbs} lb</span>`);
         if (item.waitingOn)    badges.push(`<span class="meta-badge badge-waiting">⏳ Waiting On</span>`);
         if (item.prePacked && !item.packed) badges.push(`<span class="meta-badge badge-prepacked">📦 Ready at Parents</span>`);
+        
         const statusOpts = STATUS_OPTIONS.map(o =>
             `<option value="${o.value}" ${item.itemStatus === o.value ? 'selected' : ''}>${o.label}</option>`
         ).join('');
+        
+        const bagOpts = BAG_OPTIONS.map(o =>
+            `<option value="${o.value}" ${(item.bag || '') === o.value ? 'selected' : ''}>${o.label}</option>`
+        ).join('');
+        
         const scls = statusClass(item.itemStatus || '');
+        
         return `
             <div class="packing-item ${item.packed ? 'packed' : ''} ${item.waitingOn ? 'waiting-flag' : ''}">
                 <input type="checkbox" class="packing-checkbox" ${item.packed ? 'checked' : ''} onchange="togglePacked('${item.id}', this.checked)">
@@ -674,6 +693,7 @@
                     ${item.notes ? `<div class="packing-notes">${item.notes}</div>` : ''}
                     <div class="item-status-row">
                         <select class="item-status-select ${scls}" onchange="updateItemStatus('${item.id}', this.value, this)">${statusOpts}</select>
+                        <select class="item-bag-select" onchange="updateItemBag('${item.id}', this.value)">${bagOpts}</select>
                         <input type="text" class="item-location-input" placeholder="📍 Current location..."
                             value="${item.currentLocation || ''}"
                             onblur="updateItemLocation('${item.id}', this.value)"
@@ -952,17 +972,29 @@
         renderProgressBars();
         renderPackingList();
     }
+    
     async function updateItemStatus(itemId, value, selectEl) {
         selectEl.className = `item-status-select ${statusClass(value)}`;
         await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ itemStatus: value });
         const item = allItems.find(i => i.id === itemId);
         if (item) item.itemStatus = value;
     }
+    
+    async function updateItemBag(itemId, value) {
+        await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ bag: value });
+        const item = allItems.find(i => i.id === itemId);
+        if (item) item.bag = value;
+        // Re-render to update weight bars and bag badges
+        renderAll();
+        showToast(value ? `🧳 Assigned to ${value}` : '🧳 Bag assignment removed');
+    }
+    
     async function updateItemLocation(itemId, value) {
         await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ currentLocation: value });
         const item = allItems.find(i => i.id === itemId);
         if (item) item.currentLocation = value;
     }
+    
     async function toggleWaiting(itemId, val) {
         await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).update({ waitingOn: val });
         const item = allItems.find(i => i.id === itemId);
@@ -970,6 +1002,7 @@
         renderPackingList();
         showToast(val ? '⏳ Marked as Waiting On' : '✅ Waiting On cleared');
     }
+    
     async function removeDuplicates() {
         if (!confirm('Remove duplicate items (same name + category + person), keeping the oldest? Continue?')) return;
         const seen = new Set(); const toDelete = [];
@@ -985,6 +1018,7 @@
         showToast(`🧹 Removed ${toDelete.length} duplicate${toDelete.length > 1 ? 's' : ''}!`);
         await loadPackingList();
     }
+    
     async function clearAllStatuses() {
         if (!confirm('Reset all item statuses and current locations to blank?')) return;
         const batch = db.batch();
@@ -1010,6 +1044,7 @@
         document.getElementById('quantity').value = 1;
         document.getElementById('itemModal').style.display = 'block';
     }
+    
     function editItem(itemId) {
         editingItemId = itemId;
         const item = allItems.find(i => i.id === itemId);
@@ -1025,11 +1060,13 @@
         document.getElementById('notes').value     = item.notes || '';
         document.getElementById('itemModal').style.display = 'block';
     }
+    
     async function deleteItem(itemId) {
         if (!confirm('Delete this item?')) return;
         await db.collection('trips').doc(activeTripId).collection('packing').doc(itemId).delete();
         await loadPackingList();
     }
+    
     function closeModal() { document.getElementById('itemModal').style.display = 'none'; }
 
     document.getElementById('itemForm').addEventListener('submit', async (e) => {
