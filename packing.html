@@ -1083,17 +1083,31 @@
             notes:     document.getElementById('notes').value,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
+        
         if (editingItemId) {
+            // When editing, preserve fields that aren't in the form
             const existing = allItems.find(i => i.id === editingItemId);
-            itemData.packed = existing ? existing.packed : false;
-            itemData.prePacked = existing ? existing.prePacked : false;
+            if (existing) {
+                itemData.packed = existing.packed || false;
+                itemData.prePacked = existing.prePacked || false;
+                itemData.itemStatus = existing.itemStatus || '';
+                itemData.currentLocation = existing.currentLocation || '';
+                itemData.waitingOn = existing.waitingOn || false;
+                itemData.createdAt = existing.createdAt;
+            }
             await db.collection('trips').doc(activeTripId).collection('packing').doc(editingItemId).update(itemData);
+            showToast('✅ Item updated!');
         } else {
-            itemData.packed    = false;
+            itemData.packed = false;
             itemData.prePacked = false;
+            itemData.itemStatus = '';
+            itemData.currentLocation = '';
+            itemData.waitingOn = false;
             itemData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             await db.collection('trips').doc(activeTripId).collection('packing').add(itemData);
+            showToast('✅ Item added!');
         }
+        
         closeModal();
         await loadPackingList();
     });
